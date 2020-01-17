@@ -48,8 +48,10 @@ namespace NovaDataManagement
                 //{
                 //    InstanceSv.Items.Add(row["InstanceName"].ToString());
                 //}
-                InstanceSv.Items.Add("MSSql");
-
+                Machine_txt.Text += "HUNGTRAN";
+                InstanceSv.Items.Add("MSSQLSERVER");
+                User_text.Text += "sa";
+                Password_txt.Text += "svdhnt2010";
             }
             catch (Exception Einst)
             {
