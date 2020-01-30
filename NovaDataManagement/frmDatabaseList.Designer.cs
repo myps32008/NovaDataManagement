@@ -30,55 +30,38 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDatabaseList));
             this.gvDBlist = new System.Windows.Forms.DataGridView();
-            this.UpdateVersion = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.Database = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.SizeDB = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.CountDB = new System.Windows.Forms.Label();
             this.toolData = new System.Windows.Forms.ToolStrip();
             this.btnUpgrade = new System.Windows.Forms.ToolStripButton();
             this.toolRefresh = new System.Windows.Forms.ToolStripButton();
             this.btnHelp = new System.Windows.Forms.ToolStripButton();
             this.btnGetScript = new System.Windows.Forms.Button();
-            this.lbListScript = new System.Windows.Forms.Label();
-            this.dgvListScript = new System.Windows.Forms.DataGridView();
             this.btnClearListScript = new System.Windows.Forms.Button();
+            this.UpdateVersion = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.datasource = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.catalog = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.brandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.domainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.createdDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.gvDBlist)).BeginInit();
             this.toolData.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvListScript)).BeginInit();
             this.SuspendLayout();
             // 
             // gvDBlist
             // 
+            this.gvDBlist.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.DisplayedCells;
             this.gvDBlist.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gvDBlist.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.UpdateVersion,
-            this.Database,
-            this.SizeDB});
+            this.datasource,
+            this.catalog,
+            this.brandName,
+            this.domainName,
+            this.createdDate});
             this.gvDBlist.Location = new System.Drawing.Point(8, 72);
             this.gvDBlist.Name = "gvDBlist";
-            this.gvDBlist.Size = new System.Drawing.Size(800, 472);
+            this.gvDBlist.Size = new System.Drawing.Size(1220, 472);
             this.gvDBlist.TabIndex = 3;
-            // 
-            // UpdateVersion
-            // 
-            this.UpdateVersion.DataPropertyName = "UpdateChoice";
-            this.UpdateVersion.HeaderText = "Update Version";
-            this.UpdateVersion.Name = "UpdateVersion";
-            // 
-            // Database
-            // 
-            this.Database.DataPropertyName = "Name";
-            this.Database.HeaderText = "Database Name";
-            this.Database.Name = "Database";
-            this.Database.ReadOnly = true;
-            this.Database.Width = 540;
-            // 
-            // SizeDB
-            // 
-            this.SizeDB.DataPropertyName = "Size";
-            this.SizeDB.HeaderText = "Size (MB)";
-            this.SizeDB.Name = "SizeDB";
-            this.SizeDB.ReadOnly = true;
             // 
             // CountDB
             // 
@@ -104,6 +87,7 @@
             // 
             // btnUpgrade
             // 
+            this.btnUpgrade.ForeColor = System.Drawing.SystemColors.ControlText;
             this.btnUpgrade.Image = ((System.Drawing.Image)(resources.GetObject("btnUpgrade.Image")));
             this.btnUpgrade.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.btnUpgrade.Name = "btnUpgrade";
@@ -138,24 +122,6 @@
             this.btnGetScript.UseVisualStyleBackColor = true;
             this.btnGetScript.Click += new System.EventHandler(this.btnGetFile_Click);
             // 
-            // lbListScript
-            // 
-            this.lbListScript.AutoSize = true;
-            this.lbListScript.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbListScript.Location = new System.Drawing.Point(824, 40);
-            this.lbListScript.Name = "lbListScript";
-            this.lbListScript.Size = new System.Drawing.Size(97, 20);
-            this.lbListScript.TabIndex = 8;
-            this.lbListScript.Text = "List of Script";
-            // 
-            // dgvListScript
-            // 
-            this.dgvListScript.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvListScript.Location = new System.Drawing.Point(824, 72);
-            this.dgvListScript.Name = "dgvListScript";
-            this.dgvListScript.Size = new System.Drawing.Size(408, 472);
-            this.dgvListScript.TabIndex = 9;
-            // 
             // btnClearListScript
             // 
             this.btnClearListScript.Location = new System.Drawing.Point(112, 40);
@@ -166,14 +132,59 @@
             this.btnClearListScript.UseVisualStyleBackColor = true;
             this.btnClearListScript.Click += new System.EventHandler(this.btnClearListScript_Click);
             // 
+            // UpdateVersion
+            // 
+            this.UpdateVersion.DataPropertyName = "UpdateChoice";
+            this.UpdateVersion.HeaderText = "Update Version";
+            this.UpdateVersion.Name = "UpdateVersion";
+            this.UpdateVersion.Width = 77;
+            // 
+            // datasource
+            // 
+            this.datasource.DataPropertyName = "DataSource";
+            this.datasource.HeaderText = "Data Source";
+            this.datasource.Name = "datasource";
+            this.datasource.ReadOnly = true;
+            this.datasource.Width = 85;
+            // 
+            // catalog
+            // 
+            this.catalog.DataPropertyName = "Catalog";
+            this.catalog.HeaderText = "Catalog";
+            this.catalog.Name = "catalog";
+            this.catalog.ReadOnly = true;
+            this.catalog.Width = 68;
+            // 
+            // brandName
+            // 
+            this.brandName.DataPropertyName = "BrandName";
+            this.brandName.HeaderText = "Brand Name";
+            this.brandName.Name = "brandName";
+            this.brandName.ReadOnly = true;
+            this.brandName.Width = 84;
+            // 
+            // domainName
+            // 
+            this.domainName.DataPropertyName = "DomainName";
+            this.domainName.HeaderText = "Domain Name";
+            this.domainName.Name = "domainName";
+            this.domainName.ReadOnly = true;
+            this.domainName.Width = 91;
+            // 
+            // createdDate
+            // 
+            this.createdDate.DataPropertyName = "CreatedDate";
+            this.createdDate.HeaderText = "Created Date";
+            this.createdDate.Name = "createdDate";
+            this.createdDate.ReadOnly = true;
+            this.createdDate.Width = 87;
+            // 
             // frmDatabaseList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1240, 579);
             this.Controls.Add(this.btnClearListScript);
-            this.Controls.Add(this.dgvListScript);
-            this.Controls.Add(this.lbListScript);
             this.Controls.Add(this.btnGetScript);
             this.Controls.Add(this.toolData);
             this.Controls.Add(this.CountDB);
@@ -188,7 +199,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.gvDBlist)).EndInit();
             this.toolData.ResumeLayout(false);
             this.toolData.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvListScript)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -202,11 +212,12 @@
         private System.Windows.Forms.ToolStripButton btnHelp;
         private System.Windows.Forms.Button btnGetScript;
         private System.Windows.Forms.ToolStripButton toolRefresh;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn UpdateVersion;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Database;
-        private System.Windows.Forms.DataGridViewTextBoxColumn SizeDB;
-        private System.Windows.Forms.Label lbListScript;
-        private System.Windows.Forms.DataGridView dgvListScript;
         private System.Windows.Forms.Button btnClearListScript;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn UpdateVersion;
+        private System.Windows.Forms.DataGridViewTextBoxColumn datasource;
+        private System.Windows.Forms.DataGridViewTextBoxColumn catalog;
+        private System.Windows.Forms.DataGridViewTextBoxColumn brandName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn domainName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn createdDate;
     }
 }

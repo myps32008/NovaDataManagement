@@ -24,24 +24,29 @@ namespace NovaDataManagement
             using (SqlConnection con = new SqlConnection(connectString))
             {
                 con.Open();
-                string query = "with fs as " +
-                    "(select database_id, type, size * 8.0 / (1024) as size from sys.master_files)" +
-                    "select name," +
-                    "(select sum(size) from fs where type = 0 and fs.database_id = db.database_id) + " +
-                    "(select sum(size) from fs where type = 1 and fs.database_id = db.database_id)" +
-                    "from sys.databases db " +
-                    "where suser_sname(owner_sid) = @owner";
+                string query = "SELECT s.datasource, ds.[catalog] , d.brandname, d.domainname, d.createdDate FROM (" +
+                            "([CRM_Domain_Monitoring].[dbo].[storage] as s " +
+                            "inner join " +
+                            "[CRM_Domain_Monitoring].[dbo].[domain_storage] as ds " +
+                            "on ds.storageid IN " +
+                                "(SELECT ID FROM [CRM_Domain_Monitoring].[dbo].[storage] " +
+                                "WHERE [user] = @user) AND s.[user] = @user) " +
+                            "inner join " +
+                            "[CRM_Domain_Monitoring].[dbo].[domain] as d " +
+                            "on d.id = ds.domainid)";
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
-                    cmd.Parameters.AddWithValue("@owner", frmLogin.login.User);
+                    cmd.Parameters.AddWithValue("@user", frmLogin.login.User);
                     using (SqlDataReader dbList = cmd.ExecuteReader())
                     {
                         while (dbList.Read())
                         {
                             InfoDB dB = new InfoDB();
-                            dB.Name = dbList[0].ToString();
-                            float fSize = float.Parse(dbList[1].ToString());
-                            dB.Size = string.Format("{0:0.00}", fSize);
+                            dB.DataSource   = dbList[0].ToString();
+                            dB.Catalog      = dbList[1].ToString();
+                            dB.BrandName    = dbList[2].ToString();
+                            dB.DomainName   = dbList[3].ToString();
+                            dB.CreatedDate  = dbList[4].ToString();
                             dB.UpdateChoice = false;
                             list.Add(dB);
                         }

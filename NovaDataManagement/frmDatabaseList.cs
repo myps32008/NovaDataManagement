@@ -60,9 +60,7 @@ namespace NovaDataManagement
             catch (Exception bt)
             {
                 throw bt;
-            }
-            this.dgvListScript.DataSource = null;
-            this.dgvListScript.DataSource = scripts;            
+            }                       
         }
 
         private void btnUpgrade_Click(object sender, EventArgs e)
@@ -72,7 +70,7 @@ namespace NovaDataManagement
             bool result = false;
             foreach (InfoDB item in upgradeList)
             {
-                result = ConnectDB.UpgradeDB(scripts, item.Name);
+                result = ConnectDB.UpgradeDB(scripts, item.Catalog);
             }
 
             if (result)
@@ -101,7 +99,6 @@ namespace NovaDataManagement
         {
             try
             {
-                this.dgvListScript.DataSource = null;
                 scripts.Clear();
             }
             catch (Exception btnClearE)

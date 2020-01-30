@@ -27,11 +27,9 @@ namespace NovaDataManagement
                                       this.InstanceSv.SelectedItem.ToString(),
                                       this.User_text.Text,
                                       this.Password_txt.Text);
-               
-
-                frmDatabaseList DBlist = new frmDatabaseList();
-                DBlist.Show();
-                
+                frmMain.frmDB = new frmDatabaseList();
+                frmMain.frmDB.Show();
+                this.Dispose();                
             }
             catch (Exception eb)
             {
@@ -48,7 +46,7 @@ namespace NovaDataManagement
                 //{
                 //    InstanceSv.Items.Add(row["InstanceName"].ToString());
                 //}
-                Machine_txt.Text += "HUNGTRAN";
+                Machine_txt.Text = "NGHIA-PC";
                 InstanceSv.Items.Add("MSSQLSERVER");
                 User_text.Text += "sa";
                 Password_txt.Text += "svdhnt2010";

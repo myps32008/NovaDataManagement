@@ -11,22 +11,35 @@ namespace NovaDataManagement
 {
     public partial class frmMain : Form
     {
+        public static frmDatabaseList frmDB;       
         public frmMain()
         {
             InitializeComponent();
         }
-
+        
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try
+            bool isOpen = false;
+            foreach (Form form in Application.OpenForms)
             {
-                frmLogin frm = new frmLogin();
-                frm.ShowDialog();
+                if (form.Text == "Login")
+                {
+                    isOpen = true;
+                    form.Focus();
+                    break;
+                }
             }
-            catch (Exception ex)
+            if (isOpen == false)
             {
-                throw ex;
-            }
+                frmLogin frmLog = new frmLogin();
+                frmLog.ShowDialog();                
+                frmDB.MdiParent = this;
+            }            
+        }
+
+        private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
