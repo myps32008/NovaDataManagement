@@ -12,6 +12,8 @@ namespace NovaDataManagement
         public string BrandName { get; set; }
         public string DomainName { get; set; }
         public string CreatedDate { get; set; }
+        public string User { get; set; }
+        public string Password { get; set; }
         public bool UpdateChoice { get; set; }
     }
 }

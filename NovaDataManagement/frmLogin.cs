@@ -13,30 +13,45 @@ namespace NovaDataManagement
 {
     public partial class frmLogin : Form
     {
-        public static InfoLogin login = null;
         public frmLogin()
         {
             InitializeComponent();
         }
 
+        #region "Event"
         private void btnAccept_Click(object sender, EventArgs e)
         {
             try
             {
-                login = new InfoLogin(this.Machine_txt.Text,
-                                      this.InstanceSv.SelectedItem.ToString(),
-                                      this.User_text.Text,
-                                      this.Password_txt.Text);
-                frmMain.frmDB = new frmDatabaseList();
-                frmMain.frmDB.Show();
-                this.Dispose();                
+                bool IsValiate = true;
+                /*
+                 1. Kiểm tra các thông tin có thiêu, không chính xác: Nếu không đúng cảnh báo cho NSD
+                 2. Nếu đúng thực hiện tiếp
+                 */
+                if (IsValiate)
+                {
+                    frmDatabaseList frm = new frmDatabaseList();
+                    frm.Machine = this.Machine_txt.Text;
+                    frm.InstanceSV = "";//this.InstanceSv.SelectedItem.ToString();
+                    frm.Login = this.User_text.Text;
+                    frm.Password = this.Password_txt.Text;
+                    frm.MdiParent = this.Owner;
+                    this.DialogResult = DialogResult.OK;
+                    frm.WindowState = FormWindowState.Maximized;
+                    frm.Show();
+                }
+                // this.Close();              
             }
             catch (Exception eb)
             {
                 throw eb;
-            }            
+            }
         }
         private void Machine_txt_Leave(object sender, EventArgs e)
+        {
+
+        }
+        private void frmLogin_Load(object sender, EventArgs e)
         {
             try
             {
@@ -46,20 +61,23 @@ namespace NovaDataManagement
                 //{
                 //    InstanceSv.Items.Add(row["InstanceName"].ToString());
                 //}
-                Machine_txt.Text = "NGHIA-PC";
+                Machine_txt.Text = "HUNGTRAN";
                 InstanceSv.Items.Add("MSSQLSERVER");
-                User_text.Text += "sa";
-                Password_txt.Text += "svdhnt2010";
+                User_text.Text = "sa";
+                Password_txt.Text = "svdhnt2010";
             }
-            catch (Exception Einst)
+            catch (Exception ex)
             {
-                throw Einst;
+                throw ex;
             }
         }
+        #endregion
 
-        private void frmLogin_Load(object sender, EventArgs e)
+        #region "Function"
+        private void CheckLogin()
         {
-
+            bool check = Machine_txt.Text == null ;
         }
+        #endregion
     }
 }

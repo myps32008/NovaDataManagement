@@ -11,12 +11,12 @@ namespace NovaDataManagement
         public string Machine { get; set; }
         public string User { get; set; }
         public string Password { get; set; }
-        public InfoLogin(string a, string b, string c, string d)
+        public InfoLogin(string machine, string server, string user, string password)
         {
-            this.Machine = a;
-            this.SeverName = b;
-            this.User = c;
-            this.Password = d;
+            this.Machine = machine;
+            this.SeverName = server;
+            this.User = user;
+            this.Password = password;
         }
     }
 }

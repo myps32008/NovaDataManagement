@@ -1,23 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+
 
 namespace NovaDataManagement
 {
     public partial class frmMain : Form
     {
-        public static frmDatabaseList frmDB;       
+
         public frmMain()
         {
             InitializeComponent();
         }
-        
+
+        #region "Event"
+
         private void loginToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                Login();
+            }
+            catch (Exception ex) { throw ex; }
+        }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            try
+            {
+                Login();
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        private void mstlogOut_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                foreach (Form form in this.MdiChildren)
+                {
+                    form.Close();
+                }
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        #endregion
+
+        #region "Sub/Function"
+
+        private void Login()
         {
             bool isOpen = false;
             foreach (Form form in Application.OpenForms)
@@ -32,14 +61,12 @@ namespace NovaDataManagement
             if (isOpen == false)
             {
                 frmLogin frmLog = new frmLogin();
-                frmLog.ShowDialog();                
-                frmDB.MdiParent = this;
-            }            
+                frmLog.Owner = this;               
+                frmLog.ShowDialog();
+            }
         }
+        #endregion
 
-        private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-
-        }
+       
     }
 }

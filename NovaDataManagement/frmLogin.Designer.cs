@@ -39,7 +39,9 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.Machine_txt = new System.Windows.Forms.TextBox();
             this.lbMachine = new System.Windows.Forms.Label();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.panel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // lbServer
@@ -79,10 +81,10 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(296, 216);
+            this.btnCancel.Location = new System.Drawing.Point(304, 224);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(72, 32);
+            this.btnCancel.Size = new System.Drawing.Size(70, 25);
             this.btnCancel.TabIndex = 10;
             this.btnCancel.Text = "Hủy";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -90,10 +92,11 @@
             // btnAccept
             // 
             this.btnAccept.BackColor = System.Drawing.Color.Transparent;
-            this.btnAccept.Location = new System.Drawing.Point(216, 216);
+            this.btnAccept.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.btnAccept.Location = new System.Drawing.Point(224, 224);
             this.btnAccept.Margin = new System.Windows.Forms.Padding(2);
             this.btnAccept.Name = "btnAccept";
-            this.btnAccept.Size = new System.Drawing.Size(66, 32);
+            this.btnAccept.Size = new System.Drawing.Size(70, 25);
             this.btnAccept.TabIndex = 9;
             this.btnAccept.Text = "Đồng ý";
             this.btnAccept.UseVisualStyleBackColor = false;
@@ -165,12 +168,24 @@
             this.lbMachine.Text = "Machine";
             this.lbMachine.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::NovaDataManagement.Properties.Resources.DBList;
+            this.pictureBox1.Location = new System.Drawing.Point(8, 8);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(72, 64);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pictureBox1.TabIndex = 12;
+            this.pictureBox1.TabStop = false;
+            // 
             // frmLogin
             // 
             this.AcceptButton = this.btnAccept;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(380, 260);
+            this.CancelButton = this.btnCancel;
+            this.ClientSize = new System.Drawing.Size(384, 261);
+            this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnAccept);
             this.Controls.Add(this.panel1);
@@ -183,6 +198,7 @@
             this.Load += new System.EventHandler(this.frmLogin_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -200,5 +216,6 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox Machine_txt;
         private System.Windows.Forms.Label lbMachine;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

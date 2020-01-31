@@ -28,30 +28,29 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menubar = new System.Windows.Forms.MenuStrip();
             this.toolStatLog = new System.Windows.Forms.ToolStripMenuItem();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.logOutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.mstlogOut = new System.Windows.Forms.ToolStripMenuItem();
             this.toolHelp = new System.Windows.Forms.ToolStripMenuItem();
-            this.menuStrip1.SuspendLayout();
+            this.menubar.SuspendLayout();
             this.SuspendLayout();
             // 
-            // menuStrip1
+            // menubar
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menubar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStatLog,
             this.toolHelp});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
-            this.menuStrip1.TabIndex = 0;
-            this.menuStrip1.Text = "menuStrip1";
+            this.menubar.Location = new System.Drawing.Point(0, 0);
+            this.menubar.Name = "menubar";
+            this.menubar.Size = new System.Drawing.Size(800, 24);
+            this.menubar.TabIndex = 0;
             // 
             // toolStatLog
             // 
             this.toolStatLog.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loginToolStripMenuItem,
-            this.logOutToolStripMenuItem});
+            this.mstlogOut});
             this.toolStatLog.Name = "toolStatLog";
             this.toolStatLog.Size = new System.Drawing.Size(57, 20);
             this.toolStatLog.Text = "System";
@@ -59,16 +58,16 @@
             // loginToolStripMenuItem
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.loginToolStripMenuItem.Text = "Log In";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
-            // logOutToolStripMenuItem
+            // mstlogOut
             // 
-            this.logOutToolStripMenuItem.Name = "logOutToolStripMenuItem";
-            this.logOutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.logOutToolStripMenuItem.Text = "Log Out";
-            this.logOutToolStripMenuItem.Click += new System.EventHandler(this.logOutToolStripMenuItem_Click);
+            this.mstlogOut.Name = "mstlogOut";
+            this.mstlogOut.Size = new System.Drawing.Size(180, 22);
+            this.mstlogOut.Text = "Log Out";
+            this.mstlogOut.Click += new System.EventHandler(this.mstlogOut_Click);
             // 
             // toolHelp
             // 
@@ -81,14 +80,17 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.menubar);
             this.IsMdiContainer = true;
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.menubar;
             this.Name = "frmMain";
+            this.ShowIcon = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "frmMain";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.Load += new System.EventHandler(this.frmMain_Load);
+            this.menubar.ResumeLayout(false);
+            this.menubar.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -96,10 +98,10 @@
 
         #endregion
 
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menubar;
         private System.Windows.Forms.ToolStripMenuItem toolStatLog;
         private System.Windows.Forms.ToolStripMenuItem loginToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem logOutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem mstlogOut;
         private System.Windows.Forms.ToolStripMenuItem toolHelp;
     }
 }
