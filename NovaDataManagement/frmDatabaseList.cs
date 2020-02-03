@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
+using System.Diagnostics;
 
 namespace NovaDataManagement
 {
@@ -181,15 +182,31 @@ namespace NovaDataManagement
             List<InfoDB> listUpgrade = gvDBList.DataSource as List<InfoDB>;
             var upgradeList = listUpgrade.Where(sDB => sDB.UpdateChoice == true);
             bool result = false;
+            string fileScript = MakeFileScript();
             foreach (InfoDB item in upgradeList)
             {
-                frm_ExcuteScript(totalScript.ToString(), item.Catalog);
+                frm_ExcuteScript(fileScript, item.Catalog);
             }
             return result;
         }
-        private bool frm_ExcuteScript(string script, string catalogDB)
+        private string MakeFileScript()
         {
-            
+            string fileDir = Directory.GetCurrentDirectory();
+            string fileScript = fileDir + @"\ScriptExecute.sql";            
+            File.WriteAllText(fileScript, totalScript.ToString());
+            return fileScript;
+        }
+        private bool frm_ExcuteScript(string fileScript, string catalog)
+        {            
+            string cmd = "/c sqlcmd" + 
+                            " -S " + infoLogin.Machine + 
+                            " -d " + catalog + 
+                            " -U " + infoLogin.User + 
+                            " -P " + infoLogin.Password +
+                            " -i " + fileScript;
+            Process process = new Process();
+            ProcessStartInfo startInfo = new ProcessStartInfo();
+            startInfo.RedirectStandardOutput = true;
             return true;
         }
 

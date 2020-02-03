@@ -45,8 +45,7 @@ namespace NovaDataManagement
                             dB.CreatedDate = dbList["createdDate"].ToString();
                             dB.BrandName = dbList["brandName"].ToString();
                             dB.DomainName = dbList["domainName"].ToString();
-                            
-                            dB.UpdateChoice = false;
+                          dB.UpdateChoice = false;
                             list.Add(dB);
                         }
                     }
