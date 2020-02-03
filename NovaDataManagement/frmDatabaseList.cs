@@ -29,7 +29,7 @@ namespace NovaDataManagement
         {
             try
             {
-                this.gvDBList.DataSource = ConnectDB.GetDBs(infoLogin);             
+                frm_GetListDB();
             }
             catch (Exception bl)
             {
@@ -44,7 +44,7 @@ namespace NovaDataManagement
 
         private void toolRefresh_Click(object sender, EventArgs e)
         {
-            frm_Refresh();
+            frm_GetListDB();
         }
         //Add/Clear Script
         #region "Handle Script"
@@ -119,7 +119,7 @@ namespace NovaDataManagement
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frm_Refresh();
+            frm_GetListDB();
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -165,12 +165,13 @@ namespace NovaDataManagement
             }            
         }
         //Get List DBInfo
-        private void frm_Refresh()
+        private void frm_GetListDB()
         {
             try
             {
-                this.gvDBList.DataSource = null;
                 this.gvDBList.DataSource = ConnectDB.GetDBs(infoLogin);
+                this.gvDBList.Columns["User"].Visible = false;
+                this.gvDBList.Columns["Password"].Visible = false;
             }
             catch (Exception bl) { throw bl; }
         }

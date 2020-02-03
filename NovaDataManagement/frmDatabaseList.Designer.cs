@@ -47,6 +47,12 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gvDBList = new System.Windows.Forms.DataGridView();
+            this.UpdateChoice = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.DataSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Catalog = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
@@ -204,11 +210,59 @@
             // gvDBList
             // 
             this.gvDBList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.gvDBList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.UpdateChoice,
+            this.DataSource,
+            this.Catalog,
+            this.CreatedDate,
+            this.DomainName,
+            this.BrandName});
             this.gvDBList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gvDBList.Location = new System.Drawing.Point(0, 64);
             this.gvDBList.Name = "gvDBList";
             this.gvDBList.Size = new System.Drawing.Size(1240, 475);
             this.gvDBList.TabIndex = 14;
+            // 
+            // UpdateChoice
+            // 
+            this.UpdateChoice.DataPropertyName = "UpdateChoice";
+            this.UpdateChoice.HeaderText = "Update";
+            this.UpdateChoice.Name = "UpdateChoice";
+            // 
+            // DataSource
+            // 
+            this.DataSource.DataPropertyName = "DataSource";
+            this.DataSource.HeaderText = "Data Source";
+            this.DataSource.Name = "DataSource";
+            this.DataSource.ReadOnly = true;
+            // 
+            // Catalog
+            // 
+            this.Catalog.DataPropertyName = "Catalog";
+            this.Catalog.HeaderText = "Catalog";
+            this.Catalog.Name = "Catalog";
+            this.Catalog.ReadOnly = true;
+            // 
+            // CreatedDate
+            // 
+            this.CreatedDate.DataPropertyName = "CreatedDate";
+            this.CreatedDate.HeaderText = "Created Date";
+            this.CreatedDate.Name = "CreatedDate";
+            this.CreatedDate.ReadOnly = true;
+            // 
+            // DomainName
+            // 
+            this.DomainName.DataPropertyName = "DomainName";
+            this.DomainName.HeaderText = "Domain Name";
+            this.DomainName.Name = "DomainName";
+            this.DomainName.ReadOnly = true;
+            // 
+            // BrandName
+            // 
+            this.BrandName.DataPropertyName = "BrandName";
+            this.BrandName.HeaderText = "Brand Name";
+            this.BrandName.Name = "BrandName";
+            this.BrandName.ReadOnly = true;
             // 
             // frmDatabaseList
             // 
@@ -255,5 +309,11 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.DataGridView gvDBList;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn UpdateChoice;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DataSource;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Catalog;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DomainName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn BrandName;
     }
 }
