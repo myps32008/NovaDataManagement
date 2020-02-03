@@ -14,21 +14,13 @@ namespace NovaDataManagement
 {
     public partial class frmDatabaseList : Form
     {
-        private List<Script> scripts = new List<Script>();
-        private List<StringBuilder> allScript;
+        private StringBuilder totalScript;        
+        private InfoLogin infoLogin;
 
-        private string m_machine = "";
-        private string m_ServerDB = "";
-
-        public string Machine { get; set; }
-        public string InstanceSV{ get; set; }
-        public string Login { get; set; }
-        public string Password { get; set; }
-
-        public frmDatabaseList()
+        public frmDatabaseList(string machine, string instanceSV, string user, string password)
         {
-            allScript = new List<StringBuilder>();
-            allScript.Add(new StringBuilder());
+            totalScript = new StringBuilder();
+            infoLogin = new InfoLogin(machine, instanceSV, user, password);
             InitializeComponent();
         }
 
@@ -37,17 +29,60 @@ namespace NovaDataManagement
         {
             try
             {
-                //string connectString =
-                //                "Data Source=" + this.Machine +
-                //                ";Persist Security Info=True;User ID=" + this.Login +
-                //                ";Password=" + this.Password;
-
-                //gvDBlist.DataSource = ConnectDB.GetDBs(connectString);             
+                this.gvDBList.DataSource = ConnectDB.GetDBs(infoLogin);             
             }
             catch (Exception bl)
             {
                 throw bl;
             }
+        }
+
+        private void btnUpgrade_Click(object sender, EventArgs e)
+        {
+            frm_Upgrade();
+        }
+
+        private void toolRefresh_Click(object sender, EventArgs e)
+        {
+            frm_Refresh();
+        }
+        //Add/Clear Script
+        #region "Handle Script"
+        private void btnClearListScript_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                totalScript = new StringBuilder();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private void btnAddVersion_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowser = AddFolder();
+            try
+            {
+                if (folderBrowser.ShowDialog() == DialogResult.OK)
+                {
+                    AddVersion(folderBrowser.SelectedPath);
+                }
+            }
+            catch (Exception ex) { throw ex; }
+        }
+        private void btnAddFolder_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowser = AddFolder();
+            try
+            {
+                if (folderBrowser.ShowDialog() == DialogResult.OK)
+                {
+                    string[] filesName = Directory.GetFiles(folderBrowser.SelectedPath);
+                    MakeScript(filesName);
+                }
+            }
+            catch (Exception ex) { throw ex; }
         }
         private void btnGetFile_Click(object sender, EventArgs e)
         {
@@ -63,8 +98,8 @@ namespace NovaDataManagement
                 {
                     if (openFile.CheckFileExists)
                     {
-                        string[] filesName = openFile.FileNames;                        
-                        makeScript(filesName);                        
+                        string[] filesName = openFile.FileNames;
+                        MakeScript(filesName);
                     }
                 }
             }
@@ -73,112 +108,92 @@ namespace NovaDataManagement
                 throw bt;
             }
         }
-        private void btnUpgrade_Click(object sender, EventArgs e)
-        {
-            //List<InfoDB> listUpgrade = gvDBlist.DataSource as List<InfoDB>;
-            //var upgradeList = listUpgrade.Where(sDB => sDB.UpdateChoice == true);
-            //bool result = false;
-            //foreach (InfoDB item in upgradeList)
-            //{
-            //    result = ConnectDB.UpgradeDB(scripts, item.Catalog);
-            //}
+        #endregion
 
-            //if (result)
-            //{
-            //    MessageBox.Show("Upgrade succes");
-            //}
-            //else
-            //{
-            //    MessageBox.Show("Fail: " + ConnectDB.errorScript.Folder);
-            //}
+        //Right Click event in Form
+        #region "Right click"
+        private void upgradeDBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frm_Upgrade();
         }
 
-        private void toolRefresh_Click(object sender, EventArgs e)
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try
-            {
-                // gvDBlist.DataSource = ConnectDB.GetDBs();
-            }
-            catch (Exception bl)
-            {
-                throw bl;
-            }
+            frm_Refresh();
         }
-        private void btnClearListScript_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                allScript = new List<StringBuilder>();
-                allScript.Add(new StringBuilder());
-            }
-            catch (Exception ex)
-            {
 
-                throw ex;
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+        #endregion
+
+        #endregion
+
+
+        #region "Function"
+        // Handle Script
+        private void MakeScript(string[] filesName)
+        {
+            if (filesName.Length > 0)
+            {
+                foreach (string file in filesName)
+                {
+                    totalScript.AppendLine(File.ReadAllText(file));
+                }
             }
         }
-        private void btnAddVersion_Click(object sender, EventArgs e)
+        private FolderBrowserDialog AddFolder()
         {
             FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
             folderBrowser.SelectedPath = @"C:\Users\Admin\Documents\SQL Server Management Studio\Test";
             folderBrowser.ShowNewFolderButton = false;
-            string[] pathFolders;
+            return folderBrowser;
+        }        
+        private void AddVersion(string pathVersion)
+        {
+            //Get all folder containing script in folder Version
+            string[] pathFolders = Directory.GetDirectories(pathVersion);
+            if (pathFolders.Length > 0)
+            {
+                //Make the big script for Update 
+                foreach (string path in pathFolders)
+                {
+                    string[] files = Directory.GetFiles(path);                    
+                    MakeScript(files);
+                }
+            }            
+        }
+        //Get List DBInfo
+        private void frm_Refresh()
+        {
             try
             {
-                if (folderBrowser.ShowDialog() == DialogResult.OK)
-                {
-                    
-                    //Get all folder containing script in folder Version
-                    pathFolders = Directory.GetDirectories(folderBrowser.SelectedPath);
-                    if (pathFolders.Length > 0)
-                    {
-                        //Make the big script for Update by 
-                        foreach (string path in pathFolders)
-                        {
-                            string[] files = Directory.GetFiles(path);
-                            makeScript(files);
-                        }
-                    }
-                }
+                this.gvDBList.DataSource = null;
+                this.gvDBList.DataSource = ConnectDB.GetDBs(infoLogin);
             }
-            catch (Exception ex) { throw ex; }            
+            catch (Exception bl) { throw bl; }
         }
-        #endregion
-        #region "Function"
-        private void makeScript(string[] filesName)
+        //Upgrade
+        private bool frm_Upgrade()
         {
-            if (filesName.Length > 0)
+            List<InfoDB> listUpgrade = gvDBList.DataSource as List<InfoDB>;
+            var upgradeList = listUpgrade.Where(sDB => sDB.UpdateChoice == true);
+            bool result = false;
+            foreach (InfoDB item in upgradeList)
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (string file in filesName)
-                {
-                    string scriptName = Path.GetFileNameWithoutExtension(file);
-                    stringBuilder.AppendLine(File.ReadAllText(file));
-                }
-                string tempScript = stringBuilder.ToString().ToLower();
+                frm_ExcuteScript(totalScript.ToString(), item.Catalog);
+            }
+            return result;
+        }
+        private bool frm_ExcuteScript(string script, string catalogDB)
+        {
+            
+            return true;
+        }
 
-                Regex regexCmd = new Regex("go");
-                Regex regexFinal = new Regex("create|alter proc|procedure");
-
-                List<string> tempListScript = new List<string>();
-                tempListScript.AddRange(regexCmd.Split(tempScript));                
-                foreach (string item in tempListScript)
-                {
-                    if (regexFinal.IsMatch(item))
-                    {
-                        allScript.Add(new StringBuilder(item));
-                        if (tempListScript.IndexOf(item) != (tempListScript.Count() - 1))
-                        {
-                            allScript.Add(new StringBuilder());
-                        }
-                    }
-                    else
-                    {
-                        allScript[allScript.Count - 1].AppendLine(item);
-                    }
-                }                
-            }            
-        }        
         #endregion
+
+        
     }
 }
