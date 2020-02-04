@@ -53,6 +53,7 @@
             this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lbFolderPath = new System.Windows.Forms.Label();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
@@ -141,6 +142,7 @@
             // 
             // pnlHeader
             // 
+            this.pnlHeader.Controls.Add(this.lbFolderPath);
             this.pnlHeader.Controls.Add(this.btnAddFolder);
             this.pnlHeader.Controls.Add(this.btnClearScript);
             this.pnlHeader.Controls.Add(this.btnAddVersion);
@@ -238,31 +240,50 @@
             // 
             // Catalog
             // 
+            this.Catalog.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.Catalog.DataPropertyName = "Catalog";
+            this.Catalog.FillWeight = 200F;
             this.Catalog.HeaderText = "Catalog";
             this.Catalog.Name = "Catalog";
             this.Catalog.ReadOnly = true;
+            this.Catalog.Width = 68;
             // 
             // CreatedDate
             // 
+            this.CreatedDate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.CreatedDate.DataPropertyName = "CreatedDate";
             this.CreatedDate.HeaderText = "Created Date";
             this.CreatedDate.Name = "CreatedDate";
             this.CreatedDate.ReadOnly = true;
+            this.CreatedDate.Width = 95;
             // 
             // DomainName
             // 
+            this.DomainName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.DomainName.DataPropertyName = "DomainName";
             this.DomainName.HeaderText = "Domain Name";
             this.DomainName.Name = "DomainName";
             this.DomainName.ReadOnly = true;
+            this.DomainName.Width = 99;
             // 
             // BrandName
             // 
+            this.BrandName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.BrandName.DataPropertyName = "BrandName";
             this.BrandName.HeaderText = "Brand Name";
             this.BrandName.Name = "BrandName";
             this.BrandName.ReadOnly = true;
+            this.BrandName.Width = 91;
+            // 
+            // lbFolderPath
+            // 
+            this.lbFolderPath.AutoSize = true;
+            this.lbFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbFolderPath.Location = new System.Drawing.Point(428, 11);
+            this.lbFolderPath.Name = "lbFolderPath";
+            this.lbFolderPath.Size = new System.Drawing.Size(80, 16);
+            this.lbFolderPath.TabIndex = 13;
+            this.lbFolderPath.Text = "Folder Path:";
             // 
             // frmDatabaseList
             // 
@@ -282,6 +303,7 @@
             this.toolbarDatabaseList.ResumeLayout(false);
             this.toolbarDatabaseList.PerformLayout();
             this.pnlHeader.ResumeLayout(false);
+            this.pnlHeader.PerformLayout();
             this.pnlFooter.ResumeLayout(false);
             this.pnlFooter.PerformLayout();
             this.mnsToolBarUpgrade.ResumeLayout(false);
@@ -315,5 +337,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn DomainName;
         private System.Windows.Forms.DataGridViewTextBoxColumn BrandName;
+        private System.Windows.Forms.Label lbFolderPath;
     }
 }

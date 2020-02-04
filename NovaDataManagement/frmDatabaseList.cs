@@ -15,8 +15,13 @@ namespace NovaDataManagement
 {
     public partial class frmDatabaseList : Form
     {
-        private StringBuilder totalScript;        
+        private StringBuilder totalScript;
+        private string finalScript;
         private InfoLogin infoLogin;
+        private static string[] attConnect = {  "Data Source=", 
+                                                ";Initial Catalog=" ,
+                                                ";Persist Security Info=True;User ID=",
+                                                ";Password="};
 
         public frmDatabaseList(string machine, string instanceSV, string user, string password)
         {
@@ -67,7 +72,9 @@ namespace NovaDataManagement
             {
                 if (folderBrowser.ShowDialog() == DialogResult.OK)
                 {
-                    AddVersion(folderBrowser.SelectedPath);
+                    string path = folderBrowser.SelectedPath;
+                    AddVersion(path);
+                    this.lbFolderPath.Text = "Folder Path: " + path;
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -79,8 +86,10 @@ namespace NovaDataManagement
             {
                 if (folderBrowser.ShowDialog() == DialogResult.OK)
                 {
-                    string[] filesName = Directory.GetFiles(folderBrowser.SelectedPath);
+                    string path = folderBrowser.SelectedPath;
+                    string[] filesName = Directory.GetFiles(path);
                     MakeScript(filesName);
+                    this.lbFolderPath.Text = "Folder Path: " + path;
                 }
             }
             catch (Exception ex) { throw ex; }
@@ -101,7 +110,10 @@ namespace NovaDataManagement
                     {
                         string[] filesName = openFile.FileNames;
                         MakeScript(filesName);
+                        finalScript = MakeFileScript();
+                        this.lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
                     }
+                                        
                 }
             }
             catch (Exception bt)
@@ -130,7 +142,7 @@ namespace NovaDataManagement
         #endregion
 
         #endregion
-
+        
 
         #region "Function"
         // Handle Script
@@ -140,14 +152,21 @@ namespace NovaDataManagement
             {
                 foreach (string file in filesName)
                 {
-                    totalScript.AppendLine(File.ReadAllText(file));
+                    string script = File.ReadAllText(file);                    
+                    totalScript.AppendLine(script);
                 }
             }
+        }
+        private string MakeFileScript()
+        {
+            Regex regex = new Regex("GO");
+            string result = regex.Replace(totalScript.ToString(), "");
+            return result;
         }
         private FolderBrowserDialog AddFolder()
         {
             FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
-            folderBrowser.SelectedPath = @"C:\Users\Admin\Documents\SQL Server Management Studio\Test";
+            folderBrowser.SelectedPath = @"C:\Users\Admin\Documents";
             folderBrowser.ShowNewFolderButton = false;
             return folderBrowser;
         }        
@@ -163,55 +182,144 @@ namespace NovaDataManagement
                     string[] files = Directory.GetFiles(path);                    
                     MakeScript(files);
                 }
+                finalScript = MakeFileScript();
             }            
         }
         //Get List DBInfo
+        private List<InfoDB> GetDBs(InfoLogin infoLogin)
+        {
+            List<InfoDB> list = new List<InfoDB>();
+            string connectString = attConnect[0] + infoLogin.Machine +
+                                    attConnect[2] + infoLogin.User +
+                                    attConnect[3] + infoLogin.Password;
+            using (SqlConnection con = new SqlConnection(connectString))
+            {
+                con.Open();
+                string query = "SELECT s.datasource, ds.[catalog] , d.createdDate, d.brandname, d.domainname FROM (" +
+                            "([CRM_Domain_Monitoring].[dbo].[storage] as s " +
+                            "inner join " +
+                            "[CRM_Domain_Monitoring].[dbo].[domain_storage] as ds " +
+                            "on ds.storageid IN " +
+                                "(SELECT ID FROM [CRM_Domain_Monitoring].[dbo].[storage] " +
+                                "WHERE [user] = @user) AND s.[user] = @user) " +
+                            "inner join " +
+                            "[CRM_Domain_Monitoring].[dbo].[domain] as d " +
+                            "on d.id = ds.domainid)";
+                using (SqlCommand cmd = new SqlCommand(query, con))
+                {
+                    cmd.Parameters.AddWithValue("@user", infoLogin.User);
+                    using (SqlDataReader dbList = cmd.ExecuteReader())
+                    {
+                        while (dbList.Read())
+                        {
+                            InfoDB dB = new InfoDB();
+                            dB.DataSource = dbList["datasource"].ToString();
+                            dB.Catalog = dbList["catalog"].ToString();
+                            dB.CreatedDate = dbList["createdDate"].ToString();
+                            dB.BrandName = dbList["brandName"].ToString();
+                            dB.DomainName = dbList["domainName"].ToString();
+                            dB.UpdateChoice = false;
+                            list.Add(dB);
+                        }
+                    }
+                }
+            }
+            return list;
+        }
         private void frm_GetListDB()
         {
             try
             {
-                this.gvDBList.DataSource = ConnectDB.GetDBs(infoLogin);
+                this.gvDBList.DataSource = GetDBs(infoLogin);
                 this.gvDBList.Columns["User"].Visible = false;
                 this.gvDBList.Columns["Password"].Visible = false;
             }
             catch (Exception bl) { throw bl; }
         }
         //Upgrade
+        private void UpgradeDB(InfoLogin infoLogin)
+        {
+            string connectString = attConnect[0] + infoLogin.Machine +
+                                    attConnect[1] + infoLogin.SeverName +
+                                    attConnect[2] + infoLogin.User +
+                                    attConnect[3] + infoLogin.Password;
+            using (SqlConnection con = new SqlConnection(connectString))
+            {
+                con.Open();
+                SqlTransaction transaction = con.BeginTransaction();
+                using (SqlCommand command = new SqlCommand(finalScript, con, transaction))
+                {
+                    try
+                    {
+                        command.ExecuteNonQuery();
+                        transaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        transaction.Rollback();
+                        throw ex;
+                    }
+                }
+            }
+        }
         private bool frm_Upgrade()
         {
             List<InfoDB> listUpgrade = gvDBList.DataSource as List<InfoDB>;
             var upgradeList = listUpgrade.Where(sDB => sDB.UpdateChoice == true);
             bool result = false;
-            string fileScript = MakeFileScript();
-            foreach (InfoDB item in upgradeList)
+            if (totalScript.Length > 0)
             {
-                frm_ExcuteScript(fileScript, item.Catalog);
+                foreach (InfoDB item in upgradeList)
+                {
+                    InfoLogin info = infoLogin;
+                    info.SeverName = item.Catalog;
+                    UpgradeDB(infoLogin);
+                }
+                return result;
             }
-            return result;
+            MessageBox.Show("Do not have Script");
+            return false;
         }
-        private string MakeFileScript()
-        {
-            string fileDir = Directory.GetCurrentDirectory();
-            string fileScript = fileDir + @"\ScriptExecute.sql";            
-            File.WriteAllText(fileScript, totalScript.ToString());
-            return fileScript;
-        }
-        private bool frm_ExcuteScript(string fileScript, string catalog)
-        {            
-            string cmd = "/c sqlcmd" + 
-                            " -S " + infoLogin.Machine + 
-                            " -d " + catalog + 
-                            " -U " + infoLogin.User + 
-                            " -P " + infoLogin.Password +
-                            " -i " + fileScript;
-            Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.RedirectStandardOutput = true;
-            return true;
-        }
-
+        
         #endregion
 
-        
+        #region "Maybe delete"
+        private bool frm_ExcuteScript(string fileScript, string catalog)
+        {
+            string cmdExcute = "/c sqlcmd" +
+                            " -S " + infoLogin.Machine +
+                            " -d " + catalog +
+                            " -U " + infoLogin.User +
+                            " -P " + infoLogin.Password +
+                            " -i " + fileScript;
+
+            ProcessStartInfo startInfo = new ProcessStartInfo("cmd", cmdExcute);
+            startInfo.CreateNoWindow = true;
+            startInfo.UseShellExecute = false;
+            startInfo.RedirectStandardError = true;
+
+            Process process = new Process();
+            process.StartInfo = startInfo;
+            string errors;
+
+            try
+            {
+                process.Start();
+                errors = process.StandardError.ReadToEnd();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;
+                throw ex;
+            }
+
+            if (errors.Length > 0)
+            {
+                return false;
+            }
+            return true;
+        }
+        #endregion
     }
 }

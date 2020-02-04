@@ -44,7 +44,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Script.cs" />
-    <Compile Include="ConnectDB.cs" />
     <Compile Include="frmDatabaseList.cs">
       <SubType>Form</SubType>
     </Compile>
