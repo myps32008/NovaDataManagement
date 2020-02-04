@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
-using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
+using Microsoft.SqlServer.Management.Smo;
+using Microsoft.SqlServer.Management.Common;
 
 namespace NovaDataManagement
 {
@@ -246,6 +246,9 @@ namespace NovaDataManagement
             using (SqlConnection con = new SqlConnection(connectString))
             {
                 con.Open();
+                ServerConnection svrConnection = new ServerConnection(con);
+                Server server = new Server(svrConnection);
+                server.ConnectionContext.ExecuteNonQuery(finalScript);
                 SqlTransaction transaction = con.BeginTransaction();
                 using (SqlCommand command = new SqlCommand(finalScript, con, transaction))
                 {
