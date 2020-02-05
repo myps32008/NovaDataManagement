@@ -7,15 +7,22 @@ namespace NovaDataManagement
 {
     class Script
     {
-        public string Name { get; set; }
         public string Folder { get; set; }
-        public string ScriptLine { get; set; }
-        public string ErrorQuery { get; set; }
-        public Script(string name, string folder, string script)
+        public string Query { get; set; }
+        public string Error { get; set; }
+        public Script()
         {
-            this.Name = name;
+
+        }
+        public Script(string folder, string query)
+        {
             this.Folder = folder;
-            this.ScriptLine = script;
+            this.Query = query;
+        }
+        
+        public string DisplayError()
+        {
+            return this.Folder + ": " + this.Error;
         }
     }
 }

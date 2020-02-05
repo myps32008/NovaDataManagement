@@ -1,24 +1,24 @@
-﻿using System;
+﻿using Microsoft.SqlServer.Management.Common;
+using Microsoft.SqlServer.Management.Smo;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
-using Microsoft.SqlServer.Management.Smo;
-using Microsoft.SqlServer.Management.Common;
 
 namespace NovaDataManagement
 {
     public partial class frmDatabaseList : Form
     {
         private StringBuilder totalScript;
-        private string finalScript;
         private InfoLogin infoLogin;
-        private static string[] attConnect = {  "Data Source=", 
+        private List<string> statusUpdateDB;
+        private List<Script> listFolderScript;
+        private static string[] attConnect = {  "Data Source=",
                                                 ";Initial Catalog=" ,
                                                 ";Persist Security Info=True;User ID=",
                                                 ";Password="};
@@ -26,6 +26,8 @@ namespace NovaDataManagement
         public frmDatabaseList(string machine, string instanceSV, string user, string password)
         {
             totalScript = new StringBuilder();
+            statusUpdateDB = new List<string>();
+            listFolderScript = new List<Script>();
             infoLogin = new InfoLogin(machine, instanceSV, user, password);
             InitializeComponent();
         }
@@ -97,7 +99,7 @@ namespace NovaDataManagement
         private void btnGetFile_Click(object sender, EventArgs e)
         {
             OpenFileDialog openFile = new OpenFileDialog();
-            openFile.InitialDirectory = "C://Desktop";
+            openFile.InitialDirectory = @"C:\Users\Admin\Desktop\Download\Test";
             openFile.Title = "Select the script file";
             openFile.Filter = "Select Valid Document(*.sql)|*.sql";
             openFile.FilterIndex = 1;
@@ -109,16 +111,15 @@ namespace NovaDataManagement
                     if (openFile.CheckFileExists)
                     {
                         string[] filesName = openFile.FileNames;
-                        MakeScript(filesName);
-                        finalScript = MakeFileScript();
+                        Script script = GetScript(filesName);
+                        listFolderScript.Add(script);
                         this.lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
                     }
-                                        
                 }
             }
-            catch (Exception bt)
+            catch (Exception ex)
             {
-                throw bt;
+                throw ex;
             }
         }
         #endregion
@@ -127,12 +128,20 @@ namespace NovaDataManagement
         #region "Right click"
         private void upgradeDBToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frm_Upgrade();
+            try
+            {
+                frm_Upgrade();
+            }
+            catch (Exception ex) { throw ex; }
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frm_GetListDB();
+            try
+            {
+                frm_GetListDB();
+            }
+            catch (Exception ex) { throw ex; }
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -142,26 +151,23 @@ namespace NovaDataManagement
         #endregion
 
         #endregion
-        
+
 
         #region "Function"
         // Handle Script
-        private void MakeScript(string[] filesName)
+        private string MakeScript(string[] filesName)
         {
+            StringBuilder builder = new StringBuilder();
             if (filesName.Length > 0)
             {
                 foreach (string file in filesName)
                 {
-                    string script = File.ReadAllText(file);                    
-                    totalScript.AppendLine(script);
+                    string script = File.ReadAllText(file);
+                    builder.AppendLine(script);
                 }
+                return builder.ToString();
             }
-        }
-        private string MakeFileScript()
-        {
-            Regex regex = new Regex("GO");
-            string result = regex.Replace(totalScript.ToString(), "");
-            return result;
+            return "";
         }
         private FolderBrowserDialog AddFolder()
         {
@@ -169,21 +175,44 @@ namespace NovaDataManagement
             folderBrowser.SelectedPath = @"C:\Users\Admin\Documents";
             folderBrowser.ShowNewFolderButton = false;
             return folderBrowser;
-        }        
+        }
         private void AddVersion(string pathVersion)
         {
             //Get all folder containing script in folder Version
-            string[] pathFolders = Directory.GetDirectories(pathVersion);
+            string[] pathFolders = Directory.GetDirectories(pathVersion);           
+
             if (pathFolders.Length > 0)
             {
                 //Make the big script for Update 
                 foreach (string path in pathFolders)
                 {
-                    string[] files = Directory.GetFiles(path);                    
-                    MakeScript(files);
+                    string[] files = Directory.GetFiles(path);
+                    Script script = new Script();
+                    if (files.Length > 0)
+                    {
+                        script = GetScript(files);
+                        listFolderScript.Add(script);
+                    }
+                    else
+                    {
+                        string[] childFolders = Directory.GetDirectories(path);
+                        foreach (string folder in childFolders)
+                        {
+                            string[] filesFolder = Directory.GetFiles(folder);
+                            script = GetScript(filesFolder);
+                            listFolderScript.Add(script);
+                        }
+                    }
                 }
-                finalScript = MakeFileScript();
-            }            
+            }
+        }
+        private Script GetScript(string[] files)
+        {
+            Script script = new Script();
+            script.Query = MakeScript(files);
+            script.Folder = Path.GetDirectoryName(files[0]);            
+            listFolderScript.Add(script);
+            return script;
         }
         //Get List DBInfo
         private List<InfoDB> GetDBs(InfoLogin infoLogin)
@@ -245,32 +274,33 @@ namespace NovaDataManagement
                                     attConnect[3] + infoLogin.Password;
             using (SqlConnection con = new SqlConnection(connectString))
             {
-                con.Open();
                 ServerConnection svrConnection = new ServerConnection(con);
                 Server server = new Server(svrConnection);
-                server.ConnectionContext.ExecuteNonQuery(finalScript);
-                SqlTransaction transaction = con.BeginTransaction();
-                using (SqlCommand command = new SqlCommand(finalScript, con, transaction))
+                Script errorScript;
+                server.ConnectionContext.BeginTransaction();
+                foreach (Script item in listFolderScript)
                 {
                     try
                     {
-                        command.ExecuteNonQuery();
-                        transaction.Commit();
+                        server.ConnectionContext.ExecuteNonQuery(item.Query);
                     }
-                    catch (Exception ex)
+                    catch (ExecutionFailureException ex)
                     {
-                        transaction.Rollback();
-                        throw ex;
+                        errorScript = item;
+                        errorScript.Error = ex.GetBaseException().Message;
+                        server.ConnectionContext.RollBackTransaction();
+                        MessageBox.Show(errorScript.DisplayError());
                     }
                 }
+                server.ConnectionContext.CommitTransaction();
             }
         }
         private bool frm_Upgrade()
         {
             List<InfoDB> listUpgrade = gvDBList.DataSource as List<InfoDB>;
             var upgradeList = listUpgrade.Where(sDB => sDB.UpdateChoice == true);
-            bool result = false;
-            if (totalScript.Length > 0)
+
+            if (listFolderScript.Count > 0)
             {
                 foreach (InfoDB item in upgradeList)
                 {
@@ -278,12 +308,12 @@ namespace NovaDataManagement
                     info.SeverName = item.Catalog;
                     UpgradeDB(infoLogin);
                 }
-                return result;
+                return true;
             }
             MessageBox.Show("Do not have Script");
             return false;
         }
-        
+
         #endregion
 
         #region "Maybe delete"
