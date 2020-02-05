@@ -37,9 +37,9 @@
             this.btnHelp = new System.Windows.Forms.ToolStripButton();
             this.btnAddScript = new System.Windows.Forms.Button();
             this.btnClearScript = new System.Windows.Forms.Button();
-            this.btnAddVersion = new System.Windows.Forms.Button();
-            this.pnlHeader = new System.Windows.Forms.Panel();
             this.btnAddFolder = new System.Windows.Forms.Button();
+            this.pnlHeader = new System.Windows.Forms.Panel();
+            this.lbFolderPath = new System.Windows.Forms.Label();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.mnsToolBarUpgrade = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.upgradeDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -53,7 +53,7 @@
             this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lbFolderPath = new System.Windows.Forms.Label();
+            this.btnShowScript = new System.Windows.Forms.Button();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
@@ -112,7 +112,7 @@
             // 
             // btnAddScript
             // 
-            this.btnAddScript.Location = new System.Drawing.Point(216, 8);
+            this.btnAddScript.Location = new System.Drawing.Point(114, 8);
             this.btnAddScript.Name = "btnAddScript";
             this.btnAddScript.Size = new System.Drawing.Size(100, 23);
             this.btnAddScript.TabIndex = 7;
@@ -122,7 +122,7 @@
             // 
             // btnClearScript
             // 
-            this.btnClearScript.Location = new System.Drawing.Point(320, 8);
+            this.btnClearScript.Location = new System.Drawing.Point(220, 8);
             this.btnClearScript.Name = "btnClearScript";
             this.btnClearScript.Size = new System.Drawing.Size(100, 23);
             this.btnClearScript.TabIndex = 10;
@@ -130,22 +130,22 @@
             this.btnClearScript.UseVisualStyleBackColor = true;
             this.btnClearScript.Click += new System.EventHandler(this.btnClearListScript_Click);
             // 
-            // btnAddVersion
+            // btnAddFolder
             // 
-            this.btnAddVersion.Location = new System.Drawing.Point(8, 8);
-            this.btnAddVersion.Name = "btnAddVersion";
-            this.btnAddVersion.Size = new System.Drawing.Size(100, 23);
-            this.btnAddVersion.TabIndex = 11;
-            this.btnAddVersion.Text = "Add Version";
-            this.btnAddVersion.UseVisualStyleBackColor = true;
-            this.btnAddVersion.Click += new System.EventHandler(this.btnAddVersion_Click);
+            this.btnAddFolder.Location = new System.Drawing.Point(8, 8);
+            this.btnAddFolder.Name = "btnAddFolder";
+            this.btnAddFolder.Size = new System.Drawing.Size(100, 23);
+            this.btnAddFolder.TabIndex = 11;
+            this.btnAddFolder.Text = "Add Folder";
+            this.btnAddFolder.UseVisualStyleBackColor = true;
+            this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
             // 
             // pnlHeader
             // 
+            this.pnlHeader.Controls.Add(this.btnShowScript);
             this.pnlHeader.Controls.Add(this.lbFolderPath);
-            this.pnlHeader.Controls.Add(this.btnAddFolder);
             this.pnlHeader.Controls.Add(this.btnClearScript);
-            this.pnlHeader.Controls.Add(this.btnAddVersion);
+            this.pnlHeader.Controls.Add(this.btnAddFolder);
             this.pnlHeader.Controls.Add(this.btnAddScript);
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 25);
@@ -153,15 +153,15 @@
             this.pnlHeader.Size = new System.Drawing.Size(1240, 39);
             this.pnlHeader.TabIndex = 12;
             // 
-            // btnAddFolder
+            // lbFolderPath
             // 
-            this.btnAddFolder.Location = new System.Drawing.Point(112, 8);
-            this.btnAddFolder.Name = "btnAddFolder";
-            this.btnAddFolder.Size = new System.Drawing.Size(100, 23);
-            this.btnAddFolder.TabIndex = 12;
-            this.btnAddFolder.Text = "Add Folder Script";
-            this.btnAddFolder.UseVisualStyleBackColor = true;
-            this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
+            this.lbFolderPath.AutoSize = true;
+            this.lbFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbFolderPath.Location = new System.Drawing.Point(430, 11);
+            this.lbFolderPath.Name = "lbFolderPath";
+            this.lbFolderPath.Size = new System.Drawing.Size(80, 16);
+            this.lbFolderPath.TabIndex = 13;
+            this.lbFolderPath.Text = "Folder Path:";
             // 
             // pnlFooter
             // 
@@ -275,15 +275,14 @@
             this.BrandName.ReadOnly = true;
             this.BrandName.Width = 91;
             // 
-            // lbFolderPath
+            // btnShowScript
             // 
-            this.lbFolderPath.AutoSize = true;
-            this.lbFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFolderPath.Location = new System.Drawing.Point(428, 11);
-            this.lbFolderPath.Name = "lbFolderPath";
-            this.lbFolderPath.Size = new System.Drawing.Size(80, 16);
-            this.lbFolderPath.TabIndex = 13;
-            this.lbFolderPath.Text = "Folder Path:";
+            this.btnShowScript.Location = new System.Drawing.Point(326, 8);
+            this.btnShowScript.Name = "btnShowScript";
+            this.btnShowScript.Size = new System.Drawing.Size(100, 23);
+            this.btnShowScript.TabIndex = 14;
+            this.btnShowScript.Text = "Show script";
+            this.btnShowScript.UseVisualStyleBackColor = true;
             // 
             // frmDatabaseList
             // 
@@ -321,10 +320,9 @@
         private System.Windows.Forms.Button btnAddScript;
         private System.Windows.Forms.ToolStripButton toolRefresh;
         private System.Windows.Forms.Button btnClearScript;
-        private System.Windows.Forms.Button btnAddVersion;
+        private System.Windows.Forms.Button btnAddFolder;
         private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Panel pnlFooter;
-        private System.Windows.Forms.Button btnAddFolder;
         private System.Windows.Forms.ContextMenuStrip mnsToolBarUpgrade;
         private System.Windows.Forms.ToolStripMenuItem upgradeDBToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
@@ -338,5 +336,6 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn DomainName;
         private System.Windows.Forms.DataGridViewTextBoxColumn BrandName;
         private System.Windows.Forms.Label lbFolderPath;
+        private System.Windows.Forms.Button btnShowScript;
     }
 }

@@ -14,7 +14,6 @@ namespace NovaDataManagement
 {
     public partial class frmDatabaseList : Form
     {
-        private StringBuilder totalScript;
         private InfoLogin infoLogin;
         private List<string> statusUpdateDB;
         private List<Script> listFolderScript;
@@ -25,7 +24,7 @@ namespace NovaDataManagement
 
         public frmDatabaseList(string machine, string instanceSV, string user, string password)
         {
-            totalScript = new StringBuilder();
+            listFolderScript = new List<Script>();
             statusUpdateDB = new List<string>();
             listFolderScript = new List<Script>();
             infoLogin = new InfoLogin(machine, instanceSV, user, password);
@@ -58,39 +57,19 @@ namespace NovaDataManagement
         #region "Handle Script"
         private void btnClearListScript_Click(object sender, EventArgs e)
         {
-            try
-            {
-                totalScript = new StringBuilder();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-        }
-        private void btnAddVersion_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog folderBrowser = AddFolder();
-            try
-            {
-                if (folderBrowser.ShowDialog() == DialogResult.OK)
-                {
-                    string path = folderBrowser.SelectedPath;
-                    AddVersion(path);
-                    this.lbFolderPath.Text = "Folder Path: " + path;
-                }
-            }
-            catch (Exception ex) { throw ex; }
+            listFolderScript = new List<Script>();
         }
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog folderBrowser = AddFolder();
+            FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+            folderBrowser.SelectedPath = @"C:\Users\Admin\Documents";
+            folderBrowser.ShowNewFolderButton = false;
             try
             {
                 if (folderBrowser.ShowDialog() == DialogResult.OK)
                 {
                     string path = folderBrowser.SelectedPath;
-                    string[] filesName = Directory.GetFiles(path);
-                    MakeScript(filesName);
+                    AddFolder(path);
                     this.lbFolderPath.Text = "Folder Path: " + path;
                 }
             }
@@ -111,8 +90,7 @@ namespace NovaDataManagement
                     if (openFile.CheckFileExists)
                     {
                         string[] filesName = openFile.FileNames;
-                        Script script = GetScript(filesName);
-                        listFolderScript.Add(script);
+                        GetScript(filesName);
                         this.lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
                     }
                 }
@@ -158,40 +136,38 @@ namespace NovaDataManagement
         private string MakeScript(string[] filesName)
         {
             StringBuilder builder = new StringBuilder();
-            if (filesName.Length > 0)
+            foreach (string file in filesName)
             {
-                foreach (string file in filesName)
-                {
-                    string script = File.ReadAllText(file);
-                    builder.AppendLine(script);
-                }
-                return builder.ToString();
+                string script = File.ReadAllText(file);
+                builder.AppendLine(script);
             }
-            return "";
+            return builder.ToString();
         }
-        private FolderBrowserDialog AddFolder()
+        //Filter sql file
+        private string[] FileFilter(string path)
         {
-            FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
-            folderBrowser.SelectedPath = @"C:\Users\Admin\Documents";
-            folderBrowser.ShowNewFolderButton = false;
-            return folderBrowser;
+            var needFiles = from file in Directory.EnumerateFiles(path)
+                            let extension = Path.GetExtension(file)
+                            where extension.Equals(".sql")
+                            select file;
+            return needFiles as string[];
         }
-        private void AddVersion(string pathVersion)
+        //Add folder have 3 levels at max and it mean add a version folder
+        //Important: Each folder contain only folders or script files and not empty        
+        private void AddFolder(string pathVersion)
         {
-            //Get all folder containing script in folder Version
-            string[] pathFolders = Directory.GetDirectories(pathVersion);           
-
+            //Level 1: Get all folder containing script in folder Version
+            string[] pathFolders = Directory.GetDirectories(pathVersion);
+            string[] filesScript = Directory.GetFiles(pathVersion);
             if (pathFolders.Length > 0)
             {
-                //Make the big script for Update 
+                //If it is folder contain 
                 foreach (string path in pathFolders)
                 {
                     string[] files = Directory.GetFiles(path);
-                    Script script = new Script();
                     if (files.Length > 0)
                     {
-                        script = GetScript(files);
-                        listFolderScript.Add(script);
+                        GetScript(files);
                     }
                     else
                     {
@@ -199,20 +175,30 @@ namespace NovaDataManagement
                         foreach (string folder in childFolders)
                         {
                             string[] filesFolder = Directory.GetFiles(folder);
-                            script = GetScript(filesFolder);
-                            listFolderScript.Add(script);
+                            if (filesFolder.Length > 0)
+                            {
+                                GetScript(filesFolder);
+                            }
                         }
                     }
                 }
             }
+            else if (filesScript.Length > 0)
+            {
+                GetScript(filesScript);
+            }
+            else
+            {
+                MessageBox.Show("Folder is empty");
+            }
         }
-        private Script GetScript(string[] files)
+        private void GetScript(string[] files)
         {
             Script script = new Script();
             script.Query = MakeScript(files);
-            script.Folder = Path.GetDirectoryName(files[0]);            
+            string scriptName = Path.GetDirectoryName(files[0]);
+            script.Folder = new DirectoryInfo(scriptName).Name;
             listFolderScript.Add(script);
-            return script;
         }
         //Get List DBInfo
         private List<InfoDB> GetDBs(InfoLogin infoLogin)
