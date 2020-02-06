@@ -39,7 +39,7 @@ namespace NovaDataManagement
                     frm.WindowState = FormWindowState.Maximized;
                     frm.Show();
                 }
-                // this.Close();              
+                //this.Close();              
             }
             catch (Exception eb)
             {

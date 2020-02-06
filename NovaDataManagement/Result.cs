@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace NovaDataManagement
 {
-    class Result: Script
+    public class Result: Script
     {
         private string backUp;
         public string BackUpResult 
         { 
-            get { return backUp.Equals("")? "Done": ("Failed: " + this.backUp); }
+            get { return (this.backUp == null)? "Done": ("Failed: " + this.backUp); }
             set { this.backUp = value; } 
         }        
         public Result()
@@ -29,6 +29,11 @@ namespace NovaDataManagement
             this.backUp = stateBackup;
             this.Folder = script.Folder;
             this.ResultUpgrade = script.ResultUpgrade;
-        }        
+        }
+        public Result(string stateBackup, string db)
+        {
+            this.BackUpResult = stateBackup;
+            this.DB = db;
+        }
     }
 }
