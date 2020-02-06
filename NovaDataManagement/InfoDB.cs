@@ -5,7 +5,7 @@ using System.Text;
 
 namespace NovaDataManagement
 {
-    class InfoDB
+    public class InfoDB
     {
         public bool UpdateChoice { get; set; }
         public string DataSource { get; set; }

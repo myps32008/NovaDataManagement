@@ -18,6 +18,7 @@ namespace NovaDataManagement
         private InfoLogin infoLogin;
         private List<Script> frm_listScript;        
         private List<Result> frm_resultList;
+        private frmUpgradeState frmUpgrade;
         private static string[] attConnect = {  "Data Source=",
                                                 ";Initial Catalog=" ,
                                                 ";Persist Security Info=True;User ID=",
@@ -45,7 +46,7 @@ namespace NovaDataManagement
 
         private void btnUpgrade_Click(object sender, EventArgs e)
         {
-            frm_Upgrade();
+            frm_Upgrade();                      
         }
 
         private void toolRefresh_Click(object sender, EventArgs e)
@@ -273,16 +274,15 @@ namespace NovaDataManagement
             string connectString = attConnect[0] + infoLogin.Machine +
                                     attConnect[1] + infoLogin.SeverName +
                                     attConnect[2] + infoLogin.User +
-                                    attConnect[3] + infoLogin.Password;
-            frm_resultList = new List<Result>();
+                                    attConnect[3] + infoLogin.Password;            
             
             using (SqlConnection connection = new SqlConnection(connectString))
             {
+                string infoDB = infoLogin.Machine + ", " + infoLogin.SeverName;
                 //Back up
-                string resultBackUp = BackUp(connection, infoLogin.SeverName);
-                
+                string resultBackUp = BackUp(connection, infoLogin.SeverName);                
                 //Back up if success backup
-                if (resultBackUp.Equals(""))
+                if (resultBackUp == null)
                 {
                     ServerConnection svrConnection = new ServerConnection(connection);
                     Server server = new Server(svrConnection);
@@ -291,7 +291,7 @@ namespace NovaDataManagement
                     server.ConnectionContext.BeginTransaction();
                     foreach (Script item in frm_listScript)
                     {
-                        Script stateScript = new Script();
+                        Script stateScript;                        
                         try
                         {
                             server.ConnectionContext.ExecuteNonQuery(item.Query);
@@ -299,12 +299,14 @@ namespace NovaDataManagement
                         catch (ExecutionFailureException ex)
                         {                            
                             stateScript = item;
-                            stateScript.ResultUpgrade = ex.GetBaseException().Message;
-                            stateScript.ErrorAtDB = infoLogin.Machine + ", " + infoLogin.SeverName;                            
+                            stateScript.DB = infoDB;
+                            stateScript.ResultUpgrade = ex.GetBaseException().Message;                            
+                            frm_resultList.Add(new Result(resultBackUp, stateScript));
                             server.ConnectionContext.RollBackTransaction();
                         }
                     }
                     server.ConnectionContext.CommitTransaction();
+                    frm_resultList.Add(new Result(resultBackUp, infoDB));
                 }
                 else
                 {
@@ -316,7 +318,9 @@ namespace NovaDataManagement
         {
             List<InfoDB> listUpgrade = gvDBList.DataSource as List<InfoDB>;
             var upgradeList = listUpgrade.Where(sDB => sDB.UpdateChoice == true);
-            
+            frm_resultList = new List<Result>();
+            frmUpgrade = new frmUpgradeState(frm_resultList, (List<InfoDB>)upgradeList);
+            frmUpgrade.Show();
             if (frm_listScript.Count > 0)
             {
                 foreach (InfoDB item in upgradeList)
@@ -338,7 +342,7 @@ namespace NovaDataManagement
             
             using (SqlCommand command = new SqlCommand(query, connection))
             {
-                command.Parameters.AddWithValue("@path", defaultPathBak);
+                command.Parameters.AddWithValue("@path", filePath);
                 command.CommandTimeout = 60 * 60;
                 try
                 {
@@ -349,7 +353,7 @@ namespace NovaDataManagement
                     return ex.Message;
                 }
             }
-            return "";
+            return null;
         }
 
         #endregion
