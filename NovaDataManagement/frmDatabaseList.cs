@@ -9,14 +9,15 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using System.Configuration;
 
 namespace NovaDataManagement
 {
     public partial class frmDatabaseList : Form
     {
         private InfoLogin infoLogin;
-        private List<string> statusUpdateDB;
-        private List<Script> listFolderScript;
+        private List<Script> frm_listScript;        
+        private List<Result> frm_resultList;
         private static string[] attConnect = {  "Data Source=",
                                                 ";Initial Catalog=" ,
                                                 ";Persist Security Info=True;User ID=",
@@ -24,9 +25,7 @@ namespace NovaDataManagement
 
         public frmDatabaseList(string machine, string instanceSV, string user, string password)
         {
-            listFolderScript = new List<Script>();
-            statusUpdateDB = new List<string>();
-            listFolderScript = new List<Script>();
+            frm_listScript = new List<Script>();
             infoLogin = new InfoLogin(machine, instanceSV, user, password);
             InitializeComponent();
         }
@@ -57,7 +56,8 @@ namespace NovaDataManagement
         #region "Handle Script"
         private void btnClearListScript_Click(object sender, EventArgs e)
         {
-            listFolderScript = new List<Script>();
+            frm_listScript = new List<Script>();
+            this.lbFolderPath.Text = "Folder Path:";
         }
         private void btnAddFolder_Click(object sender, EventArgs e)
         {
@@ -99,6 +99,19 @@ namespace NovaDataManagement
             {
                 throw ex;
             }
+        }
+        private void btnBackUp_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+            folderBrowser.SelectedPath = @"C:\Users\Admin\Documents";
+            try
+            {
+                if (folderBrowser.ShowDialog() == DialogResult.OK)
+                {
+                    
+                }
+            }
+            catch (Exception ex) { throw ex; }
         }
         #endregion
 
@@ -198,28 +211,31 @@ namespace NovaDataManagement
             script.Query = MakeScript(files);
             string scriptName = Path.GetDirectoryName(files[0]);
             script.Folder = new DirectoryInfo(scriptName).Name;
-            listFolderScript.Add(script);
+            frm_listScript.Add(script);
         }
         //Get List DBInfo
         private List<InfoDB> GetDBs(InfoLogin infoLogin)
         {
             List<InfoDB> list = new List<InfoDB>();
+            var monitoring_db = ConfigurationManager.AppSettings.Get("default_monitoring_dbname");
             string connectString = attConnect[0] + infoLogin.Machine +
                                     attConnect[2] + infoLogin.User +
                                     attConnect[3] + infoLogin.Password;
             using (SqlConnection con = new SqlConnection(connectString))
             {
                 con.Open();
-                string query = "SELECT s.datasource, ds.[catalog] , d.createdDate, d.brandname, d.domainname FROM (" +
-                            "([CRM_Domain_Monitoring].[dbo].[storage] as s " +
-                            "inner join " +
-                            "[CRM_Domain_Monitoring].[dbo].[domain_storage] as ds " +
-                            "on ds.storageid IN " +
-                                "(SELECT ID FROM [CRM_Domain_Monitoring].[dbo].[storage] " +
-                                "WHERE [user] = @user) AND s.[user] = @user) " +
-                            "inner join " +
-                            "[CRM_Domain_Monitoring].[dbo].[domain] as d " +
-                            "on d.id = ds.domainid)";
+                string query = String.Format(
+                    @"SELECT s.datasource, ds.[catalog] , d.createdDate, d.brandname, d.domainname, s.user, s.password 
+                    FROM (
+                            ([{0}].[dbo].[storage] as s 
+                            inner join 
+                            [{0}].[dbo].[domain_storage] as ds 
+                            on ds.storageid IN 
+                                (SELECT ID FROM [{0}].[dbo].[storage] 
+                                WHERE [user] = '{1}') AND s.[user] = '{1}')
+                            inner join
+                            [{0}].[dbo].[domain] as d 
+                            on d.id = ds.domainid)", monitoring_db, infoLogin.User);
                 using (SqlCommand cmd = new SqlCommand(query, con))
                 {
                     cmd.Parameters.AddWithValue("@user", infoLogin.User);
@@ -233,6 +249,8 @@ namespace NovaDataManagement
                             dB.CreatedDate = dbList["createdDate"].ToString();
                             dB.BrandName = dbList["brandName"].ToString();
                             dB.DomainName = dbList["domainName"].ToString();
+                            dB.User = dbList["user"].ToString();
+                            dB.Password = dbList["password"].ToString();
                             dB.UpdateChoice = false;
                             list.Add(dB);
                         }
@@ -246,8 +264,6 @@ namespace NovaDataManagement
             try
             {
                 this.gvDBList.DataSource = GetDBs(infoLogin);
-                this.gvDBList.Columns["User"].Visible = false;
-                this.gvDBList.Columns["Password"].Visible = false;
             }
             catch (Exception bl) { throw bl; }
         }
@@ -258,46 +274,82 @@ namespace NovaDataManagement
                                     attConnect[1] + infoLogin.SeverName +
                                     attConnect[2] + infoLogin.User +
                                     attConnect[3] + infoLogin.Password;
-            using (SqlConnection con = new SqlConnection(connectString))
+            frm_resultList = new List<Result>();
+            
+            using (SqlConnection connection = new SqlConnection(connectString))
             {
-                ServerConnection svrConnection = new ServerConnection(con);
-                Server server = new Server(svrConnection);
-                Script errorScript;
-                server.ConnectionContext.BeginTransaction();
-                foreach (Script item in listFolderScript)
+                //Back up
+                string resultBackUp = BackUp(connection, infoLogin.SeverName);
+                
+                //Back up if success backup
+                if (resultBackUp.Equals(""))
                 {
-                    try
+                    ServerConnection svrConnection = new ServerConnection(connection);
+                    Server server = new Server(svrConnection);
+                    ////To Avoid TimeOut Exception
+                    server.ConnectionContext.StatementTimeout = 60 * 60;
+                    server.ConnectionContext.BeginTransaction();
+                    foreach (Script item in frm_listScript)
                     {
-                        server.ConnectionContext.ExecuteNonQuery(item.Query);
+                        Script stateScript = new Script();
+                        try
+                        {
+                            server.ConnectionContext.ExecuteNonQuery(item.Query);
+                        }
+                        catch (ExecutionFailureException ex)
+                        {                            
+                            stateScript = item;
+                            stateScript.ResultUpgrade = ex.GetBaseException().Message;
+                            stateScript.ErrorAtDB = infoLogin.Machine + ", " + infoLogin.SeverName;                            
+                            server.ConnectionContext.RollBackTransaction();
+                        }
                     }
-                    catch (ExecutionFailureException ex)
-                    {
-                        errorScript = item;
-                        errorScript.Error = ex.GetBaseException().Message;
-                        server.ConnectionContext.RollBackTransaction();
-                        MessageBox.Show(errorScript.DisplayError());
-                    }
+                    server.ConnectionContext.CommitTransaction();
                 }
-                server.ConnectionContext.CommitTransaction();
+                else
+                {
+                    frm_resultList.Add(new Result(resultBackUp));
+                }
             }
         }
         private bool frm_Upgrade()
         {
             List<InfoDB> listUpgrade = gvDBList.DataSource as List<InfoDB>;
             var upgradeList = listUpgrade.Where(sDB => sDB.UpdateChoice == true);
-
-            if (listFolderScript.Count > 0)
+            
+            if (frm_listScript.Count > 0)
             {
                 foreach (InfoDB item in upgradeList)
                 {
-                    InfoLogin info = infoLogin;
-                    info.SeverName = item.Catalog;
+                    InfoLogin info = new InfoLogin(item.DataSource, item.Catalog, item.User, item.Password);
                     UpgradeDB(infoLogin);
                 }
                 return true;
             }
             MessageBox.Show("Do not have Script");
             return false;
+        }
+        private string BackUp(SqlConnection connection, string dbName)
+        {
+            string query = "BACKUP DATABASE databasename TO DISK = @path";
+            string defaultPathBak = ConfigurationManager.AppSettings.Get("default_backup_directory");
+            string filePath = String.Format(@"{0}\{1}_bak_{2}.bak}", 
+                                            defaultPathBak, dbName, DateTime.Now.ToString("ddmmyyyy_hhmm"));
+            
+            using (SqlCommand command = new SqlCommand(query, connection))
+            {
+                command.Parameters.AddWithValue("@path", defaultPathBak);
+                command.CommandTimeout = 60 * 60;
+                try
+                {
+                    command.ExecuteNonQuery();
+                }
+                catch (SqlException ex)
+                {
+                    return ex.Message;
+                }
+            }
+            return "";
         }
 
         #endregion
@@ -340,5 +392,7 @@ namespace NovaDataManagement
             return true;
         }
         #endregion
+
+        
     }
 }
