@@ -21,31 +21,30 @@ namespace NovaDataManagement
         #region "Event"
         private void btnAccept_Click(object sender, EventArgs e)
         {
-            try
+            bool IsValiate = true;
+            /*
+             1. Kiểm tra các thông tin có thiêu, không chính xác: Nếu không đúng cảnh báo cho NSD
+             2. Nếu đúng thực hiện tiếp
+             */
+            if (IsValiate)
             {
-                bool IsValiate = true;
-                /*
-                 1. Kiểm tra các thông tin có thiêu, không chính xác: Nếu không đúng cảnh báo cho NSD
-                 2. Nếu đúng thực hiện tiếp
-                 */
-                if (IsValiate)
+                InfoLogin info = new InfoLogin(this.Machine_txt.Text,
+                                          "", //this.InstanceSv.SelectedItem.ToString()
+                                          this.User_text.Text,
+                                          this.Password_txt.Text);
+                try
                 {
-                    InfoLogin info = new InfoLogin(this.Machine_txt.Text,
-                                              "", //this.InstanceSv.SelectedItem.ToString()
-                                              this.User_text.Text,
-                                              this.Password_txt.Text);
                     frmDatabaseList frm = new frmDatabaseList(info);
                     frm.MdiParent = this.Owner;
                     this.DialogResult = DialogResult.OK;
                     frm.WindowState = FormWindowState.Maximized;
                     frm.Show();
                 }
-                //this.Close();              
-            }
-            catch (Exception eb)
-            {
-                throw eb;
-            }
+                catch (Exception eb)
+                {
+                    MessageBox.Show("Login failed: " + eb.Message);
+                }                
+            }            
         }
         private void Machine_txt_Leave(object sender, EventArgs e)
         {

@@ -18,36 +18,31 @@ namespace NovaDataManagement
 		private InfoLogin infoLogin;
 		private List<Script> frm_listScript;        
 		private List<Result> frm_resultList;
-		private string frm_pathBak = ConfigurationManager.AppSettings.Get("default_backup_directory");
+		private string frm_pathBak;
+		private string frm_pathFolder;
 		private static string[] attConnect = {  "Data Source=",
 												";Initial Catalog=" ,
 												";Persist Security Info=True;User ID=",
 												";Password="};
-
 		public frmDatabaseList(InfoLogin info)
 		{
-			infoLogin = new InfoLogin(info.Machine, info.SeverName, info.User, info.Password);
-			//Make defaultFolder for backup
-			frm_listScript = new List<Script>();
-			if (!Directory.Exists(frm_pathBak))
-				{
-					Directory.CreateDirectory(frm_pathBak);
-				}
-			
 			InitializeComponent();
+			infoLogin = new InfoLogin(info.Machine, info.SeverName, info.User, info.Password);
+			frm_GetListDB();			
 		}
 
 		#region "Event"
 		private void frmDatabaseList_Load(object sender, EventArgs e)
 		{
-			try
+			//Make defaultFolder for backup
+			frm_listScript = new List<Script>();
+			frm_pathBak = Properties.Settings.Default.default_backup_directory;
+			frm_pathFolder = Properties.Settings.Default.default_script_directory;
+			if (!Directory.Exists(frm_pathBak))
 			{
-				frm_GetListDB();
+				Directory.CreateDirectory(frm_pathBak);
 			}
-			catch (Exception bl)
-			{
-				throw bl;
-			}
+			this.lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;			
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e)
@@ -69,14 +64,16 @@ namespace NovaDataManagement
 		private void btnAddFolder_Click(object sender, EventArgs e)
 		{
 			FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
-			folderBrowser.SelectedPath = @"C:\Users\Admin\Documents";
+			folderBrowser.SelectedPath = frm_pathFolder;
 			folderBrowser.ShowNewFolderButton = false;
 			try
 			{
 				if (folderBrowser.ShowDialog() == DialogResult.OK)
 				{
-					string path = folderBrowser.SelectedPath;
-					AddFolder(path);                    
+					frm_pathFolder = folderBrowser.SelectedPath;
+					Properties.Settings.Default.default_script_directory = frm_pathFolder;
+					Properties.Settings.Default.Save();
+					AddFolder(frm_pathFolder);                    
 				}
 			}
 			catch (Exception ex) { throw ex; }
@@ -84,7 +81,7 @@ namespace NovaDataManagement
 		private void btnGetFile_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog openFile = new OpenFileDialog();
-			openFile.InitialDirectory = @"C:\Users\Admin\Desktop\Download\Test";
+			openFile.InitialDirectory = frm_pathFolder;
 			openFile.Title = "Select the script file";
 			openFile.Filter = "Select Valid Document(*.sql)|*.sql";
 			openFile.FilterIndex = 1;
@@ -96,6 +93,9 @@ namespace NovaDataManagement
 					if (openFile.CheckFileExists)
 					{
 						string[] filesName = openFile.FileNames;
+						frm_pathFolder = Path.GetDirectoryName(filesName[0]);
+						Properties.Settings.Default.default_backup_directory = frm_pathFolder;
+						Properties.Settings.Default.Save();
 						GetScript(filesName);
 						this.lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
 					}
@@ -141,11 +141,7 @@ namespace NovaDataManagement
 		#region "Right click"
 		private void upgradeDBToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			try
-			{
-				frm_Upgrade();
-			}
-			catch (Exception ex) { throw ex; }
+			frm_Upgrade();			
 		}
 
 		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
@@ -239,7 +235,7 @@ namespace NovaDataManagement
 		private List<InfoDB> GetDBs(InfoLogin infoLogin)
 		{
 			List<InfoDB> list = new List<InfoDB>();
-			var monitoring_db = ConfigurationManager.AppSettings.Get("default_monitoring_dbname");
+			var monitoring_db = Properties.Settings.Default.default_monitoring_dbname;
 			string connectString = attConnect[0] + infoLogin.Machine +
 									attConnect[2] + infoLogin.User +
 									attConnect[3] + infoLogin.Password;
@@ -277,11 +273,7 @@ namespace NovaDataManagement
 		}
 		private void frm_GetListDB()
 		{
-			try
-			{
-				this.gvDBList.DataSource = GetDBs(infoLogin);
-			}
-			catch (Exception bl) { throw bl; }
+			this.gvDBList.DataSource = GetDBs(infoLogin);			
 		}
 		//Upgrade
 		private void UpgradeDB(InfoDB db)
@@ -304,24 +296,29 @@ namespace NovaDataManagement
 					////To Avoid TimeOut Exception
 					server.ConnectionContext.StatementTimeout = 60 * 60;
 					server.ConnectionContext.BeginTransaction();
+					bool stateUpgrade = true;
 					foreach (Script item in frm_listScript)
-					{
-						Script stateScript;                        
+					{						                        
 						try
 						{
 							server.ConnectionContext.ExecuteNonQuery(item.Query);
 						}
 						catch (ExecutionFailureException ex)
-						{                            
+						{
+							Script stateScript;
 							stateScript = item;                            
 							stateScript.ResultUpgrade = ex.GetBaseException().Message;                            
 							frm_resultList.Add(new Result(resultBackUp, stateScript, db));
 							server.ConnectionContext.RollBackTransaction();
+							stateUpgrade = false;
 							break;
 						}
 					}
-					server.ConnectionContext.CommitTransaction();                    
-					frm_resultList.Add(new Result(db));
+					if (stateUpgrade)
+					{
+						server.ConnectionContext.CommitTransaction();
+						frm_resultList.Add(new Result(db));
+					}					
 				}
 				else
 				{
@@ -356,10 +353,8 @@ namespace NovaDataManagement
 		}
 		private string BackUp(SqlConnection connection, string dbName)
 		{
-			
 			string time = DateTime.Now.ToString("_ddmmyyyy_hhmm");
-			string filePath = frm_pathBak + @"\" + dbName + time + ".bak";
-			
+			string filePath = frm_pathBak + @"\" + dbName + time + ".bak";			
 			string testQuery = "BACKUP DATABASE " + dbName + " TO DISK = '" + filePath +"'";
 			
 			using (SqlCommand command = new SqlCommand(testQuery, connection))

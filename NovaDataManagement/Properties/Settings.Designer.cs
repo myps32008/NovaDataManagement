@@ -22,5 +22,38 @@ namespace NovaDataManagement.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Backup")]
+        public string default_script_directory {
+            get {
+                return ((string)(this["default_script_directory"]));
+            }
+            set {
+                this["default_script_directory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Backup")]
+        public string default_backup_directory {
+            get {
+                return ((string)(this["default_backup_directory"]));
+            }
+            set {
+                this["default_backup_directory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("CRM_Domain_Monitoring")]
+        public string default_monitoring_dbname {
+            get {
+                return ((string)(this["default_monitoring_dbname"]));
+            }
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace NovaDataManagement
         private string backUp = null;
         public string DB { get; set; }
         public string Catalog { get; set; }
-        public string BackUpResult 
+        public string BackupResult 
         { 
             get { return (this.backUp == null)? "Done": ("Failed: " + this.backUp); }
             set { this.backUp = value; } 
@@ -39,7 +39,7 @@ namespace NovaDataManagement
         {
             this.DB = db.DataSource;
             this.Catalog = db.Catalog;
-            this.BackUpResult = stateBackup;
+            this.BackupResult = stateBackup;
         }
     }
 }

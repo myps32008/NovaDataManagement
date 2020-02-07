@@ -13,12 +13,18 @@ namespace NovaDataManagement
 {
     public partial class frmActionState : Form
     {
-        
+        List<Result> results;
         public frmActionState(List<Result> listResult)
-        {
-            
+        {            
             InitializeComponent();
-            this.dgvStateList.DataSource = listResult;
+            results = listResult;
+        }
+
+        private void frmActionState_Load(object sender, EventArgs e)
+        {            
+            this.dgvStateList.DataSource = results;
+            this.dgvStateList.Columns["Query"].Visible = false;
+            this.dgvStateList.Columns["Folder"].Visible = false;
         }
     }
 }

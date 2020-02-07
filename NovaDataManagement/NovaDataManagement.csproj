@@ -217,6 +217,7 @@
     <Compile Include="InfoLogin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings.cs" />
     <EmbeddedResource Include="frmActionState.resx">
       <DependentUpon>frmActionState.cs</DependentUpon>
     </EmbeddedResource>
