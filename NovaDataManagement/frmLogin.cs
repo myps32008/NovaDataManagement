@@ -30,10 +30,11 @@ namespace NovaDataManagement
                  */
                 if (IsValiate)
                 {
-                    frmDatabaseList frm = new frmDatabaseList(this.Machine_txt.Text, 
-                                                              "", //this.InstanceSv.SelectedItem.ToString()
-                                                              this.User_text.Text,
-                                                              this.Password_txt.Text);
+                    InfoLogin info = new InfoLogin(this.Machine_txt.Text,
+                                              "", //this.InstanceSv.SelectedItem.ToString()
+                                              this.User_text.Text,
+                                              this.Password_txt.Text);
+                    frmDatabaseList frm = new frmDatabaseList(info);
                     frm.MdiParent = this.Owner;
                     this.DialogResult = DialogResult.OK;
                     frm.WindowState = FormWindowState.Maximized;

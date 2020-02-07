@@ -181,11 +181,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="frmUpgradeState.cs">
+    <Compile Include="frmActionState.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="frmUpgradeState.Designer.cs">
-      <DependentUpon>frmUpgradeState.cs</DependentUpon>
+    <Compile Include="frmActionState.Designer.cs">
+      <DependentUpon>frmActionState.cs</DependentUpon>
     </Compile>
     <Compile Include="Result.cs" />
     <Compile Include="frmShowScript.cs">
@@ -217,8 +217,8 @@
     <Compile Include="InfoLogin.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="frmUpgradeState.resx">
-      <DependentUpon>frmUpgradeState.cs</DependentUpon>
+    <EmbeddedResource Include="frmActionState.resx">
+      <DependentUpon>frmActionState.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="frmDatabaseList.resx">
       <DependentUpon>frmDatabaseList.cs</DependentUpon>

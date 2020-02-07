@@ -8,32 +8,38 @@ namespace NovaDataManagement
 {
     public class Result: Script
     {
-        private string backUp;
+        private string backUp = null;
+        public string DB { get; set; }
+        public string Catalog { get; set; }
         public string BackUpResult 
         { 
             get { return (this.backUp == null)? "Done": ("Failed: " + this.backUp); }
             set { this.backUp = value; } 
-        }        
+        }       
         public Result()
         {
 
-        }
-        //when bakup fail
-        public Result(string stateBackup)
-        {
-            this.BackUpResult = stateBackup;
-        }
+        }        
         //When upgrade fail
-        public Result(string stateBackup, Script script)
+        public Result(string stateBackup, Script errorScript , InfoDB db)
         {
             this.backUp = stateBackup;
-            this.Folder = script.Folder;
-            this.ResultUpgrade = script.ResultUpgrade;
+            this.Folder = errorScript.Folder;
+            this.DB = db.DataSource;
+            this.Catalog = db.Catalog;
+            this.ResultUpgrade = errorScript.ResultUpgrade;
         }
-        public Result(string stateBackup, string db)
+        //When upgrade success
+        public Result(InfoDB db)
+        {                    
+            this.DB = db.DataSource;
+            this.Catalog = db.Catalog;
+        }
+        public Result(string stateBackup,InfoDB db)
         {
+            this.DB = db.DataSource;
+            this.Catalog = db.Catalog;
             this.BackUpResult = stateBackup;
-            this.DB = db;
         }
     }
 }

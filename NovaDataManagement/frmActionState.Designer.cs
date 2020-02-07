@@ -1,6 +1,6 @@
 ﻿namespace NovaDataManagement
 {
-    partial class frmUpgradeState
+    partial class frmActionState
     {
         /// <summary>
         /// Required designer variable.
@@ -140,7 +140,7 @@
             this.panel2.Controls.Add(this.dgvStateList);
             this.panel2.Location = new System.Drawing.Point(3, 174);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(462, 272);
+            this.panel2.Size = new System.Drawing.Size(741, 272);
             this.panel2.TabIndex = 10;
             // 
             // dgvStateList
@@ -149,19 +149,19 @@
             this.dgvStateList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dgvStateList.Location = new System.Drawing.Point(0, 0);
             this.dgvStateList.Name = "dgvStateList";
-            this.dgvStateList.Size = new System.Drawing.Size(462, 272);
+            this.dgvStateList.Size = new System.Drawing.Size(741, 272);
             this.dgvStateList.TabIndex = 0;
             // 
-            // frmUpgradeState
+            // frmActionState
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(467, 450);
+            this.ClientSize = new System.Drawing.Size(748, 450);
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmUpgradeState";
+            this.Name = "frmActionState";
             this.ShowIcon = false;
             this.Text = "Upgrade State";
             this.panel1.ResumeLayout(false);

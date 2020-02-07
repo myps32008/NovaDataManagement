@@ -5,19 +5,20 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace NovaDataManagement
 {
-    public partial class frmUpgradeState : Form
+    public partial class frmActionState : Form
     {
-        private List<InfoDB> listDB;
-        public frmUpgradeState(List<Result> listResult, List<InfoDB> upgradeList)
+        
+        public frmActionState(List<Result> listResult)
         {
-            this.dgvStateList.DataSource = listResult;
-            this.listDB = upgradeList;
+            
             InitializeComponent();
+            this.dgvStateList.DataSource = listResult;
         }
     }
 }

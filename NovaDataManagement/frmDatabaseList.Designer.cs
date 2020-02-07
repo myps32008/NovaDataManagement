@@ -39,16 +39,14 @@
             this.btnClearScript = new System.Windows.Forms.Button();
             this.btnAddFolder = new System.Windows.Forms.Button();
             this.pnlHeader = new System.Windows.Forms.Panel();
+            this.btnBackUp = new System.Windows.Forms.Button();
             this.btnShowScript = new System.Windows.Forms.Button();
             this.lbFolderPath = new System.Windows.Forms.Label();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.mnsToolBarUpgrade = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.upgradeDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gvDBList = new System.Windows.Forms.DataGridView();
-            this.btnBackUp = new System.Windows.Forms.Button();
             this.UpdateChoice = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.DataSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Catalog = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -57,6 +55,8 @@
             this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.lbFolderBackup = new System.Windows.Forms.Label();
+            this.backupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
@@ -145,6 +145,7 @@
             // 
             // pnlHeader
             // 
+            this.pnlHeader.Controls.Add(this.lbFolderBackup);
             this.pnlHeader.Controls.Add(this.btnBackUp);
             this.pnlHeader.Controls.Add(this.btnShowScript);
             this.pnlHeader.Controls.Add(this.lbFolderPath);
@@ -154,8 +155,18 @@
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 25);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Size = new System.Drawing.Size(1240, 39);
+            this.pnlHeader.Size = new System.Drawing.Size(1240, 87);
             this.pnlHeader.TabIndex = 12;
+            // 
+            // btnBackUp
+            // 
+            this.btnBackUp.Location = new System.Drawing.Point(432, 8);
+            this.btnBackUp.Name = "btnBackUp";
+            this.btnBackUp.Size = new System.Drawing.Size(100, 23);
+            this.btnBackUp.TabIndex = 15;
+            this.btnBackUp.Text = "BackUp";
+            this.btnBackUp.UseVisualStyleBackColor = true;
+            this.btnBackUp.Click += new System.EventHandler(this.btnBackUp_Click);
             // 
             // btnShowScript
             // 
@@ -170,7 +181,7 @@
             // 
             this.lbFolderPath.AutoSize = true;
             this.lbFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFolderPath.Location = new System.Drawing.Point(540, 11);
+            this.lbFolderPath.Location = new System.Drawing.Point(8, 40);
             this.lbFolderPath.Name = "lbFolderPath";
             this.lbFolderPath.Size = new System.Drawing.Size(80, 16);
             this.lbFolderPath.TabIndex = 13;
@@ -190,10 +201,9 @@
             this.mnsToolBarUpgrade.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.upgradeDBToolStripMenuItem,
             this.refreshToolStripMenuItem,
-            this.helpToolStripMenuItem,
-            this.exitToolStripMenuItem});
+            this.backupToolStripMenuItem});
             this.mnsToolBarUpgrade.Name = "mnsToolBarUpgrade";
-            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(138, 92);
+            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(138, 70);
             // 
             // upgradeDBToolStripMenuItem
             // 
@@ -209,19 +219,6 @@
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
             // gvDBList
             // 
             this.gvDBList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -235,20 +232,10 @@
             this.DomainName,
             this.BrandName});
             this.gvDBList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gvDBList.Location = new System.Drawing.Point(0, 64);
+            this.gvDBList.Location = new System.Drawing.Point(0, 112);
             this.gvDBList.Name = "gvDBList";
-            this.gvDBList.Size = new System.Drawing.Size(1240, 475);
+            this.gvDBList.Size = new System.Drawing.Size(1240, 427);
             this.gvDBList.TabIndex = 14;
-            // 
-            // btnBackUp
-            // 
-            this.btnBackUp.Location = new System.Drawing.Point(432, 8);
-            this.btnBackUp.Name = "btnBackUp";
-            this.btnBackUp.Size = new System.Drawing.Size(100, 23);
-            this.btnBackUp.TabIndex = 15;
-            this.btnBackUp.Text = "Back Up";
-            this.btnBackUp.UseVisualStyleBackColor = true;
-            this.btnBackUp.Click += new System.EventHandler(this.btnBackUp_Click);
             // 
             // UpdateChoice
             // 
@@ -322,6 +309,23 @@
             this.BrandName.ReadOnly = true;
             this.BrandName.Width = 91;
             // 
+            // lbFolderBackup
+            // 
+            this.lbFolderBackup.AutoSize = true;
+            this.lbFolderBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbFolderBackup.Location = new System.Drawing.Point(8, 64);
+            this.lbFolderBackup.Name = "lbFolderBackup";
+            this.lbFolderBackup.Size = new System.Drawing.Size(99, 16);
+            this.lbFolderBackup.TabIndex = 16;
+            this.lbFolderBackup.Text = "Folder Backup:";
+            this.lbFolderBackup.UseMnemonic = false;
+            // 
+            // backupToolStripMenuItem
+            // 
+            this.backupToolStripMenuItem.Name = "backupToolStripMenuItem";
+            this.backupToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.backupToolStripMenuItem.Text = "Backup";
+            // 
             // frmDatabaseList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -364,8 +368,6 @@
         private System.Windows.Forms.ContextMenuStrip mnsToolBarUpgrade;
         private System.Windows.Forms.ToolStripMenuItem upgradeDBToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.DataGridView gvDBList;
         private System.Windows.Forms.Label lbFolderPath;
         private System.Windows.Forms.Button btnShowScript;
@@ -378,5 +380,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn DomainName;
         private System.Windows.Forms.DataGridViewTextBoxColumn BrandName;
+        private System.Windows.Forms.Label lbFolderBackup;
+        private System.Windows.Forms.ToolStripMenuItem backupToolStripMenuItem;
     }
 }

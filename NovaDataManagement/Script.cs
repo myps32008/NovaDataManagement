@@ -5,16 +5,19 @@
         private string updateState = null;
         public string Folder { get; set; }
         public string Query { get; set; }
-        public string DB { get; set; }
         public string ResultUpgrade
         {
             get 
             {
                 if (updateState == null)
                 {
+                    return updateState;
+                }
+                else if (updateState.Equals(""))
+                {
                     return "Upgrade Success";
                 }
-                return this.DB + " error at " + this.Folder + ": " + this.updateState; 
+                return "Error at " + this.Folder + ": " + this.updateState; 
             }
             set { this.updateState = value; }
         }
