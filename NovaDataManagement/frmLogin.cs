@@ -21,13 +21,10 @@ namespace NovaDataManagement
         #region "Event"
         private void btnAccept_Click(object sender, EventArgs e)
         {
-            bool IsValiate = true;
-            /*
-             1. Kiểm tra các thông tin có thiêu, không chính xác: Nếu không đúng cảnh báo cho NSD
-             2. Nếu đúng thực hiện tiếp
-             */
+            bool IsValiate = true;            
             if (IsValiate)
             {
+                
                 InfoLogin info = new InfoLogin(this.Machine_txt.Text,
                                           "", //this.InstanceSv.SelectedItem.ToString()
                                           this.User_text.Text,
