@@ -20,6 +20,7 @@ namespace NovaDataManagement
 		private List<Result> frm_resultList;
 		private string frm_pathBak;
 		private string frm_pathFolder;
+		private frmActionState frm_actionSate;
 		private static string[] attConnect = {  "Data Source=",
 												";Initial Catalog=" ,
 												";Persist Security Info=True;User ID=",
@@ -42,7 +43,8 @@ namespace NovaDataManagement
 			{
 				Directory.CreateDirectory(frm_pathBak);
 			}
-			this.lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;			
+			this.lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
+			this.lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e)
@@ -73,6 +75,7 @@ namespace NovaDataManagement
 					frm_pathFolder = folderBrowser.SelectedPath;
 					Properties.Settings.Default.default_script_directory = frm_pathFolder;
 					Properties.Settings.Default.Save();
+					this.lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
 					AddFolder(frm_pathFolder);                    
 				}
 			}
@@ -129,8 +132,8 @@ namespace NovaDataManagement
 							string result = BackUp(connection, db.Catalog);
 							frm_resultList.Add(new Result(result, db));
 						}
-					}
-					ShowFrmActionState(frm_resultList);
+						ShowFrmActionState(frm_resultList);
+					}					
 				}            
 			}
 			catch (Exception ex) { throw ex; }
@@ -190,6 +193,7 @@ namespace NovaDataManagement
 			//Level 1: Get all folder containing script in folder Version
 			string[] pathFolders = Directory.GetDirectories(pathVersion);
 			string[] filesScript = Directory.GetFiles(pathVersion);
+			
 			if (pathFolders.Length > 0)
 			{
 				//If it is folder contain 
@@ -383,8 +387,8 @@ namespace NovaDataManagement
 		}
 		private void ShowFrmActionState(List<Result> resultAction)
 		{
-			frmActionState frmAction = new frmActionState(resultAction);
-			frmAction.Show();
+			frm_actionSate = new frmActionState(resultAction);
+			frm_actionSate.Show();
 		}
 
 		#endregion

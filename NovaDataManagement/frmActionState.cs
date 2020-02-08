@@ -18,13 +18,15 @@ namespace NovaDataManagement
         {            
             InitializeComponent();
             results = listResult;
+            this.dgvStateList.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            this.dgvStateList.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+            this.dgvStateList.DataSource = results;
+            this.dgvStateList.Columns["Query"].Visible = false;
         }
 
         private void frmActionState_Load(object sender, EventArgs e)
         {            
-            this.dgvStateList.DataSource = results;
-            this.dgvStateList.Columns["Query"].Visible = false;
-            this.dgvStateList.Columns["Folder"].Visible = false;
+            
         }
     }
 }

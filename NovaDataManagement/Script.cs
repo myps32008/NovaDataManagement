@@ -17,7 +17,7 @@
                 {
                     return "Upgrade Success";
                 }
-                return this.Folder + " error: " + this.updateState; 
+                return this.updateState; 
             }
             set { this.updateState = value; }
         }

@@ -39,6 +39,7 @@
             this.btnClearScript = new System.Windows.Forms.Button();
             this.btnAddFolder = new System.Windows.Forms.Button();
             this.pnlHeader = new System.Windows.Forms.Panel();
+            this.lbFolderBackup = new System.Windows.Forms.Label();
             this.btnBackUp = new System.Windows.Forms.Button();
             this.btnShowScript = new System.Windows.Forms.Button();
             this.lbFolderPath = new System.Windows.Forms.Label();
@@ -46,6 +47,7 @@
             this.mnsToolBarUpgrade = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.upgradeDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gvDBList = new System.Windows.Forms.DataGridView();
             this.UpdateChoice = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.DataSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -55,8 +57,6 @@
             this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.lbFolderBackup = new System.Windows.Forms.Label();
-            this.backupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
@@ -158,6 +158,17 @@
             this.pnlHeader.Size = new System.Drawing.Size(1240, 87);
             this.pnlHeader.TabIndex = 12;
             // 
+            // lbFolderBackup
+            // 
+            this.lbFolderBackup.AutoSize = true;
+            this.lbFolderBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbFolderBackup.Location = new System.Drawing.Point(8, 64);
+            this.lbFolderBackup.Name = "lbFolderBackup";
+            this.lbFolderBackup.Size = new System.Drawing.Size(99, 16);
+            this.lbFolderBackup.TabIndex = 16;
+            this.lbFolderBackup.Text = "Folder Backup:";
+            this.lbFolderBackup.UseMnemonic = false;
+            // 
             // btnBackUp
             // 
             this.btnBackUp.Location = new System.Drawing.Point(432, 8);
@@ -219,6 +230,12 @@
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
+            // backupToolStripMenuItem
+            // 
+            this.backupToolStripMenuItem.Name = "backupToolStripMenuItem";
+            this.backupToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.backupToolStripMenuItem.Text = "Backup";
+            // 
             // gvDBList
             // 
             this.gvDBList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -247,22 +264,20 @@
             // 
             // DataSource
             // 
-            this.DataSource.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.DataSource.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.DataSource.DataPropertyName = "DataSource";
             this.DataSource.HeaderText = "Data Source";
             this.DataSource.Name = "DataSource";
             this.DataSource.ReadOnly = true;
-            this.DataSource.Width = 92;
             // 
             // Catalog
             // 
-            this.Catalog.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Catalog.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.Catalog.DataPropertyName = "Catalog";
             this.Catalog.FillWeight = 200F;
             this.Catalog.HeaderText = "Catalog";
             this.Catalog.Name = "Catalog";
             this.Catalog.ReadOnly = true;
-            this.Catalog.Width = 68;
             // 
             // User
             // 
@@ -302,29 +317,11 @@
             // 
             // BrandName
             // 
-            this.BrandName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.BrandName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
             this.BrandName.DataPropertyName = "BrandName";
             this.BrandName.HeaderText = "Brand Name";
             this.BrandName.Name = "BrandName";
             this.BrandName.ReadOnly = true;
-            this.BrandName.Width = 91;
-            // 
-            // lbFolderBackup
-            // 
-            this.lbFolderBackup.AutoSize = true;
-            this.lbFolderBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFolderBackup.Location = new System.Drawing.Point(8, 64);
-            this.lbFolderBackup.Name = "lbFolderBackup";
-            this.lbFolderBackup.Size = new System.Drawing.Size(99, 16);
-            this.lbFolderBackup.TabIndex = 16;
-            this.lbFolderBackup.Text = "Folder Backup:";
-            this.lbFolderBackup.UseMnemonic = false;
-            // 
-            // backupToolStripMenuItem
-            // 
-            this.backupToolStripMenuItem.Name = "backupToolStripMenuItem";
-            this.backupToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.backupToolStripMenuItem.Text = "Backup";
             // 
             // frmDatabaseList
             // 
@@ -372,6 +369,8 @@
         private System.Windows.Forms.Label lbFolderPath;
         private System.Windows.Forms.Button btnShowScript;
         private System.Windows.Forms.Button btnBackUp;
+        private System.Windows.Forms.Label lbFolderBackup;
+        private System.Windows.Forms.ToolStripMenuItem backupToolStripMenuItem;
         private System.Windows.Forms.DataGridViewCheckBoxColumn UpdateChoice;
         private System.Windows.Forms.DataGridViewTextBoxColumn DataSource;
         private System.Windows.Forms.DataGridViewTextBoxColumn Catalog;
@@ -380,7 +379,5 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn DomainName;
         private System.Windows.Forms.DataGridViewTextBoxColumn BrandName;
-        private System.Windows.Forms.Label lbFolderBackup;
-        private System.Windows.Forms.ToolStripMenuItem backupToolStripMenuItem;
     }
 }
