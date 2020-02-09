@@ -14,5 +14,8 @@
     <Setting Name="test_login" Type="System.String" Scope="User">
       <Value Profile="(Default)">HUNGTRAN::sa:svdhnt2010</Value>
     </Setting>
+    <Setting Name="maxTask" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">5</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

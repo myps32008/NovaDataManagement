@@ -6,8 +6,7 @@ namespace NovaDataManagement
 {
     public partial class frmActionState : Form
     {
-        public List<Result> results;
-        public List<Result> ActionResults { get; set; }
+        public List<Result> results;        
         public DataGridView StateList
         {
             get { return dgvStateList; }
@@ -15,10 +14,10 @@ namespace NovaDataManagement
         public frmActionState(List<Result> listResult)
         {
             InitializeComponent();
-            ActionResults = listResult;
+            results = listResult;
             dgvStateList.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             dgvStateList.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-            dgvStateList.DataSource = listResult;
+            dgvStateList.DataSource = results;
             dgvStateList.Columns["Query"].Visible = false;
         }
 

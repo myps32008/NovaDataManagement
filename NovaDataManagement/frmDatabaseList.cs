@@ -7,19 +7,25 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace NovaDataManagement
 {
 	public partial class frmDatabaseList : Form
 	{
+		private string frm_pathBak;
+		private string frm_pathFolder;
+		private int success;
+		private int fail;
+		private int progress;
 		private InfoLogin infoLogin;
 		private List<Script> frm_listScript;
 		private List<Result> frm_resultList;
-		private string frm_pathBak;
-		private string frm_pathFolder;
 		private frmActionState frm_actionSate;
+		private List<InfoDB> listDBFind;
 		//Server=myServerName\myInstanceName;Database=myDataBase;
 		private static string[] attConnect = { "Server=", ";Database=", ";User ID=", ";Password="};
 		public frmDatabaseList(InfoLogin info)
@@ -41,7 +47,7 @@ namespace NovaDataManagement
 				Directory.CreateDirectory(frm_pathBak);
 			}
 			lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
-			lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
+			lbFolderPath.Text = "Folder Path: " + frm_pathFolder;			
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e)
@@ -149,6 +155,43 @@ namespace NovaDataManagement
 		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
 		{
 
+		}
+		private void btnResult_Click(object sender, EventArgs e)
+		{
+			ShowFrmActionState(frm_resultList);
+		}
+
+		private void Find_txt_TextChanged(object sender, EventArgs e)
+		{
+			IEnumerable<InfoDB> findResult;
+			Regex regex = new Regex(Find_txt.Text);
+			if (!Find_txt.Equals(""))
+			{
+				switch (cmbFind.SelectedIndex)
+				{
+					case 0:
+						findResult = listDBFind.Where(item => regex.IsMatch(item.DataSource));
+						break;
+					case 1:
+						findResult = listDBFind.Where(item => regex.IsMatch(item.Catalog));
+						break;
+					case 2:
+						findResult = listDBFind.Where(item => regex.IsMatch(item.CreatedDate));
+						break;
+					case 3:
+						findResult = listDBFind.Where(item => regex.IsMatch(item.DomainName));
+						break;
+					case 4:
+						findResult = listDBFind.Where(item => regex.IsMatch(item.BrandName));
+						break;
+					default:
+						findResult = listDBFind;
+						break;
+				}
+				gvDBList.DataSource = findResult.ToList();
+			}
+			else
+				gvDBList.DataSource = listDBFind;
 		}
 		#endregion
 
@@ -266,7 +309,8 @@ namespace NovaDataManagement
 		}
 		private void frm_GetListDB()
 		{
-			gvDBList.DataSource = GetDBs(infoLogin);
+			listDBFind = GetDBs(infoLogin);
+			gvDBList.DataSource = listDBFind;
 		}
 		//Upgrade
 		private void UpgradeDB(InfoDB db)
@@ -275,7 +319,7 @@ namespace NovaDataManagement
 									attConnect[1] + db.Catalog +
 									attConnect[2] + db.User +
 									attConnect[3] + db.Password;
-
+			progress++;
 			using (SqlConnection connection = new SqlConnection(connectString))
 			{
 				//Back up
@@ -304,6 +348,7 @@ namespace NovaDataManagement
 							frm_resultList.Add(new Result(resultBackUp, stateScript, db));
 							server.ConnectionContext.RollBackTransaction();
 							stateUpgrade = false;
+							fail++;
 							break;
 						}
 					}
@@ -311,29 +356,47 @@ namespace NovaDataManagement
 					{
 						server.ConnectionContext.CommitTransaction();
 						frm_resultList.Add(new Result(db));
+						success++;
 					}
 				}
 				else
 				{
 					frm_resultList.Add(new Result(resultBackUp, db));
-				}
-				frm_actionSate.StateList.DataSource = frm_resultList;
+					fail++;
+				}				
 			}
 		}
 		private void frm_Upgrade()
 		{
 			IEnumerable<InfoDB> listUpgrade = ListUseDB();
-			frm_resultList = new List<Result>();			
+			frm_resultList = new List<Result>();
+			int maxTask = Properties.Settings.Default.maxTask;
+			int totalWork = listUpgrade.Count();
+			ResetWorkingState(totalWork);
 			if (frm_listScript.Count > 0)
-			{				
-				foreach (InfoDB item in listUpgrade)
+			{
+				Task stateWork = new Task(() => DisplayState(totalWork));
+				stateWork.Start();
+				using(SemaphoreSlim semaphore = new SemaphoreSlim(maxTask))
 				{
-					var db = item;
-					Thread worker = new Thread(()=>UpgradeDB(db));
-					worker.Start();
-					//UpgradeDB(item);
-				}
-				ShowFrmActionState(frm_resultList);
+					foreach (InfoDB item in listUpgrade)
+					{
+						semaphore.Wait();
+						var db = item;
+						Task.Factory.StartNew(() =>
+						{
+							try
+							{
+								UpgradeDB(db);
+							}
+							finally
+							{
+								semaphore.Release();
+							}
+						});						
+						
+					}
+				}							
 				return;
 			}
 			MessageBox.Show("Do not have Script");
@@ -368,6 +431,33 @@ namespace NovaDataManagement
 			frm_actionSate = new frmActionState(resultAction);
 			frm_actionSate.Show();
 		}
+		private void ResetWorkingState(int totalWork)
+		{
+			progressWork.Maximum = totalWork;
+			fail = 0;
+			success = 0;
+			progress = 0;
+			lbStatAction.Text = "Running...";			
+			lbSuccess.Text = "Success: 0";
+			lbFail.Text = "Fail: 0";
+		}
+		private void DisplayState(int totalWork)
+		{
+			while ((fail + success) < totalWork)
+			{
+				Thread.Sleep(100);
+				lbSuccess.Text = "Success: " + success;
+				lbFail.Text = "Fail: " + fail;
+				lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
+				progressWork.Value = progress;
+			}
+			lbSuccess.Text = "Success: " + success;
+			lbFail.Text = "Fail: " + fail;
+			lbStatAction.Text = "Done";
+			lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
+			progressWork.Value = progress;
+			MessageBox.Show("Công việc hoàn tất.");
+		}		
 		#endregion
 	}
 }

@@ -193,12 +193,6 @@
       <DependentUpon>frmActionState.cs</DependentUpon>
     </Compile>
     <Compile Include="Result.cs" />
-    <Compile Include="frmShowScript.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmShowScript.Designer.cs">
-      <DependentUpon>frmShowScript.cs</DependentUpon>
-    </Compile>
     <Compile Include="Script.cs" />
     <Compile Include="frmDatabaseList.cs">
       <SubType>Form</SubType>
@@ -234,9 +228,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmShowScript.resx">
-      <DependentUpon>frmShowScript.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

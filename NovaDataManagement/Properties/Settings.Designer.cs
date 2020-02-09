@@ -67,5 +67,17 @@ namespace NovaDataManagement.Properties {
                 this["test_login"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("5")]
+        public int maxTask {
+            get {
+                return ((int)(this["maxTask"]));
+            }
+            set {
+                this["maxTask"] = value;
+            }
+        }
     }
 }
