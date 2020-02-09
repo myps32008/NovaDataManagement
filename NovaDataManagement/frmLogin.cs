@@ -21,26 +21,33 @@ namespace NovaDataManagement
         #region "Event"
         private void btnAccept_Click(object sender, EventArgs e)
         {
-            bool IsValiate = true;            
-            if (IsValiate)
-            {
-                
-                InfoLogin info = new InfoLogin(this.Machine_txt.Text,
-                                          "", //this.InstanceSv.SelectedItem.ToString()
-                                          this.User_text.Text,
-                                          this.Password_txt.Text);
+            bool validate = !(Machine_txt.Text.Equals("") && User_text.Text.Equals("") && Password_txt.Text.Equals(""));
+            if (validate)
+            {                
+                InfoLogin info = new InfoLogin(Machine_txt.Text, Instance_txt.Text, User_text.Text, Password_txt.Text);
                 try
                 {
                     frmDatabaseList frm = new frmDatabaseList(info);
-                    frm.MdiParent = this.Owner;
-                    this.DialogResult = DialogResult.OK;
+                    frm.MdiParent = Owner;
+                    DialogResult = DialogResult.OK;
                     frm.WindowState = FormWindowState.Maximized;
                     frm.Show();
                 }
                 catch (Exception eb)
                 {
-                    MessageBox.Show("Login failed: " + eb.Message);
-                }                
+                    MessageBox.Show("Login failed: " + eb.Message);                    
+                }
+                if (rbtnTestAcc.Checked && cbxSave.Checked)
+                {
+                    string saveAcc = String.Format("{0}:{1}:{2}:{3}",
+                                Machine_txt.Text, Instance_txt.Text, User_text.Text, Password_txt.Text);
+                    Properties.Settings.Default.test_login = saveAcc;
+                    Properties.Settings.Default.Save();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Vui lòng điền đủ thông tin đăng nhập");
             }            
         }
         private void Machine_txt_Leave(object sender, EventArgs e)
@@ -56,24 +63,35 @@ namespace NovaDataManagement
                 //foreach (DataRow row in table.Rows)
                 //{
                 //    InstanceSv.Items.Add(row["InstanceName"].ToString());
-                //}
-                Machine_txt.Text = "HUNGTRAN";
-                InstanceSv.Items.Add("MSSQLSERVER");
-                User_text.Text = "sa";
-                Password_txt.Text = "svdhnt2010";
+                //}                
             }
             catch (Exception ex)
             {
                 throw ex;
             }
         }
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void rbtnTestAcc_CheckedChanged(object sender, EventArgs e)
+        {
+            string[] testAcc = Properties.Settings.Default.test_login.Split(':');
+            Machine_txt.Text = testAcc[0];
+            Instance_txt.Text = testAcc[1];
+            User_text.Text = testAcc[2];
+            Password_txt.Text = testAcc[3];
+        }
+
+        private void rbtnWork_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
         #endregion
 
         #region "Function"
-        private void CheckLogin()
-        {
-            bool check = Machine_txt.Text == null ;
-        }
+
         #endregion
     }
 }

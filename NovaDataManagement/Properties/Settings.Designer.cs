@@ -23,9 +23,18 @@ namespace NovaDataManagement.Properties {
             }
         }
         
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("CRM_Domain_Monitoring")]
+        public string default_monitoring_dbname {
+            get {
+                return ((string)(this["default_monitoring_dbname"]));
+            }
+        }
+        
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Backup")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Backup")]
         public string default_script_directory {
             get {
                 return ((string)(this["default_script_directory"]));
@@ -37,7 +46,7 @@ namespace NovaDataManagement.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("D:\\Backup")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Backup")]
         public string default_backup_directory {
             get {
                 return ((string)(this["default_backup_directory"]));
@@ -47,12 +56,15 @@ namespace NovaDataManagement.Properties {
             }
         }
         
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("CRM_Domain_Monitoring")]
-        public string default_monitoring_dbname {
+        [global::System.Configuration.DefaultSettingValueAttribute("HUNGTRAN::sa:svdhnt2010")]
+        public string test_login {
             get {
-                return ((string)(this["default_monitoring_dbname"]));
+                return ((string)(this["test_login"]));
+            }
+            set {
+                this["test_login"] = value;
             }
         }
     }

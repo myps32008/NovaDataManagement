@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace NovaDataManagement
@@ -20,10 +21,7 @@ namespace NovaDataManagement
 		private string frm_pathFolder;
 		private frmActionState frm_actionSate;
 		//Server=myServerName\myInstanceName;Database=myDataBase;
-		private static string[] attConnect = {  "Server=",
-												";Database=" ,
-												";User ID=",
-												";Password="};
+		private static string[] attConnect = { "Server=", ";Database=", ";User ID=", ";Password="};
 		public frmDatabaseList(InfoLogin info)
 		{
 			InitializeComponent();
@@ -42,8 +40,8 @@ namespace NovaDataManagement
 			{
 				Directory.CreateDirectory(frm_pathBak);
 			}
-			this.lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
-			this.lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
+			lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
+			lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e)
@@ -60,7 +58,7 @@ namespace NovaDataManagement
 		private void btnClearListScript_Click(object sender, EventArgs e)
 		{
 			frm_listScript = new List<Script>();
-			this.lbFolderPath.Text = "Folder Path:";
+			lbFolderPath.Text = "Folder Path:";
 		}
 		private void btnAddFolder_Click(object sender, EventArgs e)
 		{
@@ -74,7 +72,7 @@ namespace NovaDataManagement
 					frm_pathFolder = folderBrowser.SelectedPath;
 					Properties.Settings.Default.default_script_directory = frm_pathFolder;
 					Properties.Settings.Default.Save();
-					this.lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
+					lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
 					AddFolder(frm_pathFolder);
 				}
 			}
@@ -99,7 +97,7 @@ namespace NovaDataManagement
 						Properties.Settings.Default.default_backup_directory = frm_pathFolder;
 						Properties.Settings.Default.Save();
 						GetScript(filesName);
-						this.lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
+						lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
 					}
 				}
 			}
@@ -246,7 +244,6 @@ namespace NovaDataManagement
 						WHERE S.ID = DS.storageid AND d.ID = ds.domainid AND s.[user] = '{1}'; ", monitoring_db, infoLogin.User);
 				using (SqlCommand cmd = new SqlCommand(query, con))
 				{
-
 					using (SqlDataReader dbList = cmd.ExecuteReader())
 					{
 						while (dbList.Read())
@@ -269,7 +266,7 @@ namespace NovaDataManagement
 		}
 		private void frm_GetListDB()
 		{
-			this.gvDBList.DataSource = GetDBs(infoLogin);
+			gvDBList.DataSource = GetDBs(infoLogin);
 		}
 		//Upgrade
 		private void UpgradeDB(InfoDB db)
@@ -320,30 +317,32 @@ namespace NovaDataManagement
 				{
 					frm_resultList.Add(new Result(resultBackUp, db));
 				}
+				frm_actionSate.StateList.DataSource = frm_resultList;
 			}
 		}
-		private bool frm_Upgrade()
+		private void frm_Upgrade()
 		{
 			IEnumerable<InfoDB> listUpgrade = ListUseDB();
-			frm_resultList = new List<Result>();
+			frm_resultList = new List<Result>();			
 			if (frm_listScript.Count > 0)
-			{
+			{				
 				foreach (InfoDB item in listUpgrade)
 				{
-					UpgradeDB(item);
+					var db = item;
+					Thread worker = new Thread(()=>UpgradeDB(db));
+					worker.Start();
+					//UpgradeDB(item);
 				}
 				ShowFrmActionState(frm_resultList);
-				return true;
+				return;
 			}
 			MessageBox.Show("Do not have Script");
-			return false;
 		}
 		private string BackUp(SqlConnection connection, string dbName)
 		{
 			string time = DateTime.Now.ToString("_ddmmyyyy_hhmm");
 			string filePath = frm_pathBak + @"\" + dbName + time + ".bak";
 			string testQuery = "BACKUP DATABASE " + dbName + " TO DISK = '" + filePath + "'";
-
 			using (SqlCommand command = new SqlCommand(testQuery, connection))
 			{
 				command.CommandTimeout = 60 * 60;

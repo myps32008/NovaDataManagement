@@ -33,13 +33,16 @@
             this.lbPass = new System.Windows.Forms.Label();
             this.btnCancel = new System.Windows.Forms.Button();
             this.btnAccept = new System.Windows.Forms.Button();
-            this.InstanceSv = new System.Windows.Forms.ComboBox();
             this.Password_txt = new System.Windows.Forms.TextBox();
             this.User_text = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.Machine_txt = new System.Windows.Forms.TextBox();
             this.lbMachine = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.rbtnTestAcc = new System.Windows.Forms.RadioButton();
+            this.rbtnWork = new System.Windows.Forms.RadioButton();
+            this.Instance_txt = new System.Windows.Forms.TextBox();
+            this.cbxSave = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
@@ -81,19 +84,20 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(304, 224);
+            this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.btnCancel.Location = new System.Drawing.Point(299, 224);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(70, 25);
             this.btnCancel.TabIndex = 10;
             this.btnCancel.Text = "Hủy";
             this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
             // 
             // btnAccept
             // 
             this.btnAccept.BackColor = System.Drawing.Color.Transparent;
-            this.btnAccept.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnAccept.Location = new System.Drawing.Point(224, 224);
+            this.btnAccept.Location = new System.Drawing.Point(225, 224);
             this.btnAccept.Margin = new System.Windows.Forms.Padding(2);
             this.btnAccept.Name = "btnAccept";
             this.btnAccept.Size = new System.Drawing.Size(70, 25);
@@ -101,16 +105,6 @@
             this.btnAccept.Text = "Đồng ý";
             this.btnAccept.UseVisualStyleBackColor = false;
             this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
-            // 
-            // InstanceSv
-            // 
-            this.InstanceSv.Font = new System.Drawing.Font("Georgia", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.InstanceSv.FormattingEnabled = true;
-            this.InstanceSv.Location = new System.Drawing.Point(102, 46);
-            this.InstanceSv.Margin = new System.Windows.Forms.Padding(2);
-            this.InstanceSv.Name = "InstanceSv";
-            this.InstanceSv.Size = new System.Drawing.Size(259, 25);
-            this.InstanceSv.TabIndex = 5;
             // 
             // Password_txt
             // 
@@ -133,9 +127,9 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.Instance_txt);
             this.panel1.Controls.Add(this.Machine_txt);
             this.panel1.Controls.Add(this.lbMachine);
-            this.panel1.Controls.Add(this.InstanceSv);
             this.panel1.Controls.Add(this.Password_txt);
             this.panel1.Controls.Add(this.lbServer);
             this.panel1.Controls.Add(this.User_text);
@@ -178,6 +172,47 @@
             this.pictureBox1.TabIndex = 12;
             this.pictureBox1.TabStop = false;
             // 
+            // rbtnTestAcc
+            // 
+            this.rbtnTestAcc.AutoSize = true;
+            this.rbtnTestAcc.Location = new System.Drawing.Point(145, 50);
+            this.rbtnTestAcc.Name = "rbtnTestAcc";
+            this.rbtnTestAcc.Size = new System.Drawing.Size(46, 17);
+            this.rbtnTestAcc.TabIndex = 13;
+            this.rbtnTestAcc.Text = "Test";
+            this.rbtnTestAcc.UseVisualStyleBackColor = true;
+            this.rbtnTestAcc.CheckedChanged += new System.EventHandler(this.rbtnTestAcc_CheckedChanged);
+            // 
+            // rbtnWork
+            // 
+            this.rbtnWork.AutoSize = true;
+            this.rbtnWork.Location = new System.Drawing.Point(197, 50);
+            this.rbtnWork.Name = "rbtnWork";
+            this.rbtnWork.Size = new System.Drawing.Size(51, 17);
+            this.rbtnWork.TabIndex = 14;
+            this.rbtnWork.Text = "Work";
+            this.rbtnWork.UseVisualStyleBackColor = true;
+            this.rbtnWork.CheckedChanged += new System.EventHandler(this.rbtnWork_CheckedChanged);
+            // 
+            // Instance_txt
+            // 
+            this.Instance_txt.Font = new System.Drawing.Font("Georgia", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Instance_txt.Location = new System.Drawing.Point(102, 46);
+            this.Instance_txt.Margin = new System.Windows.Forms.Padding(2);
+            this.Instance_txt.Name = "Instance_txt";
+            this.Instance_txt.Size = new System.Drawing.Size(259, 23);
+            this.Instance_txt.TabIndex = 10;
+            // 
+            // cbxSave
+            // 
+            this.cbxSave.AutoSize = true;
+            this.cbxSave.Location = new System.Drawing.Point(177, 229);
+            this.cbxSave.Name = "cbxSave";
+            this.cbxSave.Size = new System.Drawing.Size(44, 17);
+            this.cbxSave.TabIndex = 15;
+            this.cbxSave.Text = "Lưu";
+            this.cbxSave.UseVisualStyleBackColor = true;
+            // 
             // frmLogin
             // 
             this.AcceptButton = this.btnAccept;
@@ -185,6 +220,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(384, 261);
+            this.Controls.Add(this.cbxSave);
+            this.Controls.Add(this.rbtnWork);
+            this.Controls.Add(this.rbtnTestAcc);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnAccept);
@@ -194,12 +232,12 @@
             this.Name = "frmLogin";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Login";
             this.Load += new System.EventHandler(this.frmLogin_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -210,12 +248,15 @@
         private System.Windows.Forms.Label lbPass;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Button btnAccept;
-        private System.Windows.Forms.ComboBox InstanceSv;
         private System.Windows.Forms.TextBox Password_txt;
         private System.Windows.Forms.TextBox User_text;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox Machine_txt;
         private System.Windows.Forms.Label lbMachine;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.RadioButton rbtnTestAcc;
+        private System.Windows.Forms.RadioButton rbtnWork;
+        private System.Windows.Forms.TextBox Instance_txt;
+        private System.Windows.Forms.CheckBox cbxSave;
     }
 }
