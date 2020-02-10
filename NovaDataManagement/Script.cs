@@ -11,11 +11,7 @@
             {
                 if (updateState == null)
                 {
-                    return updateState;
-                }
-                else if (updateState.Equals(""))
-                {
-                    return "Upgrade Success";
+                   return "Upgrade Success";
                 }
                 return this.updateState; 
             }

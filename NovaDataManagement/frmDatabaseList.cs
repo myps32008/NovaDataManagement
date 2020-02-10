@@ -47,7 +47,8 @@ namespace NovaDataManagement
 				Directory.CreateDirectory(frm_pathBak);
 			}
 			lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
-			lbFolderPath.Text = "Folder Path: " + frm_pathFolder;			
+			lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
+			pLoading.Visible = false;
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e)
@@ -59,14 +60,7 @@ namespace NovaDataManagement
 		{
 			frm_GetListDB();
 		}
-		//Add/Clear Script
-		#region "Handle Script"
-		private void btnClearListScript_Click(object sender, EventArgs e)
-		{
-			frm_listScript = new List<Script>();
-			lbFolderPath.Text = "Folder Path:";
-		}
-		private void btnAddFolder_Click(object sender, EventArgs e)
+		private void tsmbAddFolder_Click(object sender, EventArgs e)
 		{
 			FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
 			folderBrowser.SelectedPath = frm_pathFolder;
@@ -84,7 +78,7 @@ namespace NovaDataManagement
 			}
 			catch (Exception ex) { throw ex; }
 		}
-		private void btnGetFile_Click(object sender, EventArgs e)
+		private void tsmbAddScript_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog openFile = new OpenFileDialog();
 			openFile.InitialDirectory = frm_pathFolder;
@@ -112,7 +106,29 @@ namespace NovaDataManagement
 				throw ex;
 			}
 		}
-		private void btnBackUp_Click(object sender, EventArgs e)
+		//Right Click event in Form
+		#region "Right click"
+		private void upgradeDBToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			frm_Upgrade();
+		}
+
+		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				frm_GetListDB();
+			}
+			catch (Exception ex) { throw ex; }
+		}
+		
+
+		private void cmsClearScript_Click(object sender, EventArgs e)
+		{
+			frm_listScript = new List<Script>();
+			lbFolderPath.Text = "Folder Path:";
+		}
+		private void tsmbBackup_Click(object sender, EventArgs e)
 		{
 			frm_resultList = new List<Result>();
 			try
@@ -134,33 +150,6 @@ namespace NovaDataManagement
 			}
 			catch (Exception ex) { throw ex; }
 		}
-		#endregion
-
-		//Right Click event in Form
-		#region "Right click"
-		private void upgradeDBToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			frm_Upgrade();
-		}
-
-		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			try
-			{
-				frm_GetListDB();
-			}
-			catch (Exception ex) { throw ex; }
-		}
-
-		private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-
-		}
-		private void btnResult_Click(object sender, EventArgs e)
-		{
-			ShowFrmActionState(frm_resultList);
-		}
-
 		private void Find_txt_TextChanged(object sender, EventArgs e)
 		{
 			IEnumerable<InfoDB> findResult;
@@ -375,35 +364,19 @@ namespace NovaDataManagement
 			ResetWorkingState(totalWork);
 			if (frm_listScript.Count > 0)
 			{
-				Task stateWork = new Task(() => DisplayState(totalWork));
-				stateWork.Start();
-				using(SemaphoreSlim semaphore = new SemaphoreSlim(maxTask))
+				foreach (InfoDB item in listUpgrade)
 				{
-					foreach (InfoDB item in listUpgrade)
-					{
-						semaphore.Wait();
-						var db = item;
-						Task.Factory.StartNew(() =>
-						{
-							try
-							{
-								UpgradeDB(db);
-							}
-							finally
-							{
-								semaphore.Release();
-							}
-						});						
-						
-					}
-				}							
+					UpgradeDB(item);
+				}
+				DisplayState(totalWork);
+				ShowFrmActionState(frm_resultList);
 				return;
 			}
 			MessageBox.Show("Do not have Script");
 		}
 		private string BackUp(SqlConnection connection, string dbName)
 		{
-			string time = DateTime.Now.ToString("_ddmmyyyy_hhmm");
+			string time = DateTime.Now.ToString("_ddMMyyyy_hhmm");
 			string filePath = frm_pathBak + @"\" + dbName + time + ".bak";
 			string testQuery = "BACKUP DATABASE " + dbName + " TO DISK = '" + filePath + "'";
 			using (SqlCommand command = new SqlCommand(testQuery, connection))
@@ -422,7 +395,7 @@ namespace NovaDataManagement
 		}
 		private IEnumerable<InfoDB> ListUseDB()
 		{
-			List<InfoDB> listUseDB = gvDBList.DataSource as List<InfoDB>;
+			List<InfoDB> listUseDB = gvDBList.DataSource as List<InfoDB>;			
 			var listUse = listUseDB.Where(sDB => sDB.UpdateChoice == true);
 			return listUse;
 		}
@@ -433,13 +406,13 @@ namespace NovaDataManagement
 		}
 		private void ResetWorkingState(int totalWork)
 		{
-			progressWork.Maximum = totalWork;
 			fail = 0;
 			success = 0;
 			progress = 0;
 			lbStatAction.Text = "Running...";			
 			lbSuccess.Text = "Success: 0";
 			lbFail.Text = "Fail: 0";
+			pLoading.Visible = true;
 		}
 		private void DisplayState(int totalWork)
 		{
@@ -449,15 +422,16 @@ namespace NovaDataManagement
 				lbSuccess.Text = "Success: " + success;
 				lbFail.Text = "Fail: " + fail;
 				lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
-				progressWork.Value = progress;
 			}
 			lbSuccess.Text = "Success: " + success;
 			lbFail.Text = "Fail: " + fail;
 			lbStatAction.Text = "Done";
 			lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
-			progressWork.Value = progress;
+			pLoading.Visible = false;
 			MessageBox.Show("Công việc hoàn tất.");
-		}		
+		}
+
 		#endregion
+
 	}
 }

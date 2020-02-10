@@ -35,21 +35,14 @@
             this.btnUpgrade = new System.Windows.Forms.ToolStripButton();
             this.toolRefresh = new System.Windows.Forms.ToolStripButton();
             this.btnHelp = new System.Windows.Forms.ToolStripButton();
-            this.btnAddScript = new System.Windows.Forms.Button();
-            this.btnClearScript = new System.Windows.Forms.Button();
-            this.btnAddFolder = new System.Windows.Forms.Button();
             this.pnlHeader = new System.Windows.Forms.Panel();
             this.cmbFind = new System.Windows.Forms.ComboBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lbFindBy = new System.Windows.Forms.Label();
             this.Find_txt = new System.Windows.Forms.TextBox();
-            this.btnResult = new System.Windows.Forms.Button();
             this.lbFolderBackup = new System.Windows.Forms.Label();
-            this.btnBackUp = new System.Windows.Forms.Button();
-            this.btnShowScript = new System.Windows.Forms.Button();
             this.lbFolderPath = new System.Windows.Forms.Label();
             this.pnlFooter = new System.Windows.Forms.Panel();
             this.lbFail = new System.Windows.Forms.Label();
-            this.progressWork = new System.Windows.Forms.ProgressBar();
             this.lbStatAction = new System.Windows.Forms.Label();
             this.lbSuccess = new System.Windows.Forms.Label();
             this.mnsToolBarUpgrade = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -65,18 +58,24 @@
             this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.pLoading = new System.Windows.Forms.PictureBox();
+            this.tsmbAddScript = new System.Windows.Forms.ToolStripButton();
+            this.tsmbAddFolder = new System.Windows.Forms.ToolStripButton();
+            this.tsmbBackup = new System.Windows.Forms.ToolStripButton();
+            this.cmsClearScript = new System.Windows.Forms.ToolStripMenuItem();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
             this.mnsToolBarUpgrade.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gvDBList)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).BeginInit();
             this.SuspendLayout();
             // 
             // lbTotalWork
             // 
             this.lbTotalWork.AutoSize = true;
             this.lbTotalWork.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbTotalWork.Location = new System.Drawing.Point(366, 10);
+            this.lbTotalWork.Location = new System.Drawing.Point(200, 8);
             this.lbTotalWork.Name = "lbTotalWork";
             this.lbTotalWork.Size = new System.Drawing.Size(97, 20);
             this.lbTotalWork.TabIndex = 4;
@@ -87,6 +86,9 @@
             this.toolbarDatabaseList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnUpgrade,
             this.toolRefresh,
+            this.tsmbAddFolder,
+            this.tsmbAddScript,
+            this.tsmbBackup,
             this.btnHelp});
             this.toolbarDatabaseList.Location = new System.Drawing.Point(0, 0);
             this.toolbarDatabaseList.Name = "toolbarDatabaseList";
@@ -121,49 +123,13 @@
             this.btnHelp.Size = new System.Drawing.Size(52, 22);
             this.btnHelp.Text = "Help";
             // 
-            // btnAddScript
-            // 
-            this.btnAddScript.Location = new System.Drawing.Point(114, 8);
-            this.btnAddScript.Name = "btnAddScript";
-            this.btnAddScript.Size = new System.Drawing.Size(100, 23);
-            this.btnAddScript.TabIndex = 7;
-            this.btnAddScript.Text = "Add script";
-            this.btnAddScript.UseVisualStyleBackColor = true;
-            this.btnAddScript.Click += new System.EventHandler(this.btnGetFile_Click);
-            // 
-            // btnClearScript
-            // 
-            this.btnClearScript.Location = new System.Drawing.Point(220, 8);
-            this.btnClearScript.Name = "btnClearScript";
-            this.btnClearScript.Size = new System.Drawing.Size(100, 23);
-            this.btnClearScript.TabIndex = 10;
-            this.btnClearScript.Text = "Clear script";
-            this.btnClearScript.UseVisualStyleBackColor = true;
-            this.btnClearScript.Click += new System.EventHandler(this.btnClearListScript_Click);
-            // 
-            // btnAddFolder
-            // 
-            this.btnAddFolder.Location = new System.Drawing.Point(8, 8);
-            this.btnAddFolder.Name = "btnAddFolder";
-            this.btnAddFolder.Size = new System.Drawing.Size(100, 23);
-            this.btnAddFolder.TabIndex = 11;
-            this.btnAddFolder.Text = "Add Folder";
-            this.btnAddFolder.UseVisualStyleBackColor = true;
-            this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
-            // 
             // pnlHeader
             // 
             this.pnlHeader.Controls.Add(this.cmbFind);
-            this.pnlHeader.Controls.Add(this.label1);
+            this.pnlHeader.Controls.Add(this.lbFindBy);
             this.pnlHeader.Controls.Add(this.Find_txt);
-            this.pnlHeader.Controls.Add(this.btnResult);
             this.pnlHeader.Controls.Add(this.lbFolderBackup);
-            this.pnlHeader.Controls.Add(this.btnBackUp);
-            this.pnlHeader.Controls.Add(this.btnShowScript);
             this.pnlHeader.Controls.Add(this.lbFolderPath);
-            this.pnlHeader.Controls.Add(this.btnClearScript);
-            this.pnlHeader.Controls.Add(this.btnAddFolder);
-            this.pnlHeader.Controls.Add(this.btnAddScript);
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 25);
             this.pnlHeader.Name = "pnlHeader";
@@ -179,74 +145,45 @@
             "Created Date",
             "Domain Name",
             "Brand Name"});
-            this.cmbFind.Location = new System.Drawing.Point(220, 46);
+            this.cmbFind.Location = new System.Drawing.Point(104, 24);
             this.cmbFind.Name = "cmbFind";
             this.cmbFind.Size = new System.Drawing.Size(100, 21);
             this.cmbFind.TabIndex = 21;
             // 
-            // label1
+            // lbFindBy
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(165, 49);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(49, 15);
-            this.label1.TabIndex = 19;
-            this.label1.Text = "Find by:";
+            this.lbFindBy.AutoSize = true;
+            this.lbFindBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbFindBy.Location = new System.Drawing.Point(32, 24);
+            this.lbFindBy.Name = "lbFindBy";
+            this.lbFindBy.Size = new System.Drawing.Size(55, 16);
+            this.lbFindBy.TabIndex = 19;
+            this.lbFindBy.Text = "Find by:";
             // 
             // Find_txt
             // 
-            this.Find_txt.Location = new System.Drawing.Point(326, 47);
+            this.Find_txt.Location = new System.Drawing.Point(208, 24);
             this.Find_txt.Name = "Find_txt";
             this.Find_txt.Size = new System.Drawing.Size(206, 20);
             this.Find_txt.TabIndex = 18;
             this.Find_txt.TextChanged += new System.EventHandler(this.Find_txt_TextChanged);
             // 
-            // btnResult
-            // 
-            this.btnResult.Location = new System.Drawing.Point(8, 45);
-            this.btnResult.Name = "btnResult";
-            this.btnResult.Size = new System.Drawing.Size(100, 23);
-            this.btnResult.TabIndex = 17;
-            this.btnResult.Text = "Result Action";
-            this.btnResult.UseVisualStyleBackColor = true;
-            this.btnResult.Click += new System.EventHandler(this.btnResult_Click);
-            // 
             // lbFolderBackup
             // 
             this.lbFolderBackup.AutoSize = true;
             this.lbFolderBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFolderBackup.Location = new System.Drawing.Point(562, 48);
+            this.lbFolderBackup.Location = new System.Drawing.Point(520, 8);
             this.lbFolderBackup.Name = "lbFolderBackup";
             this.lbFolderBackup.Size = new System.Drawing.Size(99, 16);
             this.lbFolderBackup.TabIndex = 16;
             this.lbFolderBackup.Text = "Folder Backup:";
             this.lbFolderBackup.UseMnemonic = false;
             // 
-            // btnBackUp
-            // 
-            this.btnBackUp.Location = new System.Drawing.Point(432, 8);
-            this.btnBackUp.Name = "btnBackUp";
-            this.btnBackUp.Size = new System.Drawing.Size(100, 23);
-            this.btnBackUp.TabIndex = 15;
-            this.btnBackUp.Text = "BackUp";
-            this.btnBackUp.UseVisualStyleBackColor = true;
-            this.btnBackUp.Click += new System.EventHandler(this.btnBackUp_Click);
-            // 
-            // btnShowScript
-            // 
-            this.btnShowScript.Location = new System.Drawing.Point(326, 8);
-            this.btnShowScript.Name = "btnShowScript";
-            this.btnShowScript.Size = new System.Drawing.Size(100, 23);
-            this.btnShowScript.TabIndex = 14;
-            this.btnShowScript.Text = "Show script";
-            this.btnShowScript.UseVisualStyleBackColor = true;
-            // 
             // lbFolderPath
             // 
             this.lbFolderPath.AutoSize = true;
             this.lbFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFolderPath.Location = new System.Drawing.Point(562, 11);
+            this.lbFolderPath.Location = new System.Drawing.Point(16, 8);
             this.lbFolderPath.Name = "lbFolderPath";
             this.lbFolderPath.Size = new System.Drawing.Size(80, 16);
             this.lbFolderPath.TabIndex = 13;
@@ -254,8 +191,8 @@
             // 
             // pnlFooter
             // 
+            this.pnlFooter.Controls.Add(this.pLoading);
             this.pnlFooter.Controls.Add(this.lbFail);
-            this.pnlFooter.Controls.Add(this.progressWork);
             this.pnlFooter.Controls.Add(this.lbStatAction);
             this.pnlFooter.Controls.Add(this.lbSuccess);
             this.pnlFooter.Controls.Add(this.lbTotalWork);
@@ -269,18 +206,11 @@
             // 
             this.lbFail.AutoSize = true;
             this.lbFail.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFail.Location = new System.Drawing.Point(633, 11);
+            this.lbFail.Location = new System.Drawing.Point(472, 8);
             this.lbFail.Name = "lbFail";
             this.lbFail.Size = new System.Drawing.Size(56, 20);
             this.lbFail.TabIndex = 8;
             this.lbFail.Text = "Failed:";
-            // 
-            // progressWork
-            // 
-            this.progressWork.Location = new System.Drawing.Point(131, 9);
-            this.progressWork.Name = "progressWork";
-            this.progressWork.Size = new System.Drawing.Size(211, 23);
-            this.progressWork.TabIndex = 7;
             // 
             // lbStatAction
             // 
@@ -296,7 +226,7 @@
             // 
             this.lbSuccess.AutoSize = true;
             this.lbSuccess.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbSuccess.Location = new System.Drawing.Point(518, 11);
+            this.lbSuccess.Location = new System.Drawing.Point(336, 8);
             this.lbSuccess.Name = "lbSuccess";
             this.lbSuccess.Size = new System.Drawing.Size(74, 20);
             this.lbSuccess.TabIndex = 5;
@@ -307,9 +237,10 @@
             this.mnsToolBarUpgrade.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.upgradeDBToolStripMenuItem,
             this.refreshToolStripMenuItem,
+            this.cmsClearScript,
             this.backupToolStripMenuItem});
             this.mnsToolBarUpgrade.Name = "mnsToolBarUpgrade";
-            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(138, 70);
+            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(138, 92);
             // 
             // upgradeDBToolStripMenuItem
             // 
@@ -418,6 +349,50 @@
             this.BrandName.Name = "BrandName";
             this.BrandName.ReadOnly = true;
             // 
+            // pLoading
+            // 
+            this.pLoading.Image = ((System.Drawing.Image)(resources.GetObject("pLoading.Image")));
+            this.pLoading.Location = new System.Drawing.Point(160, 8);
+            this.pLoading.Name = "pLoading";
+            this.pLoading.Size = new System.Drawing.Size(24, 24);
+            this.pLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pLoading.TabIndex = 9;
+            this.pLoading.TabStop = false;
+            // 
+            // tsmbAddScript
+            // 
+            this.tsmbAddScript.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddScript.Image")));
+            this.tsmbAddScript.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsmbAddScript.Name = "tsmbAddScript";
+            this.tsmbAddScript.Size = new System.Drawing.Size(82, 22);
+            this.tsmbAddScript.Text = "Add Script";
+            this.tsmbAddScript.Click += new System.EventHandler(this.tsmbAddScript_Click);
+            // 
+            // tsmbAddFolder
+            // 
+            this.tsmbAddFolder.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddFolder.Image")));
+            this.tsmbAddFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsmbAddFolder.Name = "tsmbAddFolder";
+            this.tsmbAddFolder.Size = new System.Drawing.Size(85, 22);
+            this.tsmbAddFolder.Text = "Add Folder";
+            this.tsmbAddFolder.Click += new System.EventHandler(this.tsmbAddFolder_Click);
+            // 
+            // tsmbBackup
+            // 
+            this.tsmbBackup.Image = ((System.Drawing.Image)(resources.GetObject("tsmbBackup.Image")));
+            this.tsmbBackup.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsmbBackup.Name = "tsmbBackup";
+            this.tsmbBackup.Size = new System.Drawing.Size(66, 22);
+            this.tsmbBackup.Text = "Backup";
+            this.tsmbBackup.Click += new System.EventHandler(this.tsmbBackup_Click);
+            // 
+            // cmsClearScript
+            // 
+            this.cmsClearScript.Name = "cmsClearScript";
+            this.cmsClearScript.Size = new System.Drawing.Size(137, 22);
+            this.cmsClearScript.Text = "Clear Script";
+            this.cmsClearScript.Click += new System.EventHandler(this.cmsClearScript_Click);
+            // 
             // frmDatabaseList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -441,6 +416,7 @@
             this.pnlFooter.PerformLayout();
             this.mnsToolBarUpgrade.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gvDBList)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -451,10 +427,7 @@
         private System.Windows.Forms.ToolStrip toolbarDatabaseList;
         private System.Windows.Forms.ToolStripButton btnUpgrade;
         private System.Windows.Forms.ToolStripButton btnHelp;
-        private System.Windows.Forms.Button btnAddScript;
         private System.Windows.Forms.ToolStripButton toolRefresh;
-        private System.Windows.Forms.Button btnClearScript;
-        private System.Windows.Forms.Button btnAddFolder;
         private System.Windows.Forms.Panel pnlHeader;
         private System.Windows.Forms.Panel pnlFooter;
         private System.Windows.Forms.ContextMenuStrip mnsToolBarUpgrade;
@@ -462,8 +435,6 @@
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.DataGridView gvDBList;
         private System.Windows.Forms.Label lbFolderPath;
-        private System.Windows.Forms.Button btnShowScript;
-        private System.Windows.Forms.Button btnBackUp;
         private System.Windows.Forms.Label lbFolderBackup;
         private System.Windows.Forms.ToolStripMenuItem backupToolStripMenuItem;
         private System.Windows.Forms.DataGridViewCheckBoxColumn UpdateChoice;
@@ -474,13 +445,16 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn DomainName;
         private System.Windows.Forms.DataGridViewTextBoxColumn BrandName;
-        private System.Windows.Forms.Button btnResult;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lbFindBy;
         private System.Windows.Forms.TextBox Find_txt;
         private System.Windows.Forms.Label lbSuccess;
         private System.Windows.Forms.Label lbStatAction;
-        private System.Windows.Forms.ProgressBar progressWork;
         private System.Windows.Forms.Label lbFail;
         private System.Windows.Forms.ComboBox cmbFind;
+        private System.Windows.Forms.PictureBox pLoading;
+        private System.Windows.Forms.ToolStripButton tsmbAddFolder;
+        private System.Windows.Forms.ToolStripButton tsmbAddScript;
+        private System.Windows.Forms.ToolStripButton tsmbBackup;
+        private System.Windows.Forms.ToolStripMenuItem cmsClearScript;
     }
 }
