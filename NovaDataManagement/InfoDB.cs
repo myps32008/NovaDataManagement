@@ -10,6 +10,7 @@ namespace NovaDataManagement
         public bool UpdateChoice { get; set; }
         public string DataSource { get; set; }
         public string Catalog { get; set; }
+        public string Version { get; set; }
         public string CreatedDate { get; set; }
         public string DomainName { get; set; }
         public string User { get; set; }

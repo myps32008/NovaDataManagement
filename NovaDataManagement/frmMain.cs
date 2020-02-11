@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 
 
@@ -10,6 +11,7 @@ namespace NovaDataManagement
         public frmMain()
         {
             InitializeComponent();
+            Controls.OfType<MdiClient>().FirstOrDefault().BackColor = this.BackColor;
         }
 
         #region "Event"
@@ -46,24 +48,11 @@ namespace NovaDataManagement
 
         #region "Sub/Function"
 
-        private void Login()
+        public void Login()
         {
-            bool isOpen = false;
-            foreach (Form form in Application.OpenForms)
-            {
-                if (form.Text == "Login")
-                {
-                    isOpen = true;
-                    form.Focus();
-                    break;
-                }
-            }
-            if (isOpen == false)
-            {
-                frmLogin frmLog = new frmLogin();
-                frmLog.Owner = this;               
-                frmLog.ShowDialog();
-            }
+            frmLogin frmLog = new frmLogin();
+            frmLog.Owner = this;               
+            frmLog.ShowDialog();            
         }
         #endregion
 

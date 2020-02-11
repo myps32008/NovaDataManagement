@@ -24,9 +24,13 @@ namespace NovaDataManagement
             bool validate = !(Machine_txt.Text.Equals("") && User_text.Text.Equals("") && Password_txt.Text.Equals(""));
             if (validate)
             {                
-                InfoLogin info = new InfoLogin(Machine_txt.Text, Instance_txt.Text, User_text.Text, Password_txt.Text);
+                InfoLogin info = new InfoLogin(Machine_txt.Text, Instance_txt.Text, User_text.Text, Password_txt.Text);                
                 try
                 {
+                    if (!Instance_txt.Text.Equals(""))
+                    {
+                        info.Machine += @"\" + Instance_txt.Text;
+                    }
                     frmDatabaseList frm = new frmDatabaseList(info);
                     frm.MdiParent = Owner;
                     DialogResult = DialogResult.OK;
@@ -43,7 +47,7 @@ namespace NovaDataManagement
                                 Machine_txt.Text, Instance_txt.Text, User_text.Text, Password_txt.Text);
                     Properties.Settings.Default.test_login = saveAcc;
                     Properties.Settings.Default.Save();
-                }
+                }                
             }
             else
             {

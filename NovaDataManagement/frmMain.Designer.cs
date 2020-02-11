@@ -43,7 +43,7 @@
             this.toolHelp});
             this.menubar.Location = new System.Drawing.Point(0, 0);
             this.menubar.Name = "menubar";
-            this.menubar.Size = new System.Drawing.Size(800, 24);
+            this.menubar.Size = new System.Drawing.Size(1184, 24);
             this.menubar.TabIndex = 0;
             // 
             // toolStatLog
@@ -58,14 +58,14 @@
             // loginToolStripMenuItem
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.loginToolStripMenuItem.Text = "Log In";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
             // mstlogOut
             // 
             this.mstlogOut.Name = "mstlogOut";
-            this.mstlogOut.Size = new System.Drawing.Size(180, 22);
+            this.mstlogOut.Size = new System.Drawing.Size(117, 22);
             this.mstlogOut.Text = "Log Out";
             this.mstlogOut.Click += new System.EventHandler(this.mstlogOut_Click);
             // 
@@ -79,8 +79,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.ClientSize = new System.Drawing.Size(1184, 681);
             this.Controls.Add(this.menubar);
+            this.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.IsMdiContainer = true;
             this.MainMenuStrip = this.menubar;
             this.Name = "frmMain";

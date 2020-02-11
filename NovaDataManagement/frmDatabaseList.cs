@@ -198,15 +198,15 @@ namespace NovaDataManagement
 			}
 			return builder.ToString();
 		}
-		//Filter sql file
-		private string[] FileFilter(string path)
-		{
-			var needFiles = from file in Directory.EnumerateFiles(path)
-							let extension = Path.GetExtension(file)
-							where extension.Equals(".sql")
-							select file;
-			return needFiles as string[];
-		}
+		//Filter sql file to assure only file sql are chosen
+		//private string[] FileFilter(string path)
+		//{
+		//	var needFiles = from file in Directory.EnumerateFiles(path)
+		//					let extension = Path.GetExtension(file)
+		//					where extension.Equals(".sql")
+		//					select file;
+		//	return needFiles as string[];
+		//}
 		//Add folder have 3 levels at max and it mean add a version folder
 		//Important: Each folder contain only folders or script files and not empty        
 		private void AddFolder(string pathVersion)
@@ -420,6 +420,7 @@ namespace NovaDataManagement
 			lbFail.Text = "Fail: " + fail;
 			lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
 			pLoading.Visible = true;
+			Cursor.Current = Cursors.WaitCursor;
 		}
 		private void DisplayState(int totalWork)
 		{
@@ -435,16 +436,29 @@ namespace NovaDataManagement
 			lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
 			lbStatAction.Text = "Done";			
 			pLoading.Visible = false;
+			Cursor.Current = Cursors.Default;
 			MessageBox.Show("Công việc hoàn tất.");
 		}
 
 		#endregion
 		private void BtnCheckAll_Click(object sender, EventArgs e)
 		{
-			foreach (var item in frm_listDB)
+			if (BtnCheckAll.Text.Equals("Check All"))
 			{
-				item.UpdateChoice = true;
+				foreach (var item in frm_listDB)
+				{
+					item.UpdateChoice = true;
+				}
+				BtnCheckAll.Text = "Uncheck All";
 			}
+			else
+			{
+				foreach (var item in frm_listDB)
+				{
+					item.UpdateChoice = false;
+				}
+				BtnCheckAll.Text = "Check All";
+			}			
 			gvDBList.DataSource = frm_listDB;
 			gvDBList.Refresh();
 		}
@@ -457,6 +471,17 @@ namespace NovaDataManagement
 				return;
 			}
 			ShowFrmActionState(frm_resultList);
+		}
+		private void gvDBList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+		{
+			gvDBList.EndEdit();
+		}
+
+		private void frmDatabaseList_FormClosed(object sender, FormClosedEventArgs e)
+		{
+			MdiParent.Refresh();
+			frmMain main = (frmMain)MdiParent;
+			main.Login();
 		}
 	}
 }

@@ -36,12 +36,12 @@
             this.Password_txt = new System.Windows.Forms.TextBox();
             this.User_text = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.Instance_txt = new System.Windows.Forms.TextBox();
             this.Machine_txt = new System.Windows.Forms.TextBox();
             this.lbMachine = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.rbtnTestAcc = new System.Windows.Forms.RadioButton();
             this.rbtnWork = new System.Windows.Forms.RadioButton();
-            this.Instance_txt = new System.Windows.Forms.TextBox();
             this.cbxSave = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -141,6 +141,15 @@
             this.panel1.Size = new System.Drawing.Size(366, 143);
             this.panel1.TabIndex = 11;
             // 
+            // Instance_txt
+            // 
+            this.Instance_txt.Font = new System.Drawing.Font("Georgia", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Instance_txt.Location = new System.Drawing.Point(102, 46);
+            this.Instance_txt.Margin = new System.Windows.Forms.Padding(2);
+            this.Instance_txt.Name = "Instance_txt";
+            this.Instance_txt.Size = new System.Drawing.Size(259, 23);
+            this.Instance_txt.TabIndex = 10;
+            // 
             // Machine_txt
             // 
             this.Machine_txt.Font = new System.Drawing.Font("Georgia", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -194,15 +203,6 @@
             this.rbtnWork.UseVisualStyleBackColor = true;
             this.rbtnWork.CheckedChanged += new System.EventHandler(this.rbtnWork_CheckedChanged);
             // 
-            // Instance_txt
-            // 
-            this.Instance_txt.Font = new System.Drawing.Font("Georgia", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.Instance_txt.Location = new System.Drawing.Point(102, 46);
-            this.Instance_txt.Margin = new System.Windows.Forms.Padding(2);
-            this.Instance_txt.Name = "Instance_txt";
-            this.Instance_txt.Size = new System.Drawing.Size(259, 23);
-            this.Instance_txt.TabIndex = 10;
-            // 
             // cbxSave
             // 
             this.cbxSave.AutoSize = true;
@@ -215,7 +215,6 @@
             // 
             // frmLogin
             // 
-            this.AcceptButton = this.btnAccept;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
@@ -227,11 +226,13 @@
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnAccept);
             this.Controls.Add(this.panel1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "frmLogin";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "Login";
             this.Load += new System.EventHandler(this.frmLogin_Load);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
