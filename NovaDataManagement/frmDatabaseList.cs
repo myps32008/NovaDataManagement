@@ -25,7 +25,7 @@ namespace NovaDataManagement
 		private List<Script> frm_listScript;
 		private List<Result> frm_resultList;
 		private frmActionState frm_actionSate;
-		private List<InfoDB> listDBFind;
+		private List<InfoDB> frm_listDB;
 		//Server=myServerName\myInstanceName;Database=myDataBase;
 		private static string[] attConnect = { "Server=", ";Database=", ";User ID=", ";Password="};
 		public frmDatabaseList(InfoLogin info)
@@ -159,28 +159,28 @@ namespace NovaDataManagement
 				switch (cmbFind.SelectedIndex)
 				{
 					case 0:
-						findResult = listDBFind.Where(item => regex.IsMatch(item.DataSource));
+						findResult = frm_listDB.Where(item => regex.IsMatch(item.DataSource));
 						break;
 					case 1:
-						findResult = listDBFind.Where(item => regex.IsMatch(item.Catalog));
+						findResult = frm_listDB.Where(item => regex.IsMatch(item.Catalog));
 						break;
 					case 2:
-						findResult = listDBFind.Where(item => regex.IsMatch(item.CreatedDate));
+						findResult = frm_listDB.Where(item => regex.IsMatch(item.CreatedDate));
 						break;
 					case 3:
-						findResult = listDBFind.Where(item => regex.IsMatch(item.DomainName));
+						findResult = frm_listDB.Where(item => regex.IsMatch(item.DomainName));
 						break;
 					case 4:
-						findResult = listDBFind.Where(item => regex.IsMatch(item.BrandName));
+						findResult = frm_listDB.Where(item => regex.IsMatch(item.BrandName));
 						break;
 					default:
-						findResult = listDBFind;
+						findResult = frm_listDB;
 						break;
 				}
 				gvDBList.DataSource = findResult.ToList();
 			}
 			else
-				gvDBList.DataSource = listDBFind;
+				gvDBList.DataSource = frm_listDB;
 		}
 		#endregion
 
@@ -298,8 +298,8 @@ namespace NovaDataManagement
 		}
 		private void frm_GetListDB()
 		{
-			listDBFind = GetDBs(infoLogin);
-			gvDBList.DataSource = listDBFind;
+			frm_listDB = GetDBs(infoLogin);
+			gvDBList.DataSource = frm_listDB;
 		}
 		//Upgrade
 		private void UpgradeDB(InfoDB db)
@@ -311,8 +311,7 @@ namespace NovaDataManagement
 			progress++;
 			using (SqlConnection connection = new SqlConnection(connectString))
 			{
-				//Back up
-				connection.Open();
+				//Back up				
 				string resultBackUp = BackUp(connection, db.Catalog);
 				//Back up if success backup
 				if (resultBackUp == null)
@@ -376,21 +375,27 @@ namespace NovaDataManagement
 		}
 		private string BackUp(SqlConnection connection, string dbName)
 		{
-			string time = DateTime.Now.ToString("_ddMMyyyy_hhmm");
-			string filePath = frm_pathBak + @"\" + dbName + time + ".bak";
-			string testQuery = "BACKUP DATABASE " + dbName + " TO DISK = '" + filePath + "'";
-			using (SqlCommand command = new SqlCommand(testQuery, connection))
-			{
-				command.CommandTimeout = 60 * 60;
-				try
+			try
+			{				
+				string time = DateTime.Now.ToString("_ddMMyyyy_hhmm");
+				string filePath = frm_pathBak + @"\" + dbName + time + ".bak";
+				string testQuery = "BACKUP DATABASE " + dbName + " TO DISK = '" + filePath + "'";
+				connection.Open();
+				using (SqlCommand command = new SqlCommand(testQuery, connection))
 				{
-					command.ExecuteNonQuery();
-				}
-				catch (SqlException ex)
-				{
-					return ex.Message;
+					command.CommandTimeout = 60 * 60;
+					try
+					{
+						command.ExecuteNonQuery();
+					}
+					catch (SqlException ex)	{ return ex.Message; }
+					finally { connection.Close(); }
 				}
 			}
+			catch (SqlException ex)
+			{
+				return ex.Message;				
+			}			
 			return null;
 		}
 		private IEnumerable<InfoDB> ListUseDB()
@@ -410,8 +415,9 @@ namespace NovaDataManagement
 			success = 0;
 			progress = 0;
 			lbStatAction.Text = "Running...";			
-			lbSuccess.Text = "Success: 0";
-			lbFail.Text = "Fail: 0";
+			lbSuccess.Text = "Success: " + success;
+			lbFail.Text = "Fail: " + fail;
+			lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
 			pLoading.Visible = true;
 		}
 		private void DisplayState(int totalWork)
@@ -419,19 +425,32 @@ namespace NovaDataManagement
 			while ((fail + success) < totalWork)
 			{
 				Thread.Sleep(100);
-				lbSuccess.Text = "Success: " + success;
-				lbFail.Text = "Fail: " + fail;
-				lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
+				lbSuccess.Refresh();
+				lbFail.Refresh();
+				lbTotalWork.Refresh();
 			}
-			lbSuccess.Text = "Success: " + success;
-			lbFail.Text = "Fail: " + fail;
-			lbStatAction.Text = "Done";
-			lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
+			lbSuccess.Refresh();
+			lbFail.Refresh();
+			lbTotalWork.Refresh();
+			lbStatAction.Text = "Done";			
 			pLoading.Visible = false;
 			MessageBox.Show("Công việc hoàn tất.");
 		}
 
 		#endregion
+		private void BtnCheckAll_Click(object sender, EventArgs e)
+		{
+			foreach (var item in frm_listDB)
+			{
+				item.UpdateChoice = true;
+			}
+			gvDBList.DataSource = frm_listDB;
+			gvDBList.Refresh();
+		}
 
+		private void cmsResult_Click(object sender, EventArgs e)
+		{
+			ShowFrmActionState(frm_resultList);
+		}
 	}
 }

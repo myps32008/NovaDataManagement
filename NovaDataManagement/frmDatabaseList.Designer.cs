@@ -34,20 +34,26 @@
             this.toolbarDatabaseList = new System.Windows.Forms.ToolStrip();
             this.btnUpgrade = new System.Windows.Forms.ToolStripButton();
             this.toolRefresh = new System.Windows.Forms.ToolStripButton();
+            this.tsmbAddFolder = new System.Windows.Forms.ToolStripButton();
+            this.tsmbAddScript = new System.Windows.Forms.ToolStripButton();
+            this.tsmbBackup = new System.Windows.Forms.ToolStripButton();
             this.btnHelp = new System.Windows.Forms.ToolStripButton();
             this.pnlHeader = new System.Windows.Forms.Panel();
+            this.BtnCheckAll = new System.Windows.Forms.Button();
             this.cmbFind = new System.Windows.Forms.ComboBox();
             this.lbFindBy = new System.Windows.Forms.Label();
             this.Find_txt = new System.Windows.Forms.TextBox();
             this.lbFolderBackup = new System.Windows.Forms.Label();
             this.lbFolderPath = new System.Windows.Forms.Label();
             this.pnlFooter = new System.Windows.Forms.Panel();
+            this.pLoading = new System.Windows.Forms.PictureBox();
             this.lbFail = new System.Windows.Forms.Label();
             this.lbStatAction = new System.Windows.Forms.Label();
             this.lbSuccess = new System.Windows.Forms.Label();
             this.mnsToolBarUpgrade = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.upgradeDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsClearScript = new System.Windows.Forms.ToolStripMenuItem();
             this.backupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gvDBList = new System.Windows.Forms.DataGridView();
             this.UpdateChoice = new System.Windows.Forms.DataGridViewCheckBoxColumn();
@@ -58,17 +64,13 @@
             this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.pLoading = new System.Windows.Forms.PictureBox();
-            this.tsmbAddScript = new System.Windows.Forms.ToolStripButton();
-            this.tsmbAddFolder = new System.Windows.Forms.ToolStripButton();
-            this.tsmbBackup = new System.Windows.Forms.ToolStripButton();
-            this.cmsClearScript = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsResult = new System.Windows.Forms.ToolStripMenuItem();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).BeginInit();
             this.mnsToolBarUpgrade.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gvDBList)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).BeginInit();
             this.SuspendLayout();
             // 
             // lbTotalWork
@@ -115,6 +117,33 @@
             this.toolRefresh.Text = "Refresh";
             this.toolRefresh.Click += new System.EventHandler(this.toolRefresh_Click);
             // 
+            // tsmbAddFolder
+            // 
+            this.tsmbAddFolder.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddFolder.Image")));
+            this.tsmbAddFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsmbAddFolder.Name = "tsmbAddFolder";
+            this.tsmbAddFolder.Size = new System.Drawing.Size(85, 22);
+            this.tsmbAddFolder.Text = "Add Folder";
+            this.tsmbAddFolder.Click += new System.EventHandler(this.tsmbAddFolder_Click);
+            // 
+            // tsmbAddScript
+            // 
+            this.tsmbAddScript.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddScript.Image")));
+            this.tsmbAddScript.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsmbAddScript.Name = "tsmbAddScript";
+            this.tsmbAddScript.Size = new System.Drawing.Size(82, 22);
+            this.tsmbAddScript.Text = "Add Script";
+            this.tsmbAddScript.Click += new System.EventHandler(this.tsmbAddScript_Click);
+            // 
+            // tsmbBackup
+            // 
+            this.tsmbBackup.Image = ((System.Drawing.Image)(resources.GetObject("tsmbBackup.Image")));
+            this.tsmbBackup.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsmbBackup.Name = "tsmbBackup";
+            this.tsmbBackup.Size = new System.Drawing.Size(66, 22);
+            this.tsmbBackup.Text = "Backup";
+            this.tsmbBackup.Click += new System.EventHandler(this.tsmbBackup_Click);
+            // 
             // btnHelp
             // 
             this.btnHelp.Image = ((System.Drawing.Image)(resources.GetObject("btnHelp.Image")));
@@ -125,6 +154,7 @@
             // 
             // pnlHeader
             // 
+            this.pnlHeader.Controls.Add(this.BtnCheckAll);
             this.pnlHeader.Controls.Add(this.cmbFind);
             this.pnlHeader.Controls.Add(this.lbFindBy);
             this.pnlHeader.Controls.Add(this.Find_txt);
@@ -133,8 +163,18 @@
             this.pnlHeader.Dock = System.Windows.Forms.DockStyle.Top;
             this.pnlHeader.Location = new System.Drawing.Point(0, 25);
             this.pnlHeader.Name = "pnlHeader";
-            this.pnlHeader.Size = new System.Drawing.Size(1240, 87);
+            this.pnlHeader.Size = new System.Drawing.Size(1240, 63);
             this.pnlHeader.TabIndex = 12;
+            // 
+            // BtnCheckAll
+            // 
+            this.BtnCheckAll.Location = new System.Drawing.Point(16, 32);
+            this.BtnCheckAll.Name = "BtnCheckAll";
+            this.BtnCheckAll.Size = new System.Drawing.Size(88, 23);
+            this.BtnCheckAll.TabIndex = 22;
+            this.BtnCheckAll.Text = "Check All";
+            this.BtnCheckAll.UseVisualStyleBackColor = true;
+            this.BtnCheckAll.Click += new System.EventHandler(this.BtnCheckAll_Click);
             // 
             // cmbFind
             // 
@@ -145,7 +185,7 @@
             "Created Date",
             "Domain Name",
             "Brand Name"});
-            this.cmbFind.Location = new System.Drawing.Point(104, 24);
+            this.cmbFind.Location = new System.Drawing.Point(176, 32);
             this.cmbFind.Name = "cmbFind";
             this.cmbFind.Size = new System.Drawing.Size(100, 21);
             this.cmbFind.TabIndex = 21;
@@ -154,7 +194,7 @@
             // 
             this.lbFindBy.AutoSize = true;
             this.lbFindBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFindBy.Location = new System.Drawing.Point(32, 24);
+            this.lbFindBy.Location = new System.Drawing.Point(120, 34);
             this.lbFindBy.Name = "lbFindBy";
             this.lbFindBy.Size = new System.Drawing.Size(55, 16);
             this.lbFindBy.TabIndex = 19;
@@ -162,7 +202,7 @@
             // 
             // Find_txt
             // 
-            this.Find_txt.Location = new System.Drawing.Point(208, 24);
+            this.Find_txt.Location = new System.Drawing.Point(280, 32);
             this.Find_txt.Name = "Find_txt";
             this.Find_txt.Size = new System.Drawing.Size(206, 20);
             this.Find_txt.TabIndex = 18;
@@ -202,6 +242,16 @@
             this.pnlFooter.Size = new System.Drawing.Size(1240, 40);
             this.pnlFooter.TabIndex = 13;
             // 
+            // pLoading
+            // 
+            this.pLoading.Image = ((System.Drawing.Image)(resources.GetObject("pLoading.Image")));
+            this.pLoading.Location = new System.Drawing.Point(160, 8);
+            this.pLoading.Name = "pLoading";
+            this.pLoading.Size = new System.Drawing.Size(24, 24);
+            this.pLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pLoading.TabIndex = 9;
+            this.pLoading.TabStop = false;
+            // 
             // lbFail
             // 
             this.lbFail.AutoSize = true;
@@ -238,28 +288,36 @@
             this.upgradeDBToolStripMenuItem,
             this.refreshToolStripMenuItem,
             this.cmsClearScript,
-            this.backupToolStripMenuItem});
+            this.backupToolStripMenuItem,
+            this.cmsResult});
             this.mnsToolBarUpgrade.Name = "mnsToolBarUpgrade";
-            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(138, 92);
+            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(181, 136);
             // 
             // upgradeDBToolStripMenuItem
             // 
             this.upgradeDBToolStripMenuItem.Name = "upgradeDBToolStripMenuItem";
-            this.upgradeDBToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.upgradeDBToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.upgradeDBToolStripMenuItem.Text = "Upgrade DB";
             this.upgradeDBToolStripMenuItem.Click += new System.EventHandler(this.upgradeDBToolStripMenuItem_Click);
             // 
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
+            // 
+            // cmsClearScript
+            // 
+            this.cmsClearScript.Name = "cmsClearScript";
+            this.cmsClearScript.Size = new System.Drawing.Size(180, 22);
+            this.cmsClearScript.Text = "Clear Script";
+            this.cmsClearScript.Click += new System.EventHandler(this.cmsClearScript_Click);
             // 
             // backupToolStripMenuItem
             // 
             this.backupToolStripMenuItem.Name = "backupToolStripMenuItem";
-            this.backupToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.backupToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.backupToolStripMenuItem.Text = "Backup";
             // 
             // gvDBList
@@ -275,9 +333,10 @@
             this.DomainName,
             this.BrandName});
             this.gvDBList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gvDBList.Location = new System.Drawing.Point(0, 112);
+            this.gvDBList.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
+            this.gvDBList.Location = new System.Drawing.Point(0, 88);
             this.gvDBList.Name = "gvDBList";
-            this.gvDBList.Size = new System.Drawing.Size(1240, 427);
+            this.gvDBList.Size = new System.Drawing.Size(1240, 451);
             this.gvDBList.TabIndex = 14;
             // 
             // UpdateChoice
@@ -349,49 +408,12 @@
             this.BrandName.Name = "BrandName";
             this.BrandName.ReadOnly = true;
             // 
-            // pLoading
+            // cmsResult
             // 
-            this.pLoading.Image = ((System.Drawing.Image)(resources.GetObject("pLoading.Image")));
-            this.pLoading.Location = new System.Drawing.Point(160, 8);
-            this.pLoading.Name = "pLoading";
-            this.pLoading.Size = new System.Drawing.Size(24, 24);
-            this.pLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pLoading.TabIndex = 9;
-            this.pLoading.TabStop = false;
-            // 
-            // tsmbAddScript
-            // 
-            this.tsmbAddScript.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddScript.Image")));
-            this.tsmbAddScript.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsmbAddScript.Name = "tsmbAddScript";
-            this.tsmbAddScript.Size = new System.Drawing.Size(82, 22);
-            this.tsmbAddScript.Text = "Add Script";
-            this.tsmbAddScript.Click += new System.EventHandler(this.tsmbAddScript_Click);
-            // 
-            // tsmbAddFolder
-            // 
-            this.tsmbAddFolder.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddFolder.Image")));
-            this.tsmbAddFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsmbAddFolder.Name = "tsmbAddFolder";
-            this.tsmbAddFolder.Size = new System.Drawing.Size(85, 22);
-            this.tsmbAddFolder.Text = "Add Folder";
-            this.tsmbAddFolder.Click += new System.EventHandler(this.tsmbAddFolder_Click);
-            // 
-            // tsmbBackup
-            // 
-            this.tsmbBackup.Image = ((System.Drawing.Image)(resources.GetObject("tsmbBackup.Image")));
-            this.tsmbBackup.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsmbBackup.Name = "tsmbBackup";
-            this.tsmbBackup.Size = new System.Drawing.Size(66, 22);
-            this.tsmbBackup.Text = "Backup";
-            this.tsmbBackup.Click += new System.EventHandler(this.tsmbBackup_Click);
-            // 
-            // cmsClearScript
-            // 
-            this.cmsClearScript.Name = "cmsClearScript";
-            this.cmsClearScript.Size = new System.Drawing.Size(137, 22);
-            this.cmsClearScript.Text = "Clear Script";
-            this.cmsClearScript.Click += new System.EventHandler(this.cmsClearScript_Click);
+            this.cmsResult.Name = "cmsResult";
+            this.cmsResult.Size = new System.Drawing.Size(180, 22);
+            this.cmsResult.Text = "Result";
+            this.cmsResult.Click += new System.EventHandler(this.cmsResult_Click);
             // 
             // frmDatabaseList
             // 
@@ -414,9 +436,9 @@
             this.pnlHeader.PerformLayout();
             this.pnlFooter.ResumeLayout(false);
             this.pnlFooter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).EndInit();
             this.mnsToolBarUpgrade.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gvDBList)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -456,5 +478,7 @@
         private System.Windows.Forms.ToolStripButton tsmbAddScript;
         private System.Windows.Forms.ToolStripButton tsmbBackup;
         private System.Windows.Forms.ToolStripMenuItem cmsClearScript;
+        private System.Windows.Forms.Button BtnCheckAll;
+        private System.Windows.Forms.ToolStripMenuItem cmsResult;
     }
 }
