@@ -33,6 +33,7 @@ namespace NovaDataManagement
 			InitializeComponent();
 			infoLogin = new InfoLogin(info.Machine, info.SeverName, info.User, info.Password);
 			frm_GetListDB();
+			frm_resultList = new List<Result>();
 		}
 
 		#region "Event"
@@ -81,7 +82,7 @@ namespace NovaDataManagement
 		private void tsmbAddScript_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog openFile = new OpenFileDialog();
-			openFile.InitialDirectory = frm_pathFolder;
+			openFile.InitialDirectory = @"C:/";
 			openFile.Title = "Select the script file";
 			openFile.Filter = "Select Valid Document(*.sql)|*.sql";
 			openFile.FilterIndex = 1;
@@ -92,10 +93,7 @@ namespace NovaDataManagement
 				{
 					if (openFile.CheckFileExists)
 					{
-						string[] filesName = openFile.FileNames;
-						frm_pathFolder = Path.GetDirectoryName(filesName[0]);
-						Properties.Settings.Default.default_backup_directory = frm_pathFolder;
-						Properties.Settings.Default.Save();
+						string[] filesName = openFile.FileNames;						
 						GetScript(filesName);
 						lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
 					}
@@ -105,6 +103,7 @@ namespace NovaDataManagement
 			{
 				throw ex;
 			}
+			MessageBox.Show("Thêm script thành công");
 		}
 		//Right Click event in Form
 		#region "Right click"
@@ -127,6 +126,7 @@ namespace NovaDataManagement
 		{
 			frm_listScript = new List<Script>();
 			lbFolderPath.Text = "Folder Path:";
+			MessageBox.Show("Đã làm mới script");
 		}
 		private void tsmbBackup_Click(object sender, EventArgs e)
 		{
@@ -141,7 +141,6 @@ namespace NovaDataManagement
 											attConnect[3] + db.Password;
 					using (SqlConnection connection = new SqlConnection(connectString))
 					{
-						connection.Open();
 						string result = BackUp(connection, db.Catalog);
 						frm_resultList.Add(new Result(result, db));
 					}
@@ -247,7 +246,9 @@ namespace NovaDataManagement
 			else
 			{
 				MessageBox.Show("Folder is empty");
+				return;
 			}
+			MessageBox.Show("Thêm script thành công");
 		}
 		private void GetScript(string[] files)
 		{
@@ -311,7 +312,7 @@ namespace NovaDataManagement
 			progress++;
 			using (SqlConnection connection = new SqlConnection(connectString))
 			{
-				//Back up				
+				//Back up
 				string resultBackUp = BackUp(connection, db.Catalog);
 				//Back up if success backup
 				if (resultBackUp == null)
@@ -342,8 +343,8 @@ namespace NovaDataManagement
 					}
 					if (stateUpgrade)
 					{
-						server.ConnectionContext.CommitTransaction();
-						frm_resultList.Add(new Result(db));
+						server.ConnectionContext.CommitTransaction();						
+						frm_resultList.Add(new Result(resultBackUp, db));
 						success++;
 					}
 				}
@@ -376,11 +377,11 @@ namespace NovaDataManagement
 		private string BackUp(SqlConnection connection, string dbName)
 		{
 			try
-			{				
+			{
+				connection.Open();
 				string time = DateTime.Now.ToString("_ddMMyyyy_hhmm");
 				string filePath = frm_pathBak + @"\" + dbName + time + ".bak";
-				string testQuery = "BACKUP DATABASE " + dbName + " TO DISK = '" + filePath + "'";
-				connection.Open();
+				string testQuery = "BACKUP DATABASE " + dbName + " TO DISK = '" + filePath + "'";				
 				using (SqlCommand command = new SqlCommand(testQuery, connection))
 				{
 					command.CommandTimeout = 60 * 60;
@@ -429,9 +430,9 @@ namespace NovaDataManagement
 				lbFail.Refresh();
 				lbTotalWork.Refresh();
 			}
-			lbSuccess.Refresh();
-			lbFail.Refresh();
-			lbTotalWork.Refresh();
+			lbSuccess.Text = "Success: " + success;
+			lbFail.Text = "Fail: " + fail;
+			lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
 			lbStatAction.Text = "Done";			
 			pLoading.Visible = false;
 			MessageBox.Show("Công việc hoàn tất.");
@@ -450,6 +451,11 @@ namespace NovaDataManagement
 
 		private void cmsResult_Click(object sender, EventArgs e)
 		{
+			if (frm_resultList.Count == 0)
+			{
+				MessageBox.Show("Chưa có công việc nào được thực hiện");
+				return;
+			}
 			ShowFrmActionState(frm_resultList);
 		}
 	}

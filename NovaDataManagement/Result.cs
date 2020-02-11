@@ -13,8 +13,8 @@ namespace NovaDataManagement
         public string Catalog { get; set; }
         public string BackupResult 
         { 
-            get { return (this.backUp == null)? "Done": ("Failed: " + this.backUp); }
-            set { this.backUp = value; } 
+            get { return (backUp == null)? "Done": ("Failed: " + backUp); }
+            set { backUp = value; } 
         }       
         public Result()
         {
@@ -23,23 +23,22 @@ namespace NovaDataManagement
         //When upgrade fail
         public Result(string stateBackup, Script errorScript , InfoDB db)
         {
-            this.backUp = stateBackup;
-            this.Folder = errorScript.Folder;
-            this.DB = db.DataSource;
-            this.Catalog = db.Catalog;
-            this.ResultUpgrade = errorScript.ResultUpgrade;
+            backUp = stateBackup;
+            Folder = errorScript.Folder;
+            DB = db.DataSource;
+            Catalog = db.Catalog;
+            ResultUpgrade = errorScript.ResultUpgrade;
         }
-        //When upgrade success
-        public Result(InfoDB db)
-        {                    
-            this.DB = db.DataSource;
-            this.Catalog = db.Catalog;
-        }
-        public Result(string stateBackup,InfoDB db)
+        //When upgrade success or backupfaile        
+        public Result(string stateBackup, InfoDB db)
         {
-            this.DB = db.DataSource;
-            this.Catalog = db.Catalog;
-            this.BackupResult = stateBackup;
+            DB = db.DataSource;
+            Catalog = db.Catalog;
+            BackupResult = stateBackup;
+            if (backUp == null)
+            {
+                ResultUpgrade = "";
+            }
         }
     }
 }

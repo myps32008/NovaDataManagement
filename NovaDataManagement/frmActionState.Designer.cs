@@ -73,7 +73,7 @@
             // 
             // DataSource
             // 
-            this.DataSource.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.DataSource.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
             this.DataSource.DataPropertyName = "DB";
             this.DataSource.HeaderText = "Data Source";
             this.DataSource.Name = "DataSource";

@@ -11,11 +11,15 @@
             {
                 if (updateState == null)
                 {
-                   return "Upgrade Success";
+                   return "";
                 }
-                return this.updateState; 
+                else if (updateState.Equals(""))
+                {
+                    return "Upgrade Success";
+                }
+                return updateState; 
             }
-            set { this.updateState = value; }
+            set { updateState = value; }
         }
         public Script()
         {
@@ -23,8 +27,8 @@
         }
         public Script(string folder, string query)
         {
-            this.Folder = folder;
-            this.Query = query;
+            Folder = folder;
+            Query = query;
         }
     }
 }
