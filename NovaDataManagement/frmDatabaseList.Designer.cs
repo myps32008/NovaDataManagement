@@ -34,10 +34,10 @@
             this.toolbarDatabaseList = new System.Windows.Forms.ToolStrip();
             this.btnUpgrade = new System.Windows.Forms.ToolStripButton();
             this.toolRefresh = new System.Windows.Forms.ToolStripButton();
-            this.tsmbAddFolder = new System.Windows.Forms.ToolStripButton();
             this.tsmbAddScript = new System.Windows.Forms.ToolStripButton();
             this.tsmbBackup = new System.Windows.Forms.ToolStripButton();
             this.pnlHeader = new System.Windows.Forms.Panel();
+            this.lbNoScript = new System.Windows.Forms.Label();
             this.BtnCheckAll = new System.Windows.Forms.Button();
             this.cmbFind = new System.Windows.Forms.ComboBox();
             this.lbFindBy = new System.Windows.Forms.Label();
@@ -45,6 +45,7 @@
             this.lbFolderBackup = new System.Windows.Forms.Label();
             this.lbFolderPath = new System.Windows.Forms.Label();
             this.pnlFooter = new System.Windows.Forms.Panel();
+            this.lbCountDBSelected = new System.Windows.Forms.Label();
             this.pLoading = new System.Windows.Forms.PictureBox();
             this.lbFail = new System.Windows.Forms.Label();
             this.lbStatAction = new System.Windows.Forms.Label();
@@ -53,8 +54,9 @@
             this.upgradeDBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsClearScript = new System.Windows.Forms.ToolStripMenuItem();
-            this.backupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsResult = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsLogError = new System.Windows.Forms.ToolStripMenuItem();
+            this.backupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gvDBList = new System.Windows.Forms.DataGridView();
             this.UpdateChoice = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.DataSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -65,9 +67,7 @@
             this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.cmsLogError = new System.Windows.Forms.ToolStripMenuItem();
-            this.lbCountDBSelected = new System.Windows.Forms.Label();
-            this.lbNoScript = new System.Windows.Forms.Label();
+            this.BtnBrowseFolder = new System.Windows.Forms.Button();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
@@ -91,7 +91,6 @@
             this.toolbarDatabaseList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnUpgrade,
             this.toolRefresh,
-            this.tsmbAddFolder,
             this.tsmbAddScript,
             this.tsmbBackup});
             this.toolbarDatabaseList.Location = new System.Drawing.Point(0, 0);
@@ -119,15 +118,6 @@
             this.toolRefresh.Text = "Refresh";
             this.toolRefresh.Click += new System.EventHandler(this.toolRefresh_Click);
             // 
-            // tsmbAddFolder
-            // 
-            this.tsmbAddFolder.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddFolder.Image")));
-            this.tsmbAddFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsmbAddFolder.Name = "tsmbAddFolder";
-            this.tsmbAddFolder.Size = new System.Drawing.Size(85, 22);
-            this.tsmbAddFolder.Text = "Add Folder";
-            this.tsmbAddFolder.Click += new System.EventHandler(this.tsmbAddFolder_Click);
-            // 
             // tsmbAddScript
             // 
             this.tsmbAddScript.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddScript.Image")));
@@ -148,6 +138,7 @@
             // 
             // pnlHeader
             // 
+            this.pnlHeader.Controls.Add(this.BtnBrowseFolder);
             this.pnlHeader.Controls.Add(this.lbNoScript);
             this.pnlHeader.Controls.Add(this.BtnCheckAll);
             this.pnlHeader.Controls.Add(this.cmbFind);
@@ -160,6 +151,17 @@
             this.pnlHeader.Name = "pnlHeader";
             this.pnlHeader.Size = new System.Drawing.Size(1240, 63);
             this.pnlHeader.TabIndex = 12;
+            // 
+            // lbNoScript
+            // 
+            this.lbNoScript.AutoSize = true;
+            this.lbNoScript.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbNoScript.Location = new System.Drawing.Point(554, 34);
+            this.lbNoScript.Name = "lbNoScript";
+            this.lbNoScript.Size = new System.Drawing.Size(96, 16);
+            this.lbNoScript.TabIndex = 23;
+            this.lbNoScript.Text = "Number Script:";
+            this.lbNoScript.UseMnemonic = false;
             // 
             // BtnCheckAll
             // 
@@ -218,7 +220,7 @@
             // 
             this.lbFolderPath.AutoSize = true;
             this.lbFolderPath.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFolderPath.Location = new System.Drawing.Point(16, 8);
+            this.lbFolderPath.Location = new System.Drawing.Point(112, 8);
             this.lbFolderPath.Name = "lbFolderPath";
             this.lbFolderPath.Size = new System.Drawing.Size(80, 16);
             this.lbFolderPath.TabIndex = 13;
@@ -237,6 +239,16 @@
             this.pnlFooter.Name = "pnlFooter";
             this.pnlFooter.Size = new System.Drawing.Size(1240, 40);
             this.pnlFooter.TabIndex = 13;
+            // 
+            // lbCountDBSelected
+            // 
+            this.lbCountDBSelected.AutoSize = true;
+            this.lbCountDBSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbCountDBSelected.Location = new System.Drawing.Point(8, 8);
+            this.lbCountDBSelected.Name = "lbCountDBSelected";
+            this.lbCountDBSelected.Size = new System.Drawing.Size(56, 20);
+            this.lbCountDBSelected.TabIndex = 10;
+            this.lbCountDBSelected.Text = "Count:";
             // 
             // pLoading
             // 
@@ -311,18 +323,25 @@
             this.cmsClearScript.Text = "Clear Script";
             this.cmsClearScript.Click += new System.EventHandler(this.cmsClearScript_Click);
             // 
-            // backupToolStripMenuItem
-            // 
-            this.backupToolStripMenuItem.Name = "backupToolStripMenuItem";
-            this.backupToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
-            this.backupToolStripMenuItem.Text = "Backup";
-            // 
             // cmsResult
             // 
             this.cmsResult.Name = "cmsResult";
             this.cmsResult.Size = new System.Drawing.Size(137, 22);
             this.cmsResult.Text = "Result";
             this.cmsResult.Click += new System.EventHandler(this.cmsResult_Click);
+            // 
+            // cmsLogError
+            // 
+            this.cmsLogError.Name = "cmsLogError";
+            this.cmsLogError.Size = new System.Drawing.Size(137, 22);
+            this.cmsLogError.Text = "Log error";
+            this.cmsLogError.Click += new System.EventHandler(this.cmsLogError_Click);
+            // 
+            // backupToolStripMenuItem
+            // 
+            this.backupToolStripMenuItem.Name = "backupToolStripMenuItem";
+            this.backupToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.backupToolStripMenuItem.Text = "Backup";
             // 
             // gvDBList
             // 
@@ -423,33 +442,15 @@
             this.BrandName.Name = "BrandName";
             this.BrandName.ReadOnly = true;
             // 
-            // cmsLogError
+            // BtnBrowseFolder
             // 
-            this.cmsLogError.Name = "cmsLogError";
-            this.cmsLogError.Size = new System.Drawing.Size(137, 22);
-            this.cmsLogError.Text = "Log error";
-            this.cmsLogError.Click += new System.EventHandler(this.cmsLogError_Click);
-            // 
-            // lbCountDBSelected
-            // 
-            this.lbCountDBSelected.AutoSize = true;
-            this.lbCountDBSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbCountDBSelected.Location = new System.Drawing.Point(8, 8);
-            this.lbCountDBSelected.Name = "lbCountDBSelected";
-            this.lbCountDBSelected.Size = new System.Drawing.Size(56, 20);
-            this.lbCountDBSelected.TabIndex = 10;
-            this.lbCountDBSelected.Text = "Count:";
-            // 
-            // lbNoScript
-            // 
-            this.lbNoScript.AutoSize = true;
-            this.lbNoScript.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbNoScript.Location = new System.Drawing.Point(554, 34);
-            this.lbNoScript.Name = "lbNoScript";
-            this.lbNoScript.Size = new System.Drawing.Size(96, 16);
-            this.lbNoScript.TabIndex = 23;
-            this.lbNoScript.Text = "Number Script:";
-            this.lbNoScript.UseMnemonic = false;
+            this.BtnBrowseFolder.Location = new System.Drawing.Point(16, 6);
+            this.BtnBrowseFolder.Name = "BtnBrowseFolder";
+            this.BtnBrowseFolder.Size = new System.Drawing.Size(88, 23);
+            this.BtnBrowseFolder.TabIndex = 24;
+            this.BtnBrowseFolder.Text = "Browse";
+            this.BtnBrowseFolder.UseVisualStyleBackColor = true;
+            this.BtnBrowseFolder.Click += new System.EventHandler(this.BtnBrowseFolder_Click);
             // 
             // frmDatabaseList
             // 
@@ -503,7 +504,6 @@
         private System.Windows.Forms.Label lbFail;
         private System.Windows.Forms.ComboBox cmbFind;
         private System.Windows.Forms.PictureBox pLoading;
-        private System.Windows.Forms.ToolStripButton tsmbAddFolder;
         private System.Windows.Forms.ToolStripButton tsmbAddScript;
         private System.Windows.Forms.ToolStripButton tsmbBackup;
         private System.Windows.Forms.ToolStripMenuItem cmsClearScript;
@@ -521,5 +521,6 @@
         private System.Windows.Forms.ToolStripMenuItem cmsLogError;
         private System.Windows.Forms.Label lbCountDBSelected;
         private System.Windows.Forms.Label lbNoScript;
+        private System.Windows.Forms.Button BtnBrowseFolder;
     }
 }

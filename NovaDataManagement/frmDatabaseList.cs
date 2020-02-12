@@ -101,15 +101,18 @@ namespace NovaDataManagement
 				MessageBox.Show("Folder is empty");
 				return;
 			}
+			lbNoScript.Text = "Number Script: " + frm_listScript.Count();
 			MessageBox.Show("Thêm script thành công");
 		}
 		private void GetScript(string[] files)
 		{
+			Cursor.Current = Cursors.WaitCursor;
 			Script script = new Script();
 			script.Query = MakeScript(files);
 			string scriptName = Path.GetDirectoryName(files[0]);
 			script.Folder = new DirectoryInfo(scriptName).Name;
 			frm_listScript.Add(script);
+			Cursor.Current = Cursors.Default;
 		}
 		//Get List DBInfo
 		private List<InfoDB> GetDBs(InfoLogin infoLogin)
@@ -217,12 +220,16 @@ namespace NovaDataManagement
 			{
 				if (!File.Exists(fileLog))
 				{
-					File.WriteAllText(fileLog, script.Query);
+					File.WriteAllText(fileLog, script.Query, Encoding.Unicode);
 				}
 			} catch (Exception ex) { throw ex; }			
 		}
 		private void frm_Upgrade()
 		{
+			if (frm_listScript.Count == 0)
+			{
+				AddFolder(frm_pathFolder);
+			}
 			var listUpgrade = ListUseDB();
 			frm_resultList = new List<Result>();
 			int maxTask = Properties.Settings.Default.maxTask;
@@ -348,6 +355,7 @@ namespace NovaDataManagement
 			lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
 			lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
 			frm_pathError = Directory.GetCurrentDirectory() + @"\LogError";
+			lbNoScript.Text = "Number Script: " + frm_listScript.Count();
 			if (!Directory.Exists(frm_pathError))
 			{
 				Directory.CreateDirectory(frm_pathError);
@@ -363,26 +371,7 @@ namespace NovaDataManagement
 		private void toolRefresh_Click(object sender, EventArgs e)
 		{
 			frm_GetListDB();
-		}
-		private void tsmbAddFolder_Click(object sender, EventArgs e)
-		{
-			FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
-			folderBrowser.SelectedPath = frm_pathFolder;
-			folderBrowser.ShowNewFolderButton = false;
-			try
-			{
-				if (folderBrowser.ShowDialog() == DialogResult.OK)
-				{
-					frm_pathFolder = folderBrowser.SelectedPath;
-					Properties.Settings.Default.default_script_directory = frm_pathFolder;
-					Properties.Settings.Default.Save();
-					lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
-					AddFolder(frm_pathFolder);
-					lbNoScript.Text = "Number Script: " + frm_listScript.Count();
-				}
-			}
-			catch (Exception ex) { throw ex; }
-		}
+		}		
 		private void tsmbAddScript_Click(object sender, EventArgs e)
 		{
 			OpenFileDialog openFile = new OpenFileDialog();
@@ -427,8 +416,8 @@ namespace NovaDataManagement
 		}
 		private void cmsClearScript_Click(object sender, EventArgs e)
 		{
-			frm_listScript = new List<Script>();
-			lbFolderPath.Text = "Folder Path:";
+			frm_listScript = new List<Script>();			
+			lbNoScript.Text = "Number Script: 0";
 			MessageBox.Show("Đã làm mới script");
 		}
 		private void tsmbBackup_Click(object sender, EventArgs e)
@@ -527,5 +516,23 @@ namespace NovaDataManagement
 		#endregion
 
 		#endregion
+
+		private void BtnBrowseFolder_Click(object sender, EventArgs e)
+		{
+			FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+			folderBrowser.SelectedPath = frm_pathFolder;
+			folderBrowser.ShowNewFolderButton = false;
+			try
+			{
+				if (folderBrowser.ShowDialog() == DialogResult.OK)
+				{
+					frm_pathFolder = folderBrowser.SelectedPath;
+					Properties.Settings.Default.default_script_directory = frm_pathFolder;
+					Properties.Settings.Default.Save();
+					lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
+				}
+			}
+			catch (Exception ex) { throw ex; }
+		}
 	}
 }
