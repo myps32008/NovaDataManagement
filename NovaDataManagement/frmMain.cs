@@ -54,8 +54,15 @@ namespace NovaDataManagement
             frmLog.Owner = this;               
             frmLog.ShowDialog();            
         }
+
         #endregion
 
-       
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (Form form in Application.OpenForms)
+            {
+                form.Dispose();
+            }
+        }
     }
 }

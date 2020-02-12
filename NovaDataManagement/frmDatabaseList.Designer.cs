@@ -32,6 +32,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDatabaseList));
             this.lbTotalWork = new System.Windows.Forms.Label();
             this.toolbarDatabaseList = new System.Windows.Forms.ToolStrip();
+            this.btnUpgrade = new System.Windows.Forms.ToolStripButton();
+            this.toolRefresh = new System.Windows.Forms.ToolStripButton();
+            this.tsmbAddFolder = new System.Windows.Forms.ToolStripButton();
+            this.tsmbAddScript = new System.Windows.Forms.ToolStripButton();
+            this.tsmbBackup = new System.Windows.Forms.ToolStripButton();
             this.pnlHeader = new System.Windows.Forms.Panel();
             this.BtnCheckAll = new System.Windows.Forms.Button();
             this.cmbFind = new System.Windows.Forms.ComboBox();
@@ -40,6 +45,7 @@
             this.lbFolderBackup = new System.Windows.Forms.Label();
             this.lbFolderPath = new System.Windows.Forms.Label();
             this.pnlFooter = new System.Windows.Forms.Panel();
+            this.pLoading = new System.Windows.Forms.PictureBox();
             this.lbFail = new System.Windows.Forms.Label();
             this.lbStatAction = new System.Windows.Forms.Label();
             this.lbSuccess = new System.Windows.Forms.Label();
@@ -50,12 +56,6 @@
             this.backupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsResult = new System.Windows.Forms.ToolStripMenuItem();
             this.gvDBList = new System.Windows.Forms.DataGridView();
-            this.pLoading = new System.Windows.Forms.PictureBox();
-            this.btnUpgrade = new System.Windows.Forms.ToolStripButton();
-            this.toolRefresh = new System.Windows.Forms.ToolStripButton();
-            this.tsmbAddFolder = new System.Windows.Forms.ToolStripButton();
-            this.tsmbAddScript = new System.Windows.Forms.ToolStripButton();
-            this.tsmbBackup = new System.Windows.Forms.ToolStripButton();
             this.UpdateChoice = new System.Windows.Forms.DataGridViewCheckBoxColumn();
             this.DataSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Catalog = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -65,19 +65,22 @@
             this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.cmsLogError = new System.Windows.Forms.ToolStripMenuItem();
+            this.lbCountDBSelected = new System.Windows.Forms.Label();
+            this.lbNoScript = new System.Windows.Forms.Label();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).BeginInit();
             this.mnsToolBarUpgrade.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gvDBList)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).BeginInit();
             this.SuspendLayout();
             // 
             // lbTotalWork
             // 
             this.lbTotalWork.AutoSize = true;
             this.lbTotalWork.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbTotalWork.Location = new System.Drawing.Point(200, 8);
+            this.lbTotalWork.Location = new System.Drawing.Point(328, 8);
             this.lbTotalWork.Name = "lbTotalWork";
             this.lbTotalWork.Size = new System.Drawing.Size(97, 20);
             this.lbTotalWork.TabIndex = 4;
@@ -97,8 +100,55 @@
             this.toolbarDatabaseList.TabIndex = 5;
             this.toolbarDatabaseList.Text = "toolStrip1";
             // 
+            // btnUpgrade
+            // 
+            this.btnUpgrade.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.btnUpgrade.Image = ((System.Drawing.Image)(resources.GetObject("btnUpgrade.Image")));
+            this.btnUpgrade.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnUpgrade.Name = "btnUpgrade";
+            this.btnUpgrade.Size = new System.Drawing.Size(90, 22);
+            this.btnUpgrade.Text = "Upgrade DB";
+            this.btnUpgrade.Click += new System.EventHandler(this.btnUpgrade_Click);
+            // 
+            // toolRefresh
+            // 
+            this.toolRefresh.Image = ((System.Drawing.Image)(resources.GetObject("toolRefresh.Image")));
+            this.toolRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolRefresh.Name = "toolRefresh";
+            this.toolRefresh.Size = new System.Drawing.Size(66, 22);
+            this.toolRefresh.Text = "Refresh";
+            this.toolRefresh.Click += new System.EventHandler(this.toolRefresh_Click);
+            // 
+            // tsmbAddFolder
+            // 
+            this.tsmbAddFolder.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddFolder.Image")));
+            this.tsmbAddFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsmbAddFolder.Name = "tsmbAddFolder";
+            this.tsmbAddFolder.Size = new System.Drawing.Size(85, 22);
+            this.tsmbAddFolder.Text = "Add Folder";
+            this.tsmbAddFolder.Click += new System.EventHandler(this.tsmbAddFolder_Click);
+            // 
+            // tsmbAddScript
+            // 
+            this.tsmbAddScript.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddScript.Image")));
+            this.tsmbAddScript.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsmbAddScript.Name = "tsmbAddScript";
+            this.tsmbAddScript.Size = new System.Drawing.Size(82, 22);
+            this.tsmbAddScript.Text = "Add Script";
+            this.tsmbAddScript.Click += new System.EventHandler(this.tsmbAddScript_Click);
+            // 
+            // tsmbBackup
+            // 
+            this.tsmbBackup.Image = ((System.Drawing.Image)(resources.GetObject("tsmbBackup.Image")));
+            this.tsmbBackup.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.tsmbBackup.Name = "tsmbBackup";
+            this.tsmbBackup.Size = new System.Drawing.Size(66, 22);
+            this.tsmbBackup.Text = "Backup";
+            this.tsmbBackup.Click += new System.EventHandler(this.tsmbBackup_Click);
+            // 
             // pnlHeader
             // 
+            this.pnlHeader.Controls.Add(this.lbNoScript);
             this.pnlHeader.Controls.Add(this.BtnCheckAll);
             this.pnlHeader.Controls.Add(this.cmbFind);
             this.pnlHeader.Controls.Add(this.lbFindBy);
@@ -157,7 +207,7 @@
             // 
             this.lbFolderBackup.AutoSize = true;
             this.lbFolderBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFolderBackup.Location = new System.Drawing.Point(520, 8);
+            this.lbFolderBackup.Location = new System.Drawing.Point(554, 8);
             this.lbFolderBackup.Name = "lbFolderBackup";
             this.lbFolderBackup.Size = new System.Drawing.Size(99, 16);
             this.lbFolderBackup.TabIndex = 16;
@@ -176,6 +226,7 @@
             // 
             // pnlFooter
             // 
+            this.pnlFooter.Controls.Add(this.lbCountDBSelected);
             this.pnlFooter.Controls.Add(this.pLoading);
             this.pnlFooter.Controls.Add(this.lbFail);
             this.pnlFooter.Controls.Add(this.lbStatAction);
@@ -187,11 +238,21 @@
             this.pnlFooter.Size = new System.Drawing.Size(1240, 40);
             this.pnlFooter.TabIndex = 13;
             // 
+            // pLoading
+            // 
+            this.pLoading.Image = ((System.Drawing.Image)(resources.GetObject("pLoading.Image")));
+            this.pLoading.Location = new System.Drawing.Point(297, 8);
+            this.pLoading.Name = "pLoading";
+            this.pLoading.Size = new System.Drawing.Size(24, 24);
+            this.pLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pLoading.TabIndex = 9;
+            this.pLoading.TabStop = false;
+            // 
             // lbFail
             // 
             this.lbFail.AutoSize = true;
             this.lbFail.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFail.Location = new System.Drawing.Point(472, 8);
+            this.lbFail.Location = new System.Drawing.Point(600, 8);
             this.lbFail.Name = "lbFail";
             this.lbFail.Size = new System.Drawing.Size(56, 20);
             this.lbFail.TabIndex = 8;
@@ -201,7 +262,7 @@
             // 
             this.lbStatAction.AutoSize = true;
             this.lbStatAction.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbStatAction.Location = new System.Drawing.Point(12, 11);
+            this.lbStatAction.Location = new System.Drawing.Point(140, 9);
             this.lbStatAction.Name = "lbStatAction";
             this.lbStatAction.Size = new System.Drawing.Size(97, 20);
             this.lbStatAction.TabIndex = 6;
@@ -211,7 +272,7 @@
             // 
             this.lbSuccess.AutoSize = true;
             this.lbSuccess.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbSuccess.Location = new System.Drawing.Point(336, 8);
+            this.lbSuccess.Location = new System.Drawing.Point(464, 8);
             this.lbSuccess.Name = "lbSuccess";
             this.lbSuccess.Size = new System.Drawing.Size(74, 20);
             this.lbSuccess.TabIndex = 5;
@@ -223,10 +284,11 @@
             this.upgradeDBToolStripMenuItem,
             this.refreshToolStripMenuItem,
             this.cmsClearScript,
-            this.backupToolStripMenuItem,
-            this.cmsResult});
+            this.cmsResult,
+            this.cmsLogError,
+            this.backupToolStripMenuItem});
             this.mnsToolBarUpgrade.Name = "mnsToolBarUpgrade";
-            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(138, 114);
+            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(138, 136);
             // 
             // upgradeDBToolStripMenuItem
             // 
@@ -282,62 +344,6 @@
             this.gvDBList.Size = new System.Drawing.Size(1240, 451);
             this.gvDBList.TabIndex = 14;
             this.gvDBList.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.gvDBList_CellContentClick);
-            // 
-            // pLoading
-            // 
-            this.pLoading.Image = ((System.Drawing.Image)(resources.GetObject("pLoading.Image")));
-            this.pLoading.Location = new System.Drawing.Point(169, 8);
-            this.pLoading.Name = "pLoading";
-            this.pLoading.Size = new System.Drawing.Size(24, 24);
-            this.pLoading.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pLoading.TabIndex = 9;
-            this.pLoading.TabStop = false;
-            // 
-            // btnUpgrade
-            // 
-            this.btnUpgrade.ForeColor = System.Drawing.SystemColors.ControlText;
-            this.btnUpgrade.Image = ((System.Drawing.Image)(resources.GetObject("btnUpgrade.Image")));
-            this.btnUpgrade.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnUpgrade.Name = "btnUpgrade";
-            this.btnUpgrade.Size = new System.Drawing.Size(90, 22);
-            this.btnUpgrade.Text = "Upgrade DB";
-            this.btnUpgrade.Click += new System.EventHandler(this.btnUpgrade_Click);
-            // 
-            // toolRefresh
-            // 
-            this.toolRefresh.Image = ((System.Drawing.Image)(resources.GetObject("toolRefresh.Image")));
-            this.toolRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolRefresh.Name = "toolRefresh";
-            this.toolRefresh.Size = new System.Drawing.Size(66, 22);
-            this.toolRefresh.Text = "Refresh";
-            this.toolRefresh.Click += new System.EventHandler(this.toolRefresh_Click);
-            // 
-            // tsmbAddFolder
-            // 
-            this.tsmbAddFolder.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddFolder.Image")));
-            this.tsmbAddFolder.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsmbAddFolder.Name = "tsmbAddFolder";
-            this.tsmbAddFolder.Size = new System.Drawing.Size(85, 22);
-            this.tsmbAddFolder.Text = "Add Folder";
-            this.tsmbAddFolder.Click += new System.EventHandler(this.tsmbAddFolder_Click);
-            // 
-            // tsmbAddScript
-            // 
-            this.tsmbAddScript.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddScript.Image")));
-            this.tsmbAddScript.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsmbAddScript.Name = "tsmbAddScript";
-            this.tsmbAddScript.Size = new System.Drawing.Size(82, 22);
-            this.tsmbAddScript.Text = "Add Script";
-            this.tsmbAddScript.Click += new System.EventHandler(this.tsmbAddScript_Click);
-            // 
-            // tsmbBackup
-            // 
-            this.tsmbBackup.Image = ((System.Drawing.Image)(resources.GetObject("tsmbBackup.Image")));
-            this.tsmbBackup.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsmbBackup.Name = "tsmbBackup";
-            this.tsmbBackup.Size = new System.Drawing.Size(66, 22);
-            this.tsmbBackup.Text = "Backup";
-            this.tsmbBackup.Click += new System.EventHandler(this.tsmbBackup_Click);
             // 
             // UpdateChoice
             // 
@@ -417,10 +423,39 @@
             this.BrandName.Name = "BrandName";
             this.BrandName.ReadOnly = true;
             // 
+            // cmsLogError
+            // 
+            this.cmsLogError.Name = "cmsLogError";
+            this.cmsLogError.Size = new System.Drawing.Size(137, 22);
+            this.cmsLogError.Text = "Log error";
+            this.cmsLogError.Click += new System.EventHandler(this.cmsLogError_Click);
+            // 
+            // lbCountDBSelected
+            // 
+            this.lbCountDBSelected.AutoSize = true;
+            this.lbCountDBSelected.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbCountDBSelected.Location = new System.Drawing.Point(8, 8);
+            this.lbCountDBSelected.Name = "lbCountDBSelected";
+            this.lbCountDBSelected.Size = new System.Drawing.Size(56, 20);
+            this.lbCountDBSelected.TabIndex = 10;
+            this.lbCountDBSelected.Text = "Count:";
+            // 
+            // lbNoScript
+            // 
+            this.lbNoScript.AutoSize = true;
+            this.lbNoScript.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lbNoScript.Location = new System.Drawing.Point(554, 34);
+            this.lbNoScript.Name = "lbNoScript";
+            this.lbNoScript.Size = new System.Drawing.Size(96, 16);
+            this.lbNoScript.TabIndex = 23;
+            this.lbNoScript.Text = "Number Script:";
+            this.lbNoScript.UseMnemonic = false;
+            // 
             // frmDatabaseList
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.ClientSize = new System.Drawing.Size(1240, 579);
             this.ContextMenuStrip = this.mnsToolBarUpgrade;
             this.Controls.Add(this.gvDBList);
@@ -439,9 +474,9 @@
             this.pnlHeader.PerformLayout();
             this.pnlFooter.ResumeLayout(false);
             this.pnlFooter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).EndInit();
             this.mnsToolBarUpgrade.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.gvDBList)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pLoading)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -483,5 +518,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
         private System.Windows.Forms.DataGridViewTextBoxColumn DomainName;
         private System.Windows.Forms.DataGridViewTextBoxColumn BrandName;
+        private System.Windows.Forms.ToolStripMenuItem cmsLogError;
+        private System.Windows.Forms.Label lbCountDBSelected;
+        private System.Windows.Forms.Label lbNoScript;
     }
 }

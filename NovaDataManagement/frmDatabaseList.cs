@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -18,6 +19,7 @@ namespace NovaDataManagement
 	{
 		private string frm_pathBak;
 		private string frm_pathFolder;
+		private string frm_pathError;
 		private int success;
 		private int fail;
 		private int progress;
@@ -36,156 +38,7 @@ namespace NovaDataManagement
 			frm_resultList = new List<Result>();
 		}
 
-		#region "Event"
-		private void frmDatabaseList_Load(object sender, EventArgs e)
-		{
-			//Make defaultFolder for backup
-			frm_listScript = new List<Script>();
-			frm_pathBak = Properties.Settings.Default.default_backup_directory;
-			frm_pathFolder = Properties.Settings.Default.default_script_directory;
-			if (!Directory.Exists(frm_pathBak))
-			{
-				Directory.CreateDirectory(frm_pathBak);
-			}
-			lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
-			lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
-			pLoading.Visible = false;
-		}
-
-		private void btnUpgrade_Click(object sender, EventArgs e)
-		{
-			frm_Upgrade();
-		}
-
-		private void toolRefresh_Click(object sender, EventArgs e)
-		{
-			frm_GetListDB();
-		}
-		private void tsmbAddFolder_Click(object sender, EventArgs e)
-		{
-			FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
-			folderBrowser.SelectedPath = frm_pathFolder;
-			folderBrowser.ShowNewFolderButton = false;
-			try
-			{
-				if (folderBrowser.ShowDialog() == DialogResult.OK)
-				{
-					frm_pathFolder = folderBrowser.SelectedPath;
-					Properties.Settings.Default.default_script_directory = frm_pathFolder;
-					Properties.Settings.Default.Save();
-					lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
-					AddFolder(frm_pathFolder);
-				}
-			}
-			catch (Exception ex) { throw ex; }
-		}
-		private void tsmbAddScript_Click(object sender, EventArgs e)
-		{
-			OpenFileDialog openFile = new OpenFileDialog();
-			openFile.InitialDirectory = @"C:/";
-			openFile.Title = "Select the script file";
-			openFile.Filter = "Select Valid Document(*.sql)|*.sql";
-			openFile.FilterIndex = 1;
-			openFile.Multiselect = true;
-			try
-			{
-				if (openFile.ShowDialog() == DialogResult.OK)
-				{
-					if (openFile.CheckFileExists)
-					{
-						string[] filesName = openFile.FileNames;						
-						GetScript(filesName);
-						lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				throw ex;
-			}
-			MessageBox.Show("Thêm script thành công");
-		}
-		//Right Click event in Form
-		#region "Right click"
-		private void upgradeDBToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			frm_Upgrade();
-		}
-
-		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			try
-			{
-				frm_GetListDB();
-			}
-			catch (Exception ex) { throw ex; }
-		}
 		
-
-		private void cmsClearScript_Click(object sender, EventArgs e)
-		{
-			frm_listScript = new List<Script>();
-			lbFolderPath.Text = "Folder Path:";
-			MessageBox.Show("Đã làm mới script");
-		}
-		private void tsmbBackup_Click(object sender, EventArgs e)
-		{
-			frm_resultList = new List<Result>();
-			try
-			{
-				IEnumerable<InfoDB> listBak = ListUseDB();
-				foreach (InfoDB db in listBak)
-				{
-					string connectString = attConnect[0] + db.DataSource +
-											attConnect[2] + db.User +
-											attConnect[3] + db.Password;
-					using (SqlConnection connection = new SqlConnection(connectString))
-					{
-						string result = BackUp(connection, db.Catalog);
-						frm_resultList.Add(new Result(result, db));
-					}
-					ShowFrmActionState(frm_resultList);
-				}
-			}
-			catch (Exception ex) { throw ex; }
-		}
-		private void Find_txt_TextChanged(object sender, EventArgs e)
-		{
-			IEnumerable<InfoDB> findResult;
-			Regex regex = new Regex(Find_txt.Text);
-			if (!Find_txt.Equals(""))
-			{
-				switch (cmbFind.SelectedIndex)
-				{
-					case 0:
-						findResult = frm_listDB.Where(item => regex.IsMatch(item.DataSource));
-						break;
-					case 1:
-						findResult = frm_listDB.Where(item => regex.IsMatch(item.Catalog));
-						break;
-					case 2:
-						findResult = frm_listDB.Where(item => regex.IsMatch(item.CreatedDate));
-						break;
-					case 3:
-						findResult = frm_listDB.Where(item => regex.IsMatch(item.DomainName));
-						break;
-					case 4:
-						findResult = frm_listDB.Where(item => regex.IsMatch(item.BrandName));
-						break;
-					default:
-						findResult = frm_listDB;
-						break;
-				}
-				gvDBList.DataSource = findResult.ToList();
-			}
-			else
-				gvDBList.DataSource = frm_listDB;
-		}
-		#endregion
-
-		#endregion
-
-
 		#region "Function"
 		// Handle Script
 		private string MakeScript(string[] filesName)
@@ -331,12 +184,13 @@ namespace NovaDataManagement
 						}
 						catch (ExecutionFailureException ex)
 						{
-							Script stateScript;
+							Script stateScript = new Script();
 							stateScript = item;
 							stateScript.ResultUpgrade = ex.GetBaseException().Message;
 							frm_resultList.Add(new Result(resultBackUp, stateScript, db));
 							server.ConnectionContext.RollBackTransaction();
 							stateUpgrade = false;
+							LogError(item);
 							fail++;
 							break;
 						}
@@ -355,9 +209,21 @@ namespace NovaDataManagement
 				}				
 			}
 		}
+		private void LogError(Script script)
+		{
+			string time = DateTime.Now.ToString("_ddMMyyyy");
+			string fileLog = frm_pathError + @"\" + script.Folder + time + ".sql";
+			try
+			{
+				if (!File.Exists(fileLog))
+				{
+					File.WriteAllText(fileLog, script.Query);
+				}
+			} catch (Exception ex) { throw ex; }			
+		}
 		private void frm_Upgrade()
 		{
-			IEnumerable<InfoDB> listUpgrade = ListUseDB();
+			var listUpgrade = ListUseDB();
 			frm_resultList = new List<Result>();
 			int maxTask = Properties.Settings.Default.maxTask;
 			int totalWork = listUpgrade.Count();
@@ -367,12 +233,35 @@ namespace NovaDataManagement
 				foreach (InfoDB item in listUpgrade)
 				{
 					UpgradeDB(item);
-				}
+				}				
 				DisplayState(totalWork);
 				ShowFrmActionState(frm_resultList);
+				if (frm_resultList.Exists(r => 
+					(!r.ResultUpgrade.Equals("Success")) || (!r.BackupResult.Equals("Done"))))
+				{
+					OpenErrorFolder();
+				}				
 				return;
 			}
 			MessageBox.Show("Do not have Script");
+		}
+		private void OpenErrorFolder()
+		{
+			try
+			{
+				if (frm_resultList.Exists(result =>
+					!result.ResultUpgrade.Equals("") || !result.Equals("Success")))
+				{
+					var psi = new ProcessStartInfo();
+					psi.FileName = "explorer.exe";
+					psi.UseShellExecute = false;
+					psi.RedirectStandardOutput = false;
+					psi.Arguments = frm_pathError;
+					Process.Start(psi);
+				}
+				else
+					MessageBox.Show("Không có lỗi");
+			} catch (Exception ex) { throw ex; }				
 		}
 		private string BackUp(SqlConnection connection, string dbName)
 		{
@@ -399,10 +288,9 @@ namespace NovaDataManagement
 			}			
 			return null;
 		}
-		private IEnumerable<InfoDB> ListUseDB()
+		private List<InfoDB> ListUseDB()
 		{
-			List<InfoDB> listUseDB = gvDBList.DataSource as List<InfoDB>;			
-			var listUse = listUseDB.Where(sDB => sDB.UpdateChoice == true);
+			var listUse = frm_listDB.FindAll(sDB => sDB.UpdateChoice == true);
 			return listUse;
 		}
 		private void ShowFrmActionState(List<Result> resultAction)
@@ -439,8 +327,156 @@ namespace NovaDataManagement
 			Cursor.Current = Cursors.Default;
 			MessageBox.Show("Công việc hoàn tất.");
 		}
-
+		private void CountCheck()
+		{
+			var count = frm_listDB.FindAll(db => db.UpdateChoice == true).Count;
+			lbCountDBSelected.Text = "Count: " + count;
+		}
 		#endregion
+
+		#region "Event"
+		private void frmDatabaseList_Load(object sender, EventArgs e)
+		{
+			//Make defaultFolder for backup
+			frm_listScript = new List<Script>();
+			frm_pathBak = Properties.Settings.Default.default_backup_directory;
+			frm_pathFolder = Properties.Settings.Default.default_script_directory;
+			if (!Directory.Exists(frm_pathBak))
+			{
+				Directory.CreateDirectory(frm_pathBak);
+			}
+			lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
+			lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
+			frm_pathError = Directory.GetCurrentDirectory() + @"\LogError";
+			if (!Directory.Exists(frm_pathError))
+			{
+				Directory.CreateDirectory(frm_pathError);
+			}
+			pLoading.Visible = false;
+		}
+
+		private void btnUpgrade_Click(object sender, EventArgs e)
+		{
+			frm_Upgrade();
+		}
+
+		private void toolRefresh_Click(object sender, EventArgs e)
+		{
+			frm_GetListDB();
+		}
+		private void tsmbAddFolder_Click(object sender, EventArgs e)
+		{
+			FolderBrowserDialog folderBrowser = new FolderBrowserDialog();
+			folderBrowser.SelectedPath = frm_pathFolder;
+			folderBrowser.ShowNewFolderButton = false;
+			try
+			{
+				if (folderBrowser.ShowDialog() == DialogResult.OK)
+				{
+					frm_pathFolder = folderBrowser.SelectedPath;
+					Properties.Settings.Default.default_script_directory = frm_pathFolder;
+					Properties.Settings.Default.Save();
+					lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
+					AddFolder(frm_pathFolder);
+					lbNoScript.Text = "Number Script: " + frm_listScript.Count();
+				}
+			}
+			catch (Exception ex) { throw ex; }
+		}
+		private void tsmbAddScript_Click(object sender, EventArgs e)
+		{
+			OpenFileDialog openFile = new OpenFileDialog();
+			openFile.InitialDirectory = @"C:/";
+			openFile.Title = "Select the script file";
+			openFile.Filter = "Select Valid Document(*.sql)|*.sql";
+			openFile.FilterIndex = 1;
+			openFile.Multiselect = true;
+			try
+			{
+				if (openFile.ShowDialog() == DialogResult.OK)
+				{
+					if (openFile.CheckFileExists)
+					{
+						string[] filesName = openFile.FileNames;
+						GetScript(filesName);
+						lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
+						lbNoScript.Text = "Number Script: " + frm_listScript.Count();
+						MessageBox.Show("Thêm script thành công");
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}			
+		}
+		//Right Click event in Form
+		#region "Right click"
+		private void upgradeDBToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			frm_Upgrade();
+		}
+
+		private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			try
+			{
+				frm_GetListDB();
+			}
+			catch (Exception ex) { throw ex; }
+		}
+		private void cmsClearScript_Click(object sender, EventArgs e)
+		{
+			frm_listScript = new List<Script>();
+			lbFolderPath.Text = "Folder Path:";
+			MessageBox.Show("Đã làm mới script");
+		}
+		private void tsmbBackup_Click(object sender, EventArgs e)
+		{
+			frm_resultList = new List<Result>();
+			try
+			{
+				var listBak = ListUseDB();
+				foreach (InfoDB db in listBak)
+				{
+					string connectString = attConnect[0] + db.DataSource +
+											attConnect[2] + db.User +
+											attConnect[3] + db.Password;
+					using (SqlConnection connection = new SqlConnection(connectString))
+					{
+						string result = BackUp(connection, db.Catalog);
+						frm_resultList.Add(new Result(result, db));
+					}
+					ShowFrmActionState(frm_resultList);
+				}
+			}
+			catch (Exception ex) { throw ex; }
+		}
+		private void Find_txt_TextChanged(object sender, EventArgs e)
+		{
+			Regex regex = new Regex(Find_txt.Text);
+			switch (cmbFind.SelectedIndex)
+			{
+				case 0:
+					gvDBList.DataSource = frm_listDB.Where(item => regex.IsMatch(item.DataSource)).ToList();
+					break;
+				case 1:
+					gvDBList.DataSource = frm_listDB.Where(item => regex.IsMatch(item.Catalog)).ToList();
+					break;
+				case 2:
+					gvDBList.DataSource = frm_listDB.Where(item => regex.IsMatch(item.CreatedDate)).ToList();
+					break;
+				case 3:
+					gvDBList.DataSource = frm_listDB.Where(item => regex.IsMatch(item.DomainName)).ToList();
+					break;
+				case 4:
+					gvDBList.DataSource = frm_listDB.Where(item => regex.IsMatch(item.BrandName)).ToList();
+					break;
+				default:
+					gvDBList.DataSource = frm_listDB;
+					break;
+			}
+		}
 		private void BtnCheckAll_Click(object sender, EventArgs e)
 		{
 			if (BtnCheckAll.Text.Equals("Check All"))
@@ -458,8 +494,8 @@ namespace NovaDataManagement
 					item.UpdateChoice = false;
 				}
 				BtnCheckAll.Text = "Check All";
-			}			
-			gvDBList.DataSource = frm_listDB;
+			}
+			CountCheck();			
 			gvDBList.Refresh();
 		}
 
@@ -475,6 +511,7 @@ namespace NovaDataManagement
 		private void gvDBList_CellContentClick(object sender, DataGridViewCellEventArgs e)
 		{
 			gvDBList.EndEdit();
+			CountCheck();
 		}
 
 		private void frmDatabaseList_FormClosed(object sender, FormClosedEventArgs e)
@@ -483,5 +520,12 @@ namespace NovaDataManagement
 			frmMain main = (frmMain)MdiParent;
 			main.Login();
 		}
+		private void cmsLogError_Click(object sender, EventArgs e)
+		{
+			OpenErrorFolder();
+		}
+		#endregion
+
+		#endregion
 	}
 }

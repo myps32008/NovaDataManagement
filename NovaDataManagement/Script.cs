@@ -11,11 +11,11 @@
             {
                 if (updateState == null)
                 {
-                   return "";
+                   return "No";
                 }
                 else if (updateState.Equals(""))
                 {
-                    return "Upgrade Success";
+                    return "Success";
                 }
                 return updateState; 
             }
