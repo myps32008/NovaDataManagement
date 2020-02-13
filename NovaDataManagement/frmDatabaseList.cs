@@ -20,6 +20,7 @@ namespace NovaDataManagement
 		private string frm_pathBak;
 		private string frm_pathFolder;
 		private string frm_pathError;
+        private string frm_pathScript;
 		private int success;
 		private int fail;
 		private int progress;
@@ -41,7 +42,7 @@ namespace NovaDataManagement
 		
 		#region "Function"
 		// Handle Script
-		private string MakeScript(string[] filesName)
+		private string MakeScript(List<string> filesName)
 		{
 			StringBuilder builder = new StringBuilder();
 			foreach (string file in filesName)
@@ -51,60 +52,50 @@ namespace NovaDataManagement
 			}
 			return builder.ToString();
 		}
-		//Filter sql file to assure only file sql are chosen
-		//private string[] FileFilter(string path)
-		//{
-		//	var needFiles = from file in Directory.EnumerateFiles(path)
-		//					let extension = Path.GetExtension(file)
-		//					where extension.Equals(".sql")
-		//					select file;
-		//	return needFiles as string[];
-		//}
-		//Add folder have 3 levels at max and it mean add a version folder
-		//Important: Each folder contain only folders or script files and not empty        
-		private void AddFolder(string pathVersion)
-		{
-			//Level 1: Get all folder containing script in folder Version
-			string[] pathFolders = Directory.GetDirectories(pathVersion);
-			string[] filesScript = Directory.GetFiles(pathVersion);
-
-			if (pathFolders.Length > 0)
-			{
-				//If it is folder contain 
-				foreach (string path in pathFolders)
-				{
-					string[] files = Directory.GetFiles(path);
-					if (files.Length > 0)
-					{
-						GetScript(files);
-					}
-					else
-					{
-						string[] childFolders = Directory.GetDirectories(path);
-						foreach (string folder in childFolders)
-						{
-							string[] filesFolder = Directory.GetFiles(folder);
-							if (filesFolder.Length > 0)
-							{
-								GetScript(filesFolder);
-							}
-						}
-					}
-				}
-			}
-			else if (filesScript.Length > 0)
-			{
-				GetScript(filesScript);
-			}
-			else
-			{
-				MessageBox.Show("Folder is empty");
-				return;
-			}
-			lbNoScript.Text = "Number Script: " + frm_listScript.Count();
-			MessageBox.Show("Thêm script thành công");
-		}
-		private void GetScript(string[] files)
+        //Filter sql file to assure only file sql are chosen
+        private List<string> FileFilter(string path)
+        {
+            var needFiles = from file in Directory.EnumerateFiles(path)
+                            let extension = Path.GetExtension(file)
+                            where extension.Equals(".sql")
+                            select file;
+            return needFiles.ToList();
+        }
+        //Parent Folder contain only child folders which each store just sql file
+        private void AddFolder(string path)
+        {
+            try
+            {
+                //Case Folder version
+                if (Directory.GetDirectories(path).Length > 0)
+                {
+                    //Extract setting default folder choose and its order
+                    string[] orderScript = Properties.Settings.Default.order_folder.Split(':');
+                    foreach (string order in orderScript)
+                    {
+                        string pathFolder = frm_pathFolder + @"\" + order;
+                        //Check if exist then get all files
+                        if (Directory.Exists(pathFolder))
+                        {
+                            var filesScript = FileFilter(pathFolder);
+                            GetScript(filesScript);
+                        }
+                    }
+                }
+                else //Case Folder script
+                {
+                    var scripts = FileFilter(path);
+                    GetScript(scripts);
+                }
+                
+                if (frm_listScript.Count > 0)
+                { MessageBox.Show("Thêm script thành công"); }
+                else
+                { MessageBox.Show("Thư mục rỗng"); }
+            }
+            catch (Exception ex) { throw ex; }            
+        }        
+		private void GetScript(List<string> files)
 		{
 			Cursor.Current = Cursors.WaitCursor;
 			Script script = new Script();
@@ -114,6 +105,18 @@ namespace NovaDataManagement
 			frm_listScript.Add(script);
 			Cursor.Current = Cursors.Default;
 		}
+        private void ListScript()
+        {
+            string time = DateTime.Now.ToString("yyyyMMdd_");            
+            foreach (var item in frm_listScript)
+            {
+                string name = time + item.Folder + ".sql";
+                if (!File.Exists(name))
+                {
+                    File.WriteAllText(name, item.Query);
+                }                
+            }
+        }      
 		//Get List DBInfo
 		private List<InfoDB> GetDBs(InfoLogin infoLogin)
 		{
@@ -175,8 +178,10 @@ namespace NovaDataManagement
 				{
 					ServerConnection svrConnection = new ServerConnection(connection);
 					Server server = new Server(svrConnection);
-					////To Avoid TimeOut Exception
-					server.ConnectionContext.StatementTimeout = 60 * 60;
+                    Result stateAction = new Result(resultBackUp, db.DataSource, db.Catalog);
+                                        
+                    //To Avoid TimeOut Exception
+                    server.ConnectionContext.StatementTimeout = 60 * 60;
 					server.ConnectionContext.BeginTransaction();
 					bool stateUpgrade = true;
 					foreach (Script item in frm_listScript)
@@ -187,40 +192,59 @@ namespace NovaDataManagement
 						}
 						catch (ExecutionFailureException ex)
 						{
-							Script stateScript = new Script();
-							stateScript = item;
-							stateScript.ResultUpgrade = ex.GetBaseException().Message;
-							frm_resultList.Add(new Result(resultBackUp, stateScript, db));
-							server.ConnectionContext.RollBackTransaction();
-							stateUpgrade = false;
-							LogError(item);
-							fail++;
-							break;
-						}
-					}
+                            Exception exception = ex.GetBaseException();
+                            bool isContinue = false;
+                            if (ex.GetBaseException().Message.Contains("There is already an object named"))
+                            {
+                                isContinue = true;
+                            }
+                            if (!isContinue) // Stop Upgrade
+                            {
+                                stateAction.ResultUpgrade = 
+                                    new StringBuilder(stateAction.Note).
+                                    AppendLine(item.Folder + "error: " + "\n" + exception.ToString()).
+                                    ToString();
+                                stateAction.Folder = item.Folder;                                
+                                frm_resultList.Add(stateAction);
+                                server.ConnectionContext.RollBackTransaction();
+                                stateUpgrade = false;
+                                LogError(stateAction, db.Catalog);
+                                fail++;
+                                break;
+                            }
+                            stateAction.Note = 
+                                new StringBuilder(stateAction.Note).AppendLine(exception.ToString()).ToString();
+						} //end a folder script
+					}//Upgrade success
 					if (stateUpgrade)
 					{
-						server.ConnectionContext.CommitTransaction();						
-						frm_resultList.Add(new Result(resultBackUp, db));
+						server.ConnectionContext.CommitTransaction();                        
+                        stateAction.ResultUpgrade = "";						
+						frm_resultList.Add(stateAction);
 						success++;
+                        if (frm_resultList.Exists(r => (r.Note != null) || (!r.Note.Equals(""))))
+                        {
+                            LogError(stateAction, db.Catalog);
+                        }
 					}
 				}
-				else
+				else //Case Backup false
 				{
 					frm_resultList.Add(new Result(resultBackUp, db));
 					fail++;
 				}				
 			}
 		}
-		private void LogError(Script script)
+		private void LogError(Result result , string db)
 		{
-			string time = DateTime.Now.ToString("_ddMMyyyy");
-			string fileLog = frm_pathError + @"\" + script.Folder + time + ".sql";
-			try
+			string time = DateTime.Now.ToString("yyyyMMdd_");
+			string fileLog = frm_pathError + @"\" + time + db + ".sql";
+            string error = result.Note + "\n" + result.ResultUpgrade;
+            try
 			{
 				if (!File.Exists(fileLog))
 				{
-					File.WriteAllText(fileLog, script.Query, Encoding.Unicode);
+					File.WriteAllText(fileLog, error, Encoding.Unicode);
 				}
 			} catch (Exception ex) { throw ex; }			
 		}
@@ -243,10 +267,17 @@ namespace NovaDataManagement
 				}				
 				DisplayState(totalWork);
 				ShowFrmActionState(frm_resultList);
-				if (frm_resultList.Exists(r => 
-					(!r.ResultUpgrade.Equals("Success")) || (!r.BackupResult.Equals("Done"))))
+				if (frm_resultList.Exists(
+                    r => 
+					(!r.ResultUpgrade.Equals("Success")) || 
+                    (!r.BackupResult.Equals("Done")) || 
+                    (!r.Note.Equals(""))))
 				{
-					OpenErrorFolder();
+                    DialogResult dialogResult = MessageBox.Show("Xem Log Error?", "Có lỗi khi upgrade Database", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
+                    {
+                        OpenErrorFolder();
+                    }                    
 				}				
 				return;
 			}
@@ -257,7 +288,7 @@ namespace NovaDataManagement
 			try
 			{
 				if (frm_resultList.Exists(result =>
-					!result.ResultUpgrade.Equals("") || !result.Equals("Success")))
+					(!result.ResultUpgrade.Equals("")) || (!result.Equals("Success"))))
 				{
 					var psi = new ProcessStartInfo();
 					psi.FileName = "explorer.exe";
@@ -348,24 +379,33 @@ namespace NovaDataManagement
 			frm_listScript = new List<Script>();
 			frm_pathBak = Properties.Settings.Default.default_backup_directory;
 			frm_pathFolder = Properties.Settings.Default.default_script_directory;
-			if (!Directory.Exists(frm_pathBak))
+            lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
+            lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
+            lbNoScript.Text = "Number Script: " + frm_listScript.Count();
+            pLoading.Visible = false;
+
+            if (!Directory.Exists(frm_pathBak))
 			{
 				Directory.CreateDirectory(frm_pathBak);
 			}
-			lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
-			lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
-			frm_pathError = Directory.GetCurrentDirectory() + @"\LogError";
-			lbNoScript.Text = "Number Script: " + frm_listScript.Count();
-			if (!Directory.Exists(frm_pathError))
-			{
-				Directory.CreateDirectory(frm_pathError);
-			}
-			pLoading.Visible = false;
+
+            frm_pathScript = Directory.GetCurrentDirectory() + @"\Script";
+            if (!Directory.Exists(frm_pathScript))
+            {
+                Directory.CreateDirectory(frm_pathScript);
+            }
+
+            frm_pathError = Directory.GetCurrentDirectory() + @"\LogError";
+            if (!Directory.Exists(frm_pathError))
+            {
+                Directory.CreateDirectory(frm_pathError);
+            }  
 		}
 
 		private void btnUpgrade_Click(object sender, EventArgs e)
 		{
-			frm_Upgrade();
+            ListScript();
+            frm_Upgrade();
 		}
 
 		private void toolRefresh_Click(object sender, EventArgs e)
@@ -386,7 +426,8 @@ namespace NovaDataManagement
 				{
 					if (openFile.CheckFileExists)
 					{
-						string[] filesName = openFile.FileNames;
+                        List<string> filesName = new List<string>();
+                        filesName.AddRange(openFile.FileNames);
 						GetScript(filesName);
 						lbFolderPath.Text = "Folder Path: " + Path.GetDirectoryName(filesName[0]);
 						lbNoScript.Text = "Number Script: " + frm_listScript.Count();

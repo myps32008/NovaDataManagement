@@ -11,6 +11,7 @@ namespace NovaDataManagement
         private string backUp = null;
         public string DB { get; set; }
         public string Catalog { get; set; }
+        public string Note { get; set; }
         public string BackupResult 
         { 
             get { return (backUp == null)? "Done": ("Failed: " + backUp); }
@@ -39,6 +40,12 @@ namespace NovaDataManagement
             {
                 ResultUpgrade = "";
             }
+        }
+        public Result(string stateBackup, string dataSource, string catalog)
+        {
+            backUp = stateBackup;
+            DB = dataSource;
+            Catalog = catalog;
         }
     }
 }
