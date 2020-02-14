@@ -18,7 +18,7 @@
       <Value Profile="(Default)">5</Value>
     </Setting>
     <Setting Name="order_folder" Type="System.String" Scope="User">
-      <Value Profile="(Default)">Alters:Tables:ClearData:Types:Functions:Procedures</Value>
+      <Value Profile="(Default)">Tables:Alters:ClearData:Types:Functions:Procedures</Value>
     </Setting>
   </Settings>
 </SettingsFile>

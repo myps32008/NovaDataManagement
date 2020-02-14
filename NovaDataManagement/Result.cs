@@ -9,9 +9,14 @@ namespace NovaDataManagement
     public class Result: Script
     {
         private string backUp = null;
+        public string note = null;
         public string DB { get; set; }
         public string Catalog { get; set; }
-        public string Note { get; set; }
+        public string Note
+        {
+            get { return note == null ? "" : "Tables error"; }
+            private set { note = value; }
+        }
         public string BackupResult 
         { 
             get { return (backUp == null)? "Done": ("Failed: " + backUp); }

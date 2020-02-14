@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmLogin));
             this.lbServer = new System.Windows.Forms.Label();
             this.lbAcc = new System.Windows.Forms.Label();
             this.lbPass = new System.Windows.Forms.Label();
@@ -40,8 +41,6 @@
             this.Machine_txt = new System.Windows.Forms.TextBox();
             this.lbMachine = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.rbtnTestAcc = new System.Windows.Forms.RadioButton();
-            this.rbtnWork = new System.Windows.Forms.RadioButton();
             this.cbxSave = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -85,7 +84,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(299, 224);
+            this.btnCancel.Location = new System.Drawing.Point(304, 224);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(2);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(70, 25);
@@ -173,35 +172,13 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Image = global::NovaDataManagement.Properties.Resources.DBList;
-            this.pictureBox1.Location = new System.Drawing.Point(8, 8);
+            this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
+            this.pictureBox1.Location = new System.Drawing.Point(160, 10);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(72, 64);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox1.TabIndex = 12;
             this.pictureBox1.TabStop = false;
-            // 
-            // rbtnTestAcc
-            // 
-            this.rbtnTestAcc.AutoSize = true;
-            this.rbtnTestAcc.Location = new System.Drawing.Point(145, 50);
-            this.rbtnTestAcc.Name = "rbtnTestAcc";
-            this.rbtnTestAcc.Size = new System.Drawing.Size(46, 17);
-            this.rbtnTestAcc.TabIndex = 13;
-            this.rbtnTestAcc.Text = "Test";
-            this.rbtnTestAcc.UseVisualStyleBackColor = true;
-            this.rbtnTestAcc.CheckedChanged += new System.EventHandler(this.rbtnTestAcc_CheckedChanged);
-            // 
-            // rbtnWork
-            // 
-            this.rbtnWork.AutoSize = true;
-            this.rbtnWork.Location = new System.Drawing.Point(197, 50);
-            this.rbtnWork.Name = "rbtnWork";
-            this.rbtnWork.Size = new System.Drawing.Size(51, 17);
-            this.rbtnWork.TabIndex = 14;
-            this.rbtnWork.Text = "Work";
-            this.rbtnWork.UseVisualStyleBackColor = true;
-            this.rbtnWork.CheckedChanged += new System.EventHandler(this.rbtnWork_CheckedChanged);
             // 
             // cbxSave
             // 
@@ -217,11 +194,10 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.GradientActiveCaption;
             this.CancelButton = this.btnCancel;
             this.ClientSize = new System.Drawing.Size(384, 261);
             this.Controls.Add(this.cbxSave);
-            this.Controls.Add(this.rbtnWork);
-            this.Controls.Add(this.rbtnTestAcc);
             this.Controls.Add(this.pictureBox1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnAccept);
@@ -255,8 +231,6 @@
         private System.Windows.Forms.TextBox Machine_txt;
         private System.Windows.Forms.Label lbMachine;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.RadioButton rbtnTestAcc;
-        private System.Windows.Forms.RadioButton rbtnWork;
         private System.Windows.Forms.TextBox Instance_txt;
         private System.Windows.Forms.CheckBox cbxSave;
     }

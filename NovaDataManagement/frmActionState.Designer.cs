@@ -28,8 +28,14 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvStateList = new System.Windows.Forms.DataGridView();
+            this.DataSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Catalog = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Backup = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ResultUpgrade = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.panel1 = new System.Windows.Forms.Panel();
             this.BtnRefresh = new System.Windows.Forms.Button();
             this.cbSort = new System.Windows.Forms.ComboBox();
@@ -37,12 +43,6 @@
             this.cbFind = new System.Windows.Forms.ComboBox();
             this.lbSortby = new System.Windows.Forms.Label();
             this.lbFindBy = new System.Windows.Forms.Label();
-            this.DataSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Catalog = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Backup = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.ResultUpgrade = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Folder = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Note = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dgvStateList)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -57,19 +57,71 @@
             this.ResultUpgrade,
             this.Folder,
             this.Note});
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgvStateList.DefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgvStateList.DefaultCellStyle = dataGridViewCellStyle3;
             this.dgvStateList.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.dgvStateList.Location = new System.Drawing.Point(0, 40);
             this.dgvStateList.Name = "dgvStateList";
             this.dgvStateList.Size = new System.Drawing.Size(1184, 641);
             this.dgvStateList.TabIndex = 0;
+            // 
+            // DataSource
+            // 
+            this.DataSource.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
+            this.DataSource.DataPropertyName = "DB";
+            this.DataSource.HeaderText = "Data Source";
+            this.DataSource.Name = "DataSource";
+            this.DataSource.ReadOnly = true;
+            this.DataSource.Width = 85;
+            // 
+            // Catalog
+            // 
+            this.Catalog.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Catalog.DataPropertyName = "Catalog";
+            this.Catalog.HeaderText = "Catalog";
+            this.Catalog.Name = "Catalog";
+            this.Catalog.ReadOnly = true;
+            this.Catalog.Width = 68;
+            // 
+            // Backup
+            // 
+            this.Backup.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Backup.DataPropertyName = "BackupResult";
+            this.Backup.HeaderText = "Backup";
+            this.Backup.Name = "Backup";
+            this.Backup.ReadOnly = true;
+            this.Backup.Width = 69;
+            // 
+            // ResultUpgrade
+            // 
+            this.ResultUpgrade.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ResultUpgrade.DataPropertyName = "ResultUpgrade";
+            this.ResultUpgrade.HeaderText = "Result Upgrade";
+            this.ResultUpgrade.Name = "ResultUpgrade";
+            // 
+            // Folder
+            // 
+            this.Folder.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Folder.DataPropertyName = "Folder";
+            this.Folder.HeaderText = "Script error";
+            this.Folder.Name = "Folder";
+            this.Folder.ReadOnly = true;
+            this.Folder.Width = 77;
+            // 
+            // Note
+            // 
+            this.Note.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Note.DataPropertyName = "Note";
+            this.Note.HeaderText = "Note";
+            this.Note.Name = "Note";
+            this.Note.ReadOnly = true;
+            this.Note.Width = 55;
             // 
             // panel1
             // 
@@ -114,7 +166,7 @@
             this.Find_txt.Name = "Find_txt";
             this.Find_txt.Size = new System.Drawing.Size(264, 20);
             this.Find_txt.TabIndex = 3;
-            this.Find_txt.TextChanged += new System.EventHandler(this.Find_txt_TextChanged);
+            this.Find_txt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Find_txt_KeyDown);
             // 
             // cbFind
             // 
@@ -146,58 +198,6 @@
             this.lbFindBy.Size = new System.Drawing.Size(55, 16);
             this.lbFindBy.TabIndex = 0;
             this.lbFindBy.Text = "Find by:";
-            // 
-            // DataSource
-            // 
-            this.DataSource.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.DisplayedCells;
-            this.DataSource.DataPropertyName = "DB";
-            this.DataSource.HeaderText = "Data Source";
-            this.DataSource.Name = "DataSource";
-            this.DataSource.ReadOnly = true;
-            this.DataSource.Width = 92;
-            // 
-            // Catalog
-            // 
-            this.Catalog.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.Catalog.DataPropertyName = "Catalog";
-            this.Catalog.HeaderText = "Catalog";
-            this.Catalog.Name = "Catalog";
-            this.Catalog.ReadOnly = true;
-            this.Catalog.Width = 68;
-            // 
-            // Backup
-            // 
-            this.Backup.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.Backup.DataPropertyName = "BackupResult";
-            this.Backup.HeaderText = "Backup";
-            this.Backup.Name = "Backup";
-            this.Backup.ReadOnly = true;
-            this.Backup.Width = 69;
-            // 
-            // ResultUpgrade
-            // 
-            this.ResultUpgrade.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ResultUpgrade.DataPropertyName = "ResultUpgrade";
-            this.ResultUpgrade.HeaderText = "Result Upgrade";
-            this.ResultUpgrade.Name = "ResultUpgrade";
-            // 
-            // Folder
-            // 
-            this.Folder.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.Folder.DataPropertyName = "Folder";
-            this.Folder.HeaderText = "Script error";
-            this.Folder.Name = "Folder";
-            this.Folder.ReadOnly = true;
-            this.Folder.Width = 83;
-            // 
-            // Note
-            // 
-            this.Note.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.Note.DataPropertyName = "Note";
-            this.Note.HeaderText = "Note";
-            this.Note.Name = "Note";
-            this.Note.ReadOnly = true;
-            this.Note.Width = 55;
             // 
             // frmActionState
             // 

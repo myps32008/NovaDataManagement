@@ -34,9 +34,9 @@
             this.toolbarDatabaseList = new System.Windows.Forms.ToolStrip();
             this.btnUpgrade = new System.Windows.Forms.ToolStripButton();
             this.toolRefresh = new System.Windows.Forms.ToolStripButton();
-            this.tsmbAddScript = new System.Windows.Forms.ToolStripButton();
             this.tsmbBackup = new System.Windows.Forms.ToolStripButton();
             this.pnlHeader = new System.Windows.Forms.Panel();
+            this.BtnBrowseFolder = new System.Windows.Forms.Button();
             this.lbNoScript = new System.Windows.Forms.Label();
             this.BtnCheckAll = new System.Windows.Forms.Button();
             this.cmbFind = new System.Windows.Forms.ComboBox();
@@ -55,19 +55,18 @@
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsClearScript = new System.Windows.Forms.ToolStripMenuItem();
             this.cmsResult = new System.Windows.Forms.ToolStripMenuItem();
-            this.cmsLogError = new System.Windows.Forms.ToolStripMenuItem();
+            this.cmsFolderResult = new System.Windows.Forms.ToolStripMenuItem();
             this.backupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gvDBList = new System.Windows.Forms.DataGridView();
             this.UpdateChoice = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.DataSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Catalog = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Version = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.User = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Password = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.DomainName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.BrandName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.BtnBrowseFolder = new System.Windows.Forms.Button();
+            this.CreatedDate = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.DataSource = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.User = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Password = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.toolbarDatabaseList.SuspendLayout();
             this.pnlHeader.SuspendLayout();
             this.pnlFooter.SuspendLayout();
@@ -91,7 +90,6 @@
             this.toolbarDatabaseList.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btnUpgrade,
             this.toolRefresh,
-            this.tsmbAddScript,
             this.tsmbBackup});
             this.toolbarDatabaseList.Location = new System.Drawing.Point(0, 0);
             this.toolbarDatabaseList.Name = "toolbarDatabaseList";
@@ -118,15 +116,6 @@
             this.toolRefresh.Text = "Refresh";
             this.toolRefresh.Click += new System.EventHandler(this.toolRefresh_Click);
             // 
-            // tsmbAddScript
-            // 
-            this.tsmbAddScript.Image = ((System.Drawing.Image)(resources.GetObject("tsmbAddScript.Image")));
-            this.tsmbAddScript.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.tsmbAddScript.Name = "tsmbAddScript";
-            this.tsmbAddScript.Size = new System.Drawing.Size(82, 22);
-            this.tsmbAddScript.Text = "Add Script";
-            this.tsmbAddScript.Click += new System.EventHandler(this.tsmbAddScript_Click);
-            // 
             // tsmbBackup
             // 
             this.tsmbBackup.Image = ((System.Drawing.Image)(resources.GetObject("tsmbBackup.Image")));
@@ -151,6 +140,16 @@
             this.pnlHeader.Name = "pnlHeader";
             this.pnlHeader.Size = new System.Drawing.Size(1240, 63);
             this.pnlHeader.TabIndex = 12;
+            // 
+            // BtnBrowseFolder
+            // 
+            this.BtnBrowseFolder.Location = new System.Drawing.Point(16, 6);
+            this.BtnBrowseFolder.Name = "BtnBrowseFolder";
+            this.BtnBrowseFolder.Size = new System.Drawing.Size(88, 23);
+            this.BtnBrowseFolder.TabIndex = 24;
+            this.BtnBrowseFolder.Text = "Browse";
+            this.BtnBrowseFolder.UseVisualStyleBackColor = true;
+            this.BtnBrowseFolder.Click += new System.EventHandler(this.BtnBrowseFolder_Click);
             // 
             // lbNoScript
             // 
@@ -203,7 +202,7 @@
             this.Find_txt.Name = "Find_txt";
             this.Find_txt.Size = new System.Drawing.Size(206, 20);
             this.Find_txt.TabIndex = 18;
-            this.Find_txt.TextChanged += new System.EventHandler(this.Find_txt_TextChanged);
+            this.Find_txt.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Find_txt_KeyDown);
             // 
             // lbFolderBackup
             // 
@@ -297,50 +296,50 @@
             this.refreshToolStripMenuItem,
             this.cmsClearScript,
             this.cmsResult,
-            this.cmsLogError,
+            this.cmsFolderResult,
             this.backupToolStripMenuItem});
             this.mnsToolBarUpgrade.Name = "mnsToolBarUpgrade";
-            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(138, 136);
+            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(153, 158);
             // 
             // upgradeDBToolStripMenuItem
             // 
             this.upgradeDBToolStripMenuItem.Name = "upgradeDBToolStripMenuItem";
-            this.upgradeDBToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.upgradeDBToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.upgradeDBToolStripMenuItem.Text = "Upgrade DB";
             this.upgradeDBToolStripMenuItem.Click += new System.EventHandler(this.upgradeDBToolStripMenuItem_Click);
             // 
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // cmsClearScript
             // 
             this.cmsClearScript.Name = "cmsClearScript";
-            this.cmsClearScript.Size = new System.Drawing.Size(137, 22);
+            this.cmsClearScript.Size = new System.Drawing.Size(152, 22);
             this.cmsClearScript.Text = "Clear Script";
             this.cmsClearScript.Click += new System.EventHandler(this.cmsClearScript_Click);
             // 
             // cmsResult
             // 
             this.cmsResult.Name = "cmsResult";
-            this.cmsResult.Size = new System.Drawing.Size(137, 22);
+            this.cmsResult.Size = new System.Drawing.Size(152, 22);
             this.cmsResult.Text = "Result";
             this.cmsResult.Click += new System.EventHandler(this.cmsResult_Click);
             // 
-            // cmsLogError
+            // cmsFolderResult
             // 
-            this.cmsLogError.Name = "cmsLogError";
-            this.cmsLogError.Size = new System.Drawing.Size(137, 22);
-            this.cmsLogError.Text = "Log error";
-            this.cmsLogError.Click += new System.EventHandler(this.cmsLogError_Click);
+            this.cmsFolderResult.Name = "cmsFolderResult";
+            this.cmsFolderResult.Size = new System.Drawing.Size(152, 22);
+            this.cmsFolderResult.Text = "Log Folder";
+            this.cmsFolderResult.Click += new System.EventHandler(this.cmsLogError_Click);
             // 
             // backupToolStripMenuItem
             // 
             this.backupToolStripMenuItem.Name = "backupToolStripMenuItem";
-            this.backupToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
+            this.backupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.backupToolStripMenuItem.Text = "Backup";
             // 
             // gvDBList
@@ -348,14 +347,14 @@
             this.gvDBList.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.gvDBList.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.UpdateChoice,
-            this.DataSource,
             this.Catalog,
             this.Version,
-            this.User,
-            this.Password,
-            this.CreatedDate,
             this.DomainName,
-            this.BrandName});
+            this.BrandName,
+            this.CreatedDate,
+            this.DataSource,
+            this.User,
+            this.Password});
             this.gvDBList.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gvDBList.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
             this.gvDBList.Location = new System.Drawing.Point(0, 88);
@@ -371,14 +370,6 @@
             this.UpdateChoice.HeaderText = "Update";
             this.UpdateChoice.Name = "UpdateChoice";
             this.UpdateChoice.Width = 48;
-            // 
-            // DataSource
-            // 
-            this.DataSource.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.DataSource.DataPropertyName = "DataSource";
-            this.DataSource.HeaderText = "Data Source";
-            this.DataSource.Name = "DataSource";
-            this.DataSource.ReadOnly = true;
             // 
             // Catalog
             // 
@@ -398,33 +389,6 @@
             this.Version.ReadOnly = true;
             this.Version.Width = 67;
             // 
-            // User
-            // 
-            this.User.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.User.DataPropertyName = "User";
-            this.User.HeaderText = "User";
-            this.User.Name = "User";
-            this.User.ReadOnly = true;
-            this.User.Width = 54;
-            // 
-            // Password
-            // 
-            this.Password.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.Password.DataPropertyName = "Password";
-            this.Password.HeaderText = "Password";
-            this.Password.Name = "Password";
-            this.Password.ReadOnly = true;
-            this.Password.Width = 78;
-            // 
-            // CreatedDate
-            // 
-            this.CreatedDate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.CreatedDate.DataPropertyName = "CreatedDate";
-            this.CreatedDate.HeaderText = "Created Date";
-            this.CreatedDate.Name = "CreatedDate";
-            this.CreatedDate.ReadOnly = true;
-            this.CreatedDate.Width = 95;
-            // 
             // DomainName
             // 
             this.DomainName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
@@ -442,15 +406,41 @@
             this.BrandName.Name = "BrandName";
             this.BrandName.ReadOnly = true;
             // 
-            // BtnBrowseFolder
+            // CreatedDate
             // 
-            this.BtnBrowseFolder.Location = new System.Drawing.Point(16, 6);
-            this.BtnBrowseFolder.Name = "BtnBrowseFolder";
-            this.BtnBrowseFolder.Size = new System.Drawing.Size(88, 23);
-            this.BtnBrowseFolder.TabIndex = 24;
-            this.BtnBrowseFolder.Text = "Browse";
-            this.BtnBrowseFolder.UseVisualStyleBackColor = true;
-            this.BtnBrowseFolder.Click += new System.EventHandler(this.BtnBrowseFolder_Click);
+            this.CreatedDate.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.CreatedDate.DataPropertyName = "CreatedDate";
+            this.CreatedDate.HeaderText = "Created Date";
+            this.CreatedDate.Name = "CreatedDate";
+            this.CreatedDate.ReadOnly = true;
+            this.CreatedDate.Width = 95;
+            // 
+            // DataSource
+            // 
+            this.DataSource.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.DataSource.DataPropertyName = "DataSource";
+            this.DataSource.HeaderText = "Data Source";
+            this.DataSource.Name = "DataSource";
+            this.DataSource.ReadOnly = true;
+            this.DataSource.Width = 92;
+            // 
+            // User
+            // 
+            this.User.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.User.DataPropertyName = "User";
+            this.User.HeaderText = "User";
+            this.User.Name = "User";
+            this.User.ReadOnly = true;
+            this.User.Width = 54;
+            // 
+            // Password
+            // 
+            this.Password.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.Password.DataPropertyName = "Password";
+            this.Password.HeaderText = "Password";
+            this.Password.Name = "Password";
+            this.Password.ReadOnly = true;
+            this.Password.Width = 78;
             // 
             // frmDatabaseList
             // 
@@ -504,23 +494,22 @@
         private System.Windows.Forms.Label lbFail;
         private System.Windows.Forms.ComboBox cmbFind;
         private System.Windows.Forms.PictureBox pLoading;
-        private System.Windows.Forms.ToolStripButton tsmbAddScript;
         private System.Windows.Forms.ToolStripButton tsmbBackup;
         private System.Windows.Forms.ToolStripMenuItem cmsClearScript;
         private System.Windows.Forms.Button BtnCheckAll;
         private System.Windows.Forms.ToolStripMenuItem cmsResult;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn UpdateChoice;
-        private System.Windows.Forms.DataGridViewTextBoxColumn DataSource;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Catalog;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Version;
-        private System.Windows.Forms.DataGridViewTextBoxColumn User;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Password;
-        private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
-        private System.Windows.Forms.DataGridViewTextBoxColumn DomainName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn BrandName;
-        private System.Windows.Forms.ToolStripMenuItem cmsLogError;
+        private System.Windows.Forms.ToolStripMenuItem cmsFolderResult;
         private System.Windows.Forms.Label lbCountDBSelected;
         private System.Windows.Forms.Label lbNoScript;
         private System.Windows.Forms.Button BtnBrowseFolder;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn UpdateChoice;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Catalog;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Version;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DomainName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn BrandName;
+        private System.Windows.Forms.DataGridViewTextBoxColumn CreatedDate;
+        private System.Windows.Forms.DataGridViewTextBoxColumn DataSource;
+        private System.Windows.Forms.DataGridViewTextBoxColumn User;
+        private System.Windows.Forms.DataGridViewTextBoxColumn Password;
     }
 }

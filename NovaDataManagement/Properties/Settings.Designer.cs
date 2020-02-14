@@ -82,7 +82,7 @@ namespace NovaDataManagement.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Alters:Tables:ClearData:Types:Functions:Procedures")]
+        [global::System.Configuration.DefaultSettingValueAttribute("Tables:Alters:ClearData:Types:Functions:Procedures")]
         public string order_folder {
             get {
                 return ((string)(this["order_folder"]));

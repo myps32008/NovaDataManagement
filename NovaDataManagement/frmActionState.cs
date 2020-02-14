@@ -52,31 +52,43 @@ namespace NovaDataManagement
         }
         private void Find_txt_TextChanged(object sender, EventArgs e)
         {
-            if (Find_txt.Equals(""))
-            {
-                dgvStateList.DataSource = frm_results;
-            }
-            else
-            {
-                Regex regex = new Regex(Find_txt.Text);
-                var temp = dgvStateList.DataSource as List<Result>;
-                switch (cbFind.SelectedIndex)
-                {
-                    case 0:
-                        dgvStateList.DataSource = temp.FindAll(r => regex.IsMatch(r.DB)).ToList();
-                        break;
-                    case 1:
-                        dgvStateList.DataSource = temp.FindAll(r => regex.IsMatch(r.Catalog)).ToList();
-                        break;
-                    default:
-                        dgvStateList.DataSource = frm_results;
-                        break;
-                }                
-            }            
+            
         }
         private void BtnRefresh_Click(object sender, EventArgs e)
         {
             dgvStateList.DataSource = frm_results;
+        }
+
+        private void Find_txt_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (Find_txt.Equals(""))
+                {
+                    dgvStateList.DataSource = frm_results;
+                }
+                else
+                {
+                    Regex regex = new Regex(Find_txt.Text);
+                    var temp = dgvStateList.DataSource as List<Result>;
+                    switch (cbFind.SelectedIndex)
+                    {
+                        case 0:
+                            dgvStateList.DataSource = temp.FindAll(r => regex.IsMatch(r.DB)).ToList();
+                            break;
+                        case 1:
+                            dgvStateList.DataSource = temp.FindAll(r => regex.IsMatch(r.Catalog)).ToList();
+                            break;
+                        default:
+                            dgvStateList.DataSource = frm_results;
+                            break;
+                    }
+                }
+            }            
+        }
+        private void Btn_ShowFolder_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
