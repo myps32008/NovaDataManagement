@@ -91,5 +91,14 @@ namespace NovaDataManagement.Properties {
                 this["order_folder"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int min_DBsTask {
+            get {
+                return ((int)(this["min_DBsTask"]));
+            }
+        }
     }
 }

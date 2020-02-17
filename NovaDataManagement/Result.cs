@@ -25,26 +25,13 @@ namespace NovaDataManagement
         public Result()
         {
 
-        }        
-        //When upgrade fail
-        public Result(string stateBackup, Script errorScript , InfoDB db)
-        {
-            backUp = stateBackup;
-            Folder = errorScript.Folder;
-            DB = db.DataSource;
-            Catalog = db.Catalog;
-            ResultUpgrade = errorScript.ResultUpgrade;
-        }
-        //When upgrade success or backupfaile        
+        } 
+        //When backup failed        
         public Result(string stateBackup, InfoDB db)
         {
             DB = db.DataSource;
             Catalog = db.Catalog;
-            BackupResult = stateBackup;
-            if (backUp == null)
-            {
-                ResultUpgrade = "";
-            }
+            BackupResult = stateBackup;            
         }
         public Result(string stateBackup, string dataSource, string catalog)
         {

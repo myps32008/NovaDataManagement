@@ -32,15 +32,13 @@
             this.toolStatLog = new System.Windows.Forms.ToolStripMenuItem();
             this.loginToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mstlogOut = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.menubar.SuspendLayout();
             this.SuspendLayout();
             // 
             // menubar
             // 
             this.menubar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStatLog,
-            this.toolHelp});
+            this.toolStatLog});
             this.menubar.Location = new System.Drawing.Point(0, 0);
             this.menubar.Name = "menubar";
             this.menubar.Size = new System.Drawing.Size(1184, 24);
@@ -58,22 +56,16 @@
             // loginToolStripMenuItem
             // 
             this.loginToolStripMenuItem.Name = "loginToolStripMenuItem";
-            this.loginToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.loginToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.loginToolStripMenuItem.Text = "Log In";
             this.loginToolStripMenuItem.Click += new System.EventHandler(this.loginToolStripMenuItem_Click);
             // 
             // mstlogOut
             // 
             this.mstlogOut.Name = "mstlogOut";
-            this.mstlogOut.Size = new System.Drawing.Size(117, 22);
+            this.mstlogOut.Size = new System.Drawing.Size(152, 22);
             this.mstlogOut.Text = "Log Out";
             this.mstlogOut.Click += new System.EventHandler(this.mstlogOut_Click);
-            // 
-            // toolHelp
-            // 
-            this.toolHelp.Name = "toolHelp";
-            this.toolHelp.Size = new System.Drawing.Size(44, 20);
-            this.toolHelp.Text = "Help";
             // 
             // frmMain
             // 
@@ -88,7 +80,7 @@
             this.Name = "frmMain";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "frmMain";
+            this.Text = "Database Management Novaon";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
             this.Load += new System.EventHandler(this.frmMain_Load);
@@ -105,7 +97,6 @@
         private System.Windows.Forms.ToolStripMenuItem toolStatLog;
         private System.Windows.Forms.ToolStripMenuItem loginToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem mstlogOut;
-        private System.Windows.Forms.ToolStripMenuItem toolHelp;
     }
 }
 

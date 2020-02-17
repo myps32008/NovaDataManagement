@@ -23,22 +23,20 @@ namespace NovaDataManagement
         private int success;
         private int fail;
         private int progress;
-        private InfoLogin infoLogin;
+        public bool onWorking;
+        private int totalDB;
+        private Object lockInUpgrade = new Object();        
+        public InfoLogin infoLogin;
         private List<Script> frm_listScript;
         private List<Result> frm_resultList;
         private frmActionState frm_actionSate;
         private List<InfoDB> frm_listDB;
         //Server=myServerName\myInstanceName;Database=myDataBase;
         private static string[] attConnect = { "Server=", ";Database=", ";User ID=", ";Password="};
-        public frmDatabaseList(InfoLogin info)
+        public frmDatabaseList()
         {
-            InitializeComponent();
-            infoLogin = new InfoLogin(info.Machine, info.SeverName, info.User, info.Password);
-            frm_GetListDB();
-            frm_resultList = new List<Result>();
-        }
-
-        
+            InitializeComponent();            
+        }        
         #region "Function"
         // Handle Script
         private string MakeScript(List<string> filesName)
@@ -61,7 +59,7 @@ namespace NovaDataManagement
             return needFiles.ToList();
         }
         //Parent Folder contain only child folders which each store just sql file
-        private void AddFolder(string path)
+        private bool AddFolder(string path)
         {
             try
             {
@@ -85,14 +83,21 @@ namespace NovaDataManagement
                 {
                     var scripts = FileFilter(path);
                     GetScript(scripts);
-                }
-                
+                }                
                 if (frm_listScript.Count > 0)
-                { MessageBox.Show("Thêm script thành công"); }
+                { MessageBox.Show("Thêm script thành công."); }
                 else
-                { MessageBox.Show("Thư mục rỗng"); }
+                {
+                    MessageBox.Show("Thư mục rỗng hoặc sai tên mặc định.");
+                    return false;
+                }
+                return true;
             }
-            catch (Exception ex) { throw ex; }            
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return false;                
+            }                        
         }        
         private void GetScript(List<string> files)
         {
@@ -157,28 +162,25 @@ namespace NovaDataManagement
                                     attConnect[2] + db.User +
                                     attConnect[3] + db.Password;
             progress++;
+            bool stateUpgrade = true;
             using (SqlConnection connection = new SqlConnection(connectString))
             {
                 //Back up
                 string resultBackUp = BackUp(connection, db.Catalog);
+                Result progress = new Result(resultBackUp, db.DataSource, db.Catalog);
                 //Back up if success backup
                 if (resultBackUp == null)
-                {
-                    Result progress = new Result(resultBackUp, db.DataSource, db.Catalog);
-
+                {               
                     ServerConnection svrConnection = new ServerConnection(connection);
                     Server server = new Server(svrConnection);
                     server.ConnectionContext.StatementTimeout = 60 * 60; //To Avoid TimeOut Exception
-                    server.ConnectionContext.BeginTransaction();
-
-                    bool stateUpgrade = true; //Commit script
-                    bool isPerfect = true; //Could apply all script for database
-
+                    server.ConnectionContext.BeginTransaction();                    
+                    bool isPerfect = true; //Could execute all script for database                    
                     foreach (Script item in frm_listScript)
                     {
                         try
                         {
-                            server.ConnectionContext.ExecuteNonQuery(item.Query);
+                            server.ConnectionContext.ExecuteNonQuery(item.Query);                            
                         }
                         catch (ExecutionFailureException ex)
                         {
@@ -186,8 +188,7 @@ namespace NovaDataManagement
                             Exception exception = ex.GetBaseException();
                             bool isContinue = false;
                             string errorHeader = "\n" + item.Folder + " error:\n";                            
-                            string errorDetail = errorHeader + exception.ToString();
-                            server.ConnectionContext.RollBackTransaction();
+                            string errorDetail = errorHeader + exception.ToString();                            
                             //If folder Tables error then continue
                             //For the other roll back and stop immediately
                             if (item.Folder.Equals("Tables"))
@@ -204,20 +205,25 @@ namespace NovaDataManagement
                                 string errorSummary = errorHeader + exception.Message;
                                 progress.ResultUpgrade = exception.Message;                                
                                 stateUpgrade = false;
-                                fail++;
+                                server.ConnectionContext.RollBackTransaction();
                                 break;
                             }
                         } //End execute a folder script
                     }//End upgrade
-
-                    if (stateUpgrade) //Upgrade success
+                    lock (lockInUpgrade)
                     {
-                        server.ConnectionContext.CommitTransaction();                        
-                        progress.ResultUpgrade = "";                        						
-                        success++;						
+                        if (stateUpgrade) //Upgrade success
+                        {
+                            server.ConnectionContext.CommitTransaction();
+                            progress.ResultUpgrade = "";
+                            success++;
+                        }
+                        else
+                        {
+                            fail++;
+                        }
+                        frm_resultList.Add(progress);
                     }
-                    frm_resultList.Add(progress);
-
                     if (!isPerfect)
                     {
                         LogError(progress);
@@ -225,7 +231,8 @@ namespace NovaDataManagement
                 }
                 else //Case Backup false
                 {
-                    frm_resultList.Add(new Result(resultBackUp, db));
+                    progress.BackupResult = resultBackUp;
+                    frm_resultList.Add(progress);
                     fail++;
                 }				
             }
@@ -258,35 +265,96 @@ namespace NovaDataManagement
         }
         private void frm_Upgrade()
         {
-            if (frm_listScript.Count == 0)
+            try
             {
-                AddFolder(frm_pathFolder);
-                lbNoScript.Text = "Number Script: " + frm_listScript.Count;
-                ListScript();
-            }
-            if (frm_listScript.Count == 0) //Check if folder is empty
-            {
-                MessageBox.Show("Thư mục rỗng.");
-                return;
-            }
-
-            var listUpgrade = ListUseDB();
-            if (listUpgrade.Count > 0)
-            {
-                frm_resultList = new List<Result>();
-                int maxTask = Properties.Settings.Default.maxTask;
-                int totalWork = listUpgrade.Count();
-                ResetWorkingState(totalWork);
-                foreach (InfoDB item in listUpgrade)
+                var listUpgrade = ListUseDB();                
+                bool existList;
+                if (listUpgrade.Count > 0)
                 {
-                    UpgradeDB(item);
+                    if (frm_listScript.Count == 0)
+                    {
+                        if (!Directory.Exists(frm_pathFolder))
+                        {
+                            MessageBox.Show("Thư mục mặc định chứa script không tồn tại. Vui lòng kiểm tra");
+                            return;
+                        }
+                        existList = AddFolder(frm_pathFolder);
+                        if (!existList)
+                        {
+                            return;
+                        }
+                        lbNoScript.Text = "Number Script: " + frm_listScript.Count;
+                        ListScript();
+                    }
+                    frm_resultList = new List<Result>();
+                    //Check default setting to create task
+                    totalDB = listUpgrade.Count();
+                    int maxTask = Properties.Settings.Default.maxTask;
+                    int minDBsTask = Properties.Settings.Default.min_DBsTask;                    
+                    List<List<InfoDB>> listWork = new List<List<InfoDB>>();
+                    ResetWorkingState();                    
+                    if (totalDB < minDBsTask)
+                    {
+                        foreach (InfoDB item in listUpgrade)
+                        {
+                            UpgradeDB(item);
+                        }
+                    }
+                    else
+                    {
+                        int countWork = totalDB / minDBsTask;
+                        if ((totalDB % minDBsTask) != 0)
+                        {
+                            countWork++;
+                        }                        
+                        for (int i = 1; i <= countWork; i++)
+                        {
+                            var list = listUpgrade.Where(db => //Find list db base on index db
+                            (listUpgrade.IndexOf(db) >= (i - 1) * countWork) && 
+                            (listUpgrade.IndexOf(db) < (i * countWork))).
+                            ToList();
+                            listWork.Add(list);
+                        }
+                        if (countWork < maxTask)
+                        {
+                            maxTask = countWork;
+                        }
+                        using (SemaphoreSlim concurrency = new SemaphoreSlim(maxTask + 1))
+                        {
+                            List<Task> tasks = new List<Task>();
+                            tasks.Add(Task.Factory.StartNew(() => {
+                                concurrency.Wait();
+                                try
+                                {
+                                    DisplayState();
+                                }
+                                finally { concurrency.Release(); }
+                            }));
+                            foreach (var listDB in listWork)
+                            {
+                                concurrency.Wait();                               
+                                var t = Task.Factory.StartNew(() =>
+                                {
+                                    try
+                                    {
+                                        foreach (var db in listDB)
+                                        {
+                                            UpgradeDB(db);
+                                        }
+                                    }
+                                    finally { concurrency.Release(); }                                    
+                                });
+                                tasks.Add(t);
+                            }
+                            Task.WaitAll(tasks.ToArray());
+                        }                       
+                    }                                        
+                    return;
                 }
-                DisplayState(totalWork);
-                ShowFrmActionState(frm_resultList);
-                return;
+                MessageBox.Show("Vui lòng chọn Database để nâng cấp.");
             }
-            MessageBox.Show("Vui lòng chọn Database để nâng cấp.");
-        }
+            catch (Exception ex) { throw ex; }            
+        }       
         private void FolderResult()
         {
             try
@@ -338,45 +406,48 @@ namespace NovaDataManagement
         private void ShowFrmActionState(List<Result> resultAction)
         {
             frm_actionSate = new frmActionState(resultAction);
+            frm_actionSate.MdiParent = MdiParent;
             frm_actionSate.Show();
             if (frm_resultList.Exists(r =>
                         (!r.ResultUpgrade.Equals("Success")) ||
                         (!r.BackupResult.Equals("Done")) ||
                         (!r.Note.Equals(""))))
             {
-                DialogResult dialogResult = MessageBox.Show("Xem kết quả?", "Upgrade Database lỗi!", MessageBoxButtons.YesNo);
+                DialogResult dialogResult = MessageBox.Show("Bạn có muốn xem kết quả?", "Upgrade Database lỗi!", MessageBoxButtons.YesNo);
                 if (dialogResult == DialogResult.Yes)
                 {
                     FolderResult();
                 }
             }
         }
-        private void ResetWorkingState(int totalWork)
+        private void ResetWorkingState()
         {
             fail = 0;
             success = 0;
             progress = 0;
-            lbStatAction.Text = "Running...";			
+            lbStatAction.Text = "Running...";
             lbSuccess.Text = "Success: " + success;
             lbFail.Text = "Fail: " + fail;
-            lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
+            lbTotalWork.Text = "Working: " + progress + @"/" + totalDB;
             pLoading.Visible = true;
-            Cursor.Current = Cursors.WaitCursor;
+            onWorking = true;
+            Cursor.Current = Cursors.WaitCursor;            
         }
-        private void DisplayState(int totalWork)
-        {
-            while ((fail + success) < totalWork)
+        private void DisplayState()
+        {            
+            while ((fail + success) < totalDB)
             {
-                Thread.Sleep(100);
-                lbSuccess.Refresh();
-                lbFail.Refresh();
-                lbTotalWork.Refresh();
+                lbSuccess.Text = "Success: " + success;
+                lbFail.Text = "Fail: " + fail;
+                lbTotalWork.Text = "Working: " + progress + @"/" + totalDB;
+                Refresh();
             }
             lbSuccess.Text = "Success: " + success;
             lbFail.Text = "Fail: " + fail;
-            lbTotalWork.Text = "Working: " + progress + @"/" + totalWork;
+            lbTotalWork.Text = "Working: " + progress + @"/" + totalDB;
             lbStatAction.Text = "Done";			
             pLoading.Visible = false;
+            onWorking = false;
             Cursor.Current = Cursors.Default;
             MessageBox.Show("Công việc hoàn tất.");
         }
@@ -390,36 +461,51 @@ namespace NovaDataManagement
         #region "Event"
         private void frmDatabaseList_Load(object sender, EventArgs e)
         {
-            //Initialize workshop
-            frm_listScript = new List<Script>();            
-            frm_pathFolder = Properties.Settings.Default.default_script_directory;			
-            lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
-            lbNoScript.Text = "Number Script: " + frm_listScript.Count();
-            pLoading.Visible = false;
-
-            //Make folder Backup, Results
-            frm_pathBak = Directory.GetCurrentDirectory() + @"\Backup";
-            if (!Directory.Exists(frm_pathBak))
+            try
             {
-                Directory.CreateDirectory(frm_pathBak);
+                //Initialize workshop
+                infoLogin = new InfoLogin(infoLogin.Machine, infoLogin.SeverName, infoLogin.User, infoLogin.Password);
+                frm_GetListDB();
+                frm_resultList = new List<Result>();
+                frm_listScript = new List<Script>();
+                frm_pathFolder = Properties.Settings.Default.default_script_directory;                
+                lbFolderPath.Text = "Folder Path: " + frm_pathFolder;
+                lbNoScript.Text = "Number Script: " + frm_listScript.Count();
+                pLoading.Visible = false;
+
+                //Make folder Backup, Results
+                frm_pathBak = Directory.GetCurrentDirectory() + @"\Backup";
+                if (!Directory.Exists(frm_pathBak))
+                {
+                    Directory.CreateDirectory(frm_pathBak);
+                }
+                lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
+
+                frm_pathResults = Directory.GetCurrentDirectory() + @"\Results";
+                if (!Directory.Exists(frm_pathResults))
+                {
+                    Directory.CreateDirectory(frm_pathResults);
+                }
             }
-            lbFolderBackup.Text = "Folder Backup: " + frm_pathBak;
-
-            frm_pathResults = Directory.GetCurrentDirectory() + @"\Results";
-            if (!Directory.Exists(frm_pathResults))
-            {
-                Directory.CreateDirectory(frm_pathResults);
-            }  
+            catch (Exception ex) { throw ex; }            
         }
 
         private void btnUpgrade_Click(object sender, EventArgs e)
-        {			
-            frm_Upgrade();
+        {
+            try
+            {
+                frm_Upgrade();
+            }
+            catch (Exception ex) { throw ex; }
         }
 
         private void toolRefresh_Click(object sender, EventArgs e)
         {
-            frm_GetListDB();
+            try
+            {
+                frm_GetListDB();
+            }
+            catch (Exception ex) { throw ex; }
         }		
         //Browse folder version or script
         private void BtnBrowseFolder_Click(object sender, EventArgs e)
@@ -443,9 +529,12 @@ namespace NovaDataManagement
         #region "Right click"
         private void upgradeDBToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frm_Upgrade();
+            try
+            {
+                frm_Upgrade();
+            }
+            catch (Exception ex) { throw ex; }            
         }
-
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -462,55 +551,67 @@ namespace NovaDataManagement
         }
         private void tsmbBackup_Click(object sender, EventArgs e)
         {
-            frm_resultList = new List<Result>();
             try
             {
                 var listBak = ListUseDB();
-                foreach (InfoDB db in listBak)
+                if (listBak.Count > 0)
                 {
-                    string connectString = attConnect[0] + db.DataSource +
-                                            attConnect[2] + db.User +
-                                            attConnect[3] + db.Password;
-                    using (SqlConnection connection = new SqlConnection(connectString))
+                    foreach (InfoDB db in listBak)
                     {
-                        string result = BackUp(connection, db.Catalog);
-                        frm_resultList.Add(new Result(result, db));
+                        string connectString = attConnect[0] + db.DataSource +
+                                                attConnect[2] + db.User +
+                                                attConnect[3] + db.Password;
+                        using (SqlConnection connection = new SqlConnection(connectString))
+                        {
+                            string result = BackUp(connection, db.Catalog);
+                            frm_resultList.Add(new Result(result, db));
+                        }
+                        ShowFrmActionState(frm_resultList);
                     }
-                    ShowFrmActionState(frm_resultList);
+                    return;
                 }
+                MessageBox.Show("Vui lòng chọn Database để backup");
             }
             catch (Exception ex) { throw ex; }
         }
         private void BtnCheckAll_Click(object sender, EventArgs e)
         {
-            if (BtnCheckAll.Text.Equals("Check All"))
+            try
             {
-                foreach (var item in frm_listDB)
+                if (BtnCheckAll.Text.Equals("Check All"))
                 {
-                    item.UpdateChoice = true;
+                    foreach (var item in frm_listDB)
+                    {
+                        item.UpdateChoice = true;
+                    }
+                    BtnCheckAll.Text = "Uncheck All";
                 }
-                BtnCheckAll.Text = "Uncheck All";
-            }
-            else
-            {
-                foreach (var item in frm_listDB)
+                else
                 {
-                    item.UpdateChoice = false;
+                    foreach (var item in frm_listDB)
+                    {
+                        item.UpdateChoice = false;
+                    }
+                    BtnCheckAll.Text = "Check All";
                 }
-                BtnCheckAll.Text = "Check All";
+                CountCheck();
+                gvDBList.Refresh();
             }
-            CountCheck();			
-            gvDBList.Refresh();
+            catch (Exception ex) { throw ex; }
         }
 
         private void cmsResult_Click(object sender, EventArgs e)
         {
-            if (frm_resultList.Count == 0)
+            try
             {
-                MessageBox.Show("Chưa có công việc nào được thực hiện");
-                return;
+                if (frm_resultList.Count == 0)
+                {
+                    MessageBox.Show("Chưa có công việc nào được thực hiện");
+                    return;
+                }
+                ShowFrmActionState(frm_resultList);
             }
-            ShowFrmActionState(frm_resultList);
+            catch (Exception ex) { throw ex; }
         }
         private void gvDBList_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
@@ -526,7 +627,11 @@ namespace NovaDataManagement
         }
         private void cmsLogError_Click(object sender, EventArgs e)
         {
-            FolderResult();
+            try
+            {
+                FolderResult();
+            }
+            catch (Exception ex) { throw ex; }
         }
         private void Find_txt_KeyDown(object sender, KeyEventArgs e)
         {
@@ -565,5 +670,13 @@ namespace NovaDataManagement
 
         #endregion
 
+        private void frmDatabaseList_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (onWorking == true)
+            {
+                MessageBox.Show("Công việc chưa hoàn tất.");
+                e.Cancel = true;
+            }            
+        }
     }
 }

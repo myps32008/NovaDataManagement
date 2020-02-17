@@ -15,16 +15,7 @@ namespace NovaDataManagement
     {
         public frmLogin()
         {
-            InitializeComponent();
-            try
-            {
-                string[] testAcc = Properties.Settings.Default.test_login.Split(':');
-                Machine_txt.Text = testAcc[0];
-                Instance_txt.Text = testAcc[1];
-                User_text.Text = testAcc[2];
-                Password_txt.Text = testAcc[3];
-            }
-            catch (Exception ex) { throw ex; }            
+            InitializeComponent();             
         }
 
         #region "Event"
@@ -46,7 +37,8 @@ namespace NovaDataManagement
                     {
                         info.Machine += @"\" + Instance_txt.Text;
                     }
-                    frmDatabaseList frm = new frmDatabaseList(info);
+                    frmDatabaseList frm = new frmDatabaseList();
+                    frm.infoLogin = info;
                     frm.MdiParent = Owner;
                     DialogResult = DialogResult.OK;
                     frm.WindowState = FormWindowState.Maximized;
@@ -88,6 +80,15 @@ namespace NovaDataManagement
             //{
             //    throw ex;
             //}
+            try
+            {
+                string[] testAcc = Properties.Settings.Default.test_login.Split(':');
+                Machine_txt.Text = testAcc[0];
+                Instance_txt.Text = testAcc[1];
+                User_text.Text = testAcc[2];
+                Password_txt.Text = testAcc[3];
+            }
+            catch (Exception ex) { throw ex; }
         }
         private void btnCancel_Click(object sender, EventArgs e)
         {

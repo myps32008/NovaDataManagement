@@ -59,10 +59,22 @@ namespace NovaDataManagement
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            foreach (Form form in Application.OpenForms)
+            try
             {
-                form.Dispose();
+                foreach (frmDatabaseList item in MdiChildren.Where(f => ReferenceEquals(f, new frmDatabaseList())))
+                {
+                    if (item.onWorking)
+                    {
+                        e.Cancel = true;
+                        return;
+                    }
+                }
+                foreach (Form form in MdiChildren)
+                {                    
+                   form.Dispose();
+                }
             }
+            catch (Exception ex) { throw ex; }            
         }
     }
 }

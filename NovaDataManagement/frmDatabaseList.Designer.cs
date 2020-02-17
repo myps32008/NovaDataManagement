@@ -155,7 +155,7 @@
             // 
             this.lbNoScript.AutoSize = true;
             this.lbNoScript.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbNoScript.Location = new System.Drawing.Point(554, 34);
+            this.lbNoScript.Location = new System.Drawing.Point(563, 34);
             this.lbNoScript.Name = "lbNoScript";
             this.lbNoScript.Size = new System.Drawing.Size(96, 16);
             this.lbNoScript.TabIndex = 23;
@@ -181,7 +181,7 @@
             "Created Date",
             "Domain Name",
             "Brand Name"});
-            this.cmbFind.Location = new System.Drawing.Point(176, 32);
+            this.cmbFind.Location = new System.Drawing.Point(191, 32);
             this.cmbFind.Name = "cmbFind";
             this.cmbFind.Size = new System.Drawing.Size(100, 21);
             this.cmbFind.TabIndex = 21;
@@ -190,7 +190,7 @@
             // 
             this.lbFindBy.AutoSize = true;
             this.lbFindBy.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFindBy.Location = new System.Drawing.Point(120, 34);
+            this.lbFindBy.Location = new System.Drawing.Point(136, 34);
             this.lbFindBy.Name = "lbFindBy";
             this.lbFindBy.Size = new System.Drawing.Size(55, 16);
             this.lbFindBy.TabIndex = 19;
@@ -198,7 +198,7 @@
             // 
             // Find_txt
             // 
-            this.Find_txt.Location = new System.Drawing.Point(280, 32);
+            this.Find_txt.Location = new System.Drawing.Point(295, 32);
             this.Find_txt.Name = "Find_txt";
             this.Find_txt.Size = new System.Drawing.Size(206, 20);
             this.Find_txt.TabIndex = 18;
@@ -208,7 +208,7 @@
             // 
             this.lbFolderBackup.AutoSize = true;
             this.lbFolderBackup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lbFolderBackup.Location = new System.Drawing.Point(554, 8);
+            this.lbFolderBackup.Location = new System.Drawing.Point(560, 8);
             this.lbFolderBackup.Name = "lbFolderBackup";
             this.lbFolderBackup.Size = new System.Drawing.Size(99, 16);
             this.lbFolderBackup.TabIndex = 16;
@@ -299,47 +299,47 @@
             this.cmsFolderResult,
             this.backupToolStripMenuItem});
             this.mnsToolBarUpgrade.Name = "mnsToolBarUpgrade";
-            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(153, 158);
+            this.mnsToolBarUpgrade.Size = new System.Drawing.Size(138, 136);
             // 
             // upgradeDBToolStripMenuItem
             // 
             this.upgradeDBToolStripMenuItem.Name = "upgradeDBToolStripMenuItem";
-            this.upgradeDBToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.upgradeDBToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.upgradeDBToolStripMenuItem.Text = "Upgrade DB";
             this.upgradeDBToolStripMenuItem.Click += new System.EventHandler(this.upgradeDBToolStripMenuItem_Click);
             // 
             // refreshToolStripMenuItem
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
             // cmsClearScript
             // 
             this.cmsClearScript.Name = "cmsClearScript";
-            this.cmsClearScript.Size = new System.Drawing.Size(152, 22);
+            this.cmsClearScript.Size = new System.Drawing.Size(137, 22);
             this.cmsClearScript.Text = "Clear Script";
             this.cmsClearScript.Click += new System.EventHandler(this.cmsClearScript_Click);
             // 
             // cmsResult
             // 
             this.cmsResult.Name = "cmsResult";
-            this.cmsResult.Size = new System.Drawing.Size(152, 22);
+            this.cmsResult.Size = new System.Drawing.Size(137, 22);
             this.cmsResult.Text = "Result";
             this.cmsResult.Click += new System.EventHandler(this.cmsResult_Click);
             // 
             // cmsFolderResult
             // 
             this.cmsFolderResult.Name = "cmsFolderResult";
-            this.cmsFolderResult.Size = new System.Drawing.Size(152, 22);
+            this.cmsFolderResult.Size = new System.Drawing.Size(137, 22);
             this.cmsFolderResult.Text = "Log Folder";
             this.cmsFolderResult.Click += new System.EventHandler(this.cmsLogError_Click);
             // 
             // backupToolStripMenuItem
             // 
             this.backupToolStripMenuItem.Name = "backupToolStripMenuItem";
-            this.backupToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.backupToolStripMenuItem.Size = new System.Drawing.Size(137, 22);
             this.backupToolStripMenuItem.Text = "Backup";
             // 
             // gvDBList
@@ -457,6 +457,7 @@
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Upgrade Databse";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmDatabaseList_FormClosing);
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmDatabaseList_FormClosed);
             this.Load += new System.EventHandler(this.frmDatabaseList_Load);
             this.toolbarDatabaseList.ResumeLayout(false);
